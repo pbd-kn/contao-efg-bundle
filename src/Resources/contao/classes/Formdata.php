@@ -69,7 +69,7 @@ class Formdata extends \Contao\Frontend
 	{
 
 		parent::__construct();
-$this->log("PBD Formdata construct ", __METHOD__, 'ERROR');
+//$this->log("PBD Formdata construct ", __METHOD__, 'ERROR');
 		// Types of form fields with storable data
 		$this->arrFFstorable = array
 		(
@@ -207,7 +207,7 @@ $this->log("PBD Formdata generateAlias input varValue=$varValue, strFormTitle=$s
 				$strAliasField = $objForm->efgAliasField;
 			}
 		}
-$this->log("PBD Formdata generateAlias strAliasField $strAliasField ", __METHOD__, TL_GENERAL);
+//$this->log("PBD Formdata generateAlias strAliasField $strAliasField ", __METHOD__, TL_GENERAL);
 
 		if ($strAliasField == '')
 		{
@@ -253,7 +253,7 @@ $this->log("PBD Formdata generateAlias strAliasField $strAliasField ", __METHOD_
 
 		$objAlias = \Database::getInstance()->prepare("SELECT id FROM tl_formdata WHERE alias=? AND id != ?")
 			->execute($varValue, $intRecId);
-$this->log("PBD Formdata generateAlias check varValue $varValue intRecId $intRecId autoAlias $autoAlias " . $objAlias->numRows , __METHOD__, TL_GENERAL);
+//$this->log("PBD Formdata generateAlias check varValue $varValue intRecId $intRecId autoAlias $autoAlias " . $objAlias->numRows , __METHOD__, TL_GENERAL);
 
 		// Check whether the alias exists
 		if ($objAlias->numRows > 1 && !$autoAlias)
@@ -437,7 +437,7 @@ $this->log("PBD Formdata generateAlias return $varValue" , __METHOD__, TL_GENERA
 				$strFormKey = (!empty($objForms->alias)) ? $objForms->alias : str_replace('-', '_', standardize($objForms->title));
 				$this->arrStoringForms[$strFormKey] = $objForms->row();
 				$this->arrFormsDcaKey[$strFormKey] = $objForms->title;
-$this->log("PBD Formdata getStoringForms erzeugt title[$strFormKey]" . $objForms->title , __METHOD__, 'ERROR');
+//$this->log("PBD Formdata getStoringForms erzeugt title[$strFormKey]" . $objForms->title , __METHOD__, 'ERROR');
 			}
 		}
 	}

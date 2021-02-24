@@ -16,6 +16,7 @@
  * Namespace
  */
 namespace PBDKN\Efgco4\Resources\contao\modules;
+use PBDKN\Efgco4\Resources\contao\forms\ExtendedForm;
 /**
  * Class ModuleFormdataListing
  *
@@ -263,6 +264,7 @@ class ModuleFormdataListing extends \Module
 		if (strlen($this->efg_fe_edit_access))
 		{
 			$arrAllowedOwnerIds = array();
+$this->log("PBD ModuleFormdataListing check edit " . $this->efg_fe_edit_access , __METHOD__, TL_GENERAL);
 			switch ($this->efg_fe_edit_access)
 			{
 				case 'member': // edit own records only
@@ -491,8 +493,8 @@ class ModuleFormdataListing extends \Module
 		{
 			$strSearchFormType = $this->efg_list_searchtype;
 		}
-
-		$this->strIconFolder = (strlen($this->efg_iconfolder) ? $this->efg_iconfolder : 'system/modules/efg_co4/assets');
+		$this->strIconFolder = (strlen($this->efg_iconfolder) ? $this->efg_iconfolder : 'bundles/contaoefgco4/images');
+$this->log("PBD ModuleFormdataListing compile $this->efg_iconfolder " . $this->efg_iconfolder .  $this->strIconFolder " . $this->strIconFolder , __METHOD__, TL_GENERAL);
 
 		$this->import('FrontendUser', 'Member');
 
@@ -2946,6 +2948,7 @@ class ModuleFormdataListing extends \Module
 		{
 			$this->list_edit_layout = 'edit_fd_default';
 		}
+$this->log("PBD ModuleFormdataListing  list_edit_layout " . $this->list_edit_layout , __METHOD__, 'ERROR');
 
 		// Get the form
 		$objCheckRecord = \Database::getInstance()->prepare("SELECT form FROM tl_formdata WHERE id=?")
@@ -2956,9 +2959,10 @@ class ModuleFormdataListing extends \Module
 		if ($objCheckRecord->numRows == 1)
 		{
 			$strForm = $objCheckRecord->form;
-//$this->log("PBD search formadata found Listenname \"".$strForm."\"", __METHOD__, 'ERROR');
+$this->log("PBD ModuleFormdataListing found Listenname \"".$strForm."\"", __METHOD__, 'ERROR');
 		}
 
+$this->log("PBD ModuleFormdataListing form \"".$strForm."\"", __METHOD__, 'ERROR');
 		// Get the ContentElement holding the form
 		if (strlen($strForm))
 		{
@@ -3132,6 +3136,8 @@ class ModuleFormdataListing extends \Module
 	public function generateEditForm($objFormElement, $objRecord)
 	{
 
+$this->log("PBD ModuleFormdataListing generateEditForm " . $objFormElement , __METHOD__, TL_GENERAL);
+
 		if (TL_MODE == 'BE')
 		{
 			return '';
@@ -3139,6 +3145,7 @@ class ModuleFormdataListing extends \Module
 
 		$objFormElement->typePrefix = 'ce_';
 
+$this->log("PBD ModuleFormdataListing generateEditForm vor create " . $objFormElement , __METHOD__, TL_GENERAL);
 		$this->EditForm = new ExtendedForm($objFormElement);
 		$this->EditForm->objEditRecord = $objRecord;
 

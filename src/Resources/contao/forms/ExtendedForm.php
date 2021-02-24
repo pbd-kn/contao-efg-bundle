@@ -99,6 +99,7 @@ class ExtendedForm extends \Form
 	 */
 	protected function compile()
 	{
+$this->log("PBD ExtendedForm compile " , __METHOD__, TL_GENERAL);
 
 		$hasUpload = false;
 		$doNotSubmit = false;

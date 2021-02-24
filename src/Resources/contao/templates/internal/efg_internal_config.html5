@@ -64,8 +64,8 @@ $GLOBALS['BE_MOD']['formdata']['fd_<?php echo $strKey; ?>'] = array
 (
 	'tables'     => array('tl_formdata', 'tl_formdata_details'),
 	'import'     => array('FormdataBackend', 'importCsv'),
-	'icon'       => 'system/modules/efg_co4/assets/formdata.gif',
-	'stylesheet' => 'system/modules/efg_co4/assets/style.css'
+	'icon'       => 'PBDKN/Efgco4/Resources/contao/assets/formdata_all.gif',
+	'stylesheet' => 'PBDKN/Efgco4/Resources/contao/assets/style.css'
 );
 <?php endforeach; ?>
 <?php endif; ?>
