@@ -16,6 +16,7 @@
  * Namespace
  */
 namespace PBDKN\Efgco4\Resources\contao\classes;
+//use PBDKN\Efgco4\Resources\contao\classes\EfgLog;
 
 /**
  * Class Formdata
@@ -69,7 +70,9 @@ class Formdata extends \Contao\Frontend
 	{
 
 		parent::__construct();
-//$this->log("PBD Formdata construct ", __METHOD__, 'ERROR');
+$this->log("PBD Formdata construct do " . \Input::get('do') . "'", __METHOD__, 'TL_GENERAL');
+EfgLog::EfgwriteLog(1, __METHOD__ , __LINE__, "PBD Formdata construct do '" . \Input::get('do') . "'");
+
 		// Types of form fields with storable data
 		$this->arrFFstorable = array
 		(
@@ -429,7 +432,7 @@ $this->log("PBD Formdata generateAlias return $varValue" , __METHOD__, TL_GENERA
 		if (!$this->arrStoringForms)
 		{
 			// Get all forms marked to store data
-			$objForms = \Database::getInstance()->prepare("SELECT id,title,alias,formID,useFormValues,useFieldNames FROM tl_form WHERE storeFormdata=?")
+			$objForms = \Database::getInstance()->prepare("SELECT id,title,alias,formID,useFormValues,useFieldNames,efgDebugMode FROM tl_form WHERE storeFormdata=?")
 				->execute("1");
 
 			while ($objForms->next())
@@ -437,7 +440,7 @@ $this->log("PBD Formdata generateAlias return $varValue" , __METHOD__, TL_GENERA
 				$strFormKey = (!empty($objForms->alias)) ? $objForms->alias : str_replace('-', '_', standardize($objForms->title));
 				$this->arrStoringForms[$strFormKey] = $objForms->row();
 				$this->arrFormsDcaKey[$strFormKey] = $objForms->title;
-//$this->log("PBD Formdata getStoringForms erzeugt title[$strFormKey]" . $objForms->title , __METHOD__, 'ERROR');
+$this->log("PBD Formdata getStoringForms erzeugt fuer title[$strFormKey]" . $objForms->title . " efgDebugMode " . $objForms->efgDebugMode , __METHOD__, 'TL_GENERAL');
 			}
 		}
 	}
@@ -554,6 +557,7 @@ $this->log("PBD Formdata getFormfieldsAsArray formId $intId"  , __METHOD__, TL_G
 
 		if ($intId > 0)
 		{
+            /* liefert alle Felder, die for diese Form angelegt sind (pid) */
 			$objFormFields = \Database::getInstance()->prepare("SELECT * FROM tl_form_field WHERE pid=? ORDER BY sorting ASC")
 				->execute($intId);
 
@@ -847,7 +851,7 @@ $this->log("PBD Formdata getFormfieldsAsArray varKey $varKey"  , __METHOD__, TL_
 					break;
 
 				case 'efgImageSelect':
-//$this->log('PBD Formdata preparePostValueForDatabase 1', __METHOD__, 'ERROR');
+//$this->log('PBD Formdata preparePostValueForDatabase 1', __METHOD__, 'TL_GENERAL');
 
 					$strVal = '';
 					if (is_array($varSubmitted))
@@ -989,7 +993,7 @@ $this->log("PBD Formdata getFormfieldsAsArray varKey $varKey"  , __METHOD__, TL_
 				case 'countryselect':
 				case 'fp_preSelectMenu':
 				case 'select':
-//$this->log('PBD Formdata prepareImportValueForDatabase 1', __METHOD__, 'ERROR');
+//$this->log('PBD Formdata prepareImportValueForDatabase 1', __METHOD__, 'TL_GENERAL');
 
 					if ($arrField['eval']['multiple'])
 					{
@@ -1029,7 +1033,7 @@ $this->log("PBD Formdata getFormfieldsAsArray varKey $varKey"  , __METHOD__, TL_
 				case 'fileTree':
 				case 'upload':
 				case 'efgImageSelect':
-//$this->log('PBD Formdata prepareImportValueForDatabase 2', __METHOD__, 'ERROR');
+//$this->log('PBD Formdata prepareImportValueForDatabase 2', __METHOD__, 'TL_GENERAL');
 
 					$strVal = '';
 					if ($arrField['eval']['multiple'])
@@ -1247,7 +1251,7 @@ $this->log("PBD Formdata getFormfieldsAsArray varKey $varKey"  , __METHOD__, TL_
 					break;
 
 				case 'efgImageSelect':
-//$this->log('PBD Formdata preparePostValueForMail', __METHOD__, 'ERROR');
+//$this->log('PBD Formdata preparePostValueForMail', __METHOD__, 'TL_GENERAL');
 
 					$strVal = '';
 					if (is_string($varSubmitted) && strlen($varSubmitted))
@@ -1461,7 +1465,7 @@ $this->log("PBD Formdata getFormfieldsAsArray varKey $varKey"  , __METHOD__, TL_
 
 				case 'efgImageSelect':
 				case 'fileTree':
-//$this->log('PBD Formdata prepareDatabaseValueForMail', __METHOD__, 'ERROR');
+//$this->log('PBD Formdata prepareDatabaseValueForMail', __METHOD__, 'TL_GENERAL');
 					$strVal = '';
 					$arrSel = array();
 
@@ -1532,7 +1536,7 @@ $this->log("PBD Formdata getFormfieldsAsArray varKey $varKey"  , __METHOD__, TL_
 	 */
 	public function prepareDatabaseValueForWidget($varValue='', $arrField=false, $varFile=false)
 	{
-//$this->log("PBD Formdata prepareDatabaseValueForWidget gerufen", __METHOD__, 'ERROR');
+//$this->log("PBD Formdata prepareDatabaseValueForWidget gerufen", __METHOD__, 'TL_GENERAL');
 
 		if (!is_array($arrField))
 		{
@@ -1549,7 +1553,7 @@ $this->log("PBD Formdata getFormfieldsAsArray varKey $varKey"  , __METHOD__, TL_
 			$strType = $arrField['inputType'];
 		}
 if ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['label'][0] == "Logo"){
-//$this->log("PBD Formdata prepareDatabaseValueForWidget arrField da label " . $arrField['label'][0] . " type $strType varValue $varValue", __METHOD__, 'ERROR');
+//$this->log("PBD Formdata prepareDatabaseValueForWidget arrField da label " . $arrField['label'][0] . " type $strType varValue $varValue", __METHOD__, 'TL_GENERAL');
 }
 
 
@@ -1610,7 +1614,7 @@ if ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['label'][0] =
 				case 'fileTree':
 
 					$strSep = (isset($arrField['eval']['csv'])) ? $arrField['eval']['csv'] : '|';
-//$this->log("PBD Formdata prepareDatabaseValueForWidget 2 arrField $arrField strSep $strSep", __METHOD__, 'ERROR');
+//$this->log("PBD Formdata prepareDatabaseValueForWidget 2 arrField $arrField strSep $strSep", __METHOD__, 'TL_GENERAL');
 
 					if (is_string($varVal) && strpos($varVal, $strSep) !== false)
 					{
@@ -1624,18 +1628,18 @@ if ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['label'][0] =
 					{
 						$varVal = deserialize($varValue);
 					}
-//$this->log("PBD Formdata prepareDatabaseValueForWidget 2 varVal $varVal", __METHOD__, 'ERROR');
+//$this->log("PBD Formdata prepareDatabaseValueForWidget 2 varVal $varVal", __METHOD__, 'TL_GENERAL');
 
 					if (!empty($varVal))
 					{
-//$this->log("PBD Formdata prepareDatabaseValueForWidget 2 varVal nicht leer varVal $varVal", __METHOD__, 'ERROR');
+//$this->log("PBD Formdata prepareDatabaseValueForWidget 2 varVal nicht leer varVal $varVal", __METHOD__, 'TL_GENERAL');
 						if (is_array($varVal))
 						{
-//$this->log('PBD Formdata prepareDatabaseValueForWidget 2 varval da array', __METHOD__, 'ERROR');
+//$this->log('PBD Formdata prepareDatabaseValueForWidget 2 varval da array', __METHOD__, 'TL_GENERAL');
 							foreach ($varVal as $key => $varFile)
 							{
 								$objFileModel = null;
-//$this->log("PBD Formdata prepareDatabaseValueForWidget 2 varval da array [$key] $varFile", __METHOD__, 'ERROR');
+//$this->log("PBD Formdata prepareDatabaseValueForWidget 2 varval da array [$key] $varFile", __METHOD__, 'TL_GENERAL');
 
 								if (\Validator::isUuid($varFile) || is_numeric($varFile))
 								{
@@ -1651,13 +1655,13 @@ if ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['label'][0] =
 									$varVal[$key] = (TL_MODE == 'FE' ? $objFileModel->path : $objFileModel->uuid);
 								}
                 else {
-//$this->log("PBD Formdata prepareDatabaseValueForWidget 2 varval da array objfile Null $varFile", __METHOD__, 'ERROR');
+//$this->log("PBD Formdata prepareDatabaseValueForWidget 2 varval da array objfile Null $varFile", __METHOD__, 'TL_GENERAL');
                 }
 							}
 						}
 						elseif (is_string($varVal))
 						{
-//$this->log("PBD Formdata prepareDatabaseValueForWidget 2 varval da string: $varVal", __METHOD__, 'ERROR');
+//$this->log("PBD Formdata prepareDatabaseValueForWidget 2 varval da string: $varVal", __METHOD__, 'TL_GENERAL');
 							$objFileModel = null;
 
 							if (\Validator::isUuid($varVal) || is_numeric($varVal))
@@ -1674,7 +1678,7 @@ if ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['label'][0] =
 								$varVal = (TL_MODE == 'FE' ? $objFileModel->path : $objFileModel->uuid);
 							}
               else {
-//$this->log("PBD Formdata prepareDatabaseValueForWidget 2 varval da array objfile Null $varFile", __METHOD__, 'ERROR');
+//$this->log("PBD Formdata prepareDatabaseValueForWidget 2 varval da array objfile Null $varFile", __METHOD__, 'TL_GENERAL');
               }
               
 						}
@@ -2277,7 +2281,7 @@ if ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['label'][0] =
 		$attachments = $objMailProperties->attachments;
 
 		$blnSkipEmptyFields = $objMailProperties->skipEmptyFields;
-//$this->log("PBD Formdata prepareMailData sender $sender subject $subject", __METHOD__, 'ERROR');
+//$this->log("PBD Formdata prepareMailData sender $sender subject $subject", __METHOD__, 'TL_GENERAL');
 
 		if (\Validator::isUuid($messageHtmlTmpl) || (is_numeric($messageHtmlTmpl) && $messageHtmlTmpl > 0))
 		{
@@ -2911,12 +2915,12 @@ $this->log("PBD Formdata executePostActions generate Up2 $up  ", __METHOD__, TL_
 
 			// Load nodes of the file tree
 			case 'loadFiletree':
-$this->log("PBD Formdata executePostActions loadFiletree ", __METHOD__, 'ERROR');
+$this->log("PBD Formdata executePostActions loadFiletree ", __METHOD__, 'TL_GENERAL');
 
 				$arrData['strTable'] = $dc->table;
 				$arrData['id'] = $this->strAjaxName ?: $dc->id;
 				$arrData['name'] = \Input::post('name');
-$this->log("PBD Formdata executePostActions loadFiletree name " . \Input::post('name') . " id " . $arrData['id'] , __METHOD__, 'ERROR');
+$this->log("PBD Formdata executePostActions loadFiletree name " . \Input::post('name') . " id " . $arrData['id'] , __METHOD__, 'TL_GENERAL');
 
 				$objWidget = new $GLOBALS['BE_FFL']['fileSelector']($arrData, $dc);
 
@@ -2929,7 +2933,7 @@ $this->log("PBD Formdata executePostActions loadFiletree name " . \Input::post('
 				{
 					echo $objWidget->generate();
 				}
-$this->log("PBD Formdata loadFiletree vor exit", __METHOD__, 'ERROR');
+$this->log("PBD Formdata loadFiletree vor exit", __METHOD__, 'TL_GENERAL');
 				exit; break;
 
              

@@ -35,3 +35,4 @@ $GLOBALS['TL_LANG']['tl_form']['formattedMailTemplate'] = array('HTML-Vorlage f√
 $GLOBALS['TL_LANG']['tl_form']['efgStoreFormdata_legend'] = '(EFG) Formular-Daten speichern';
 $GLOBALS['TL_LANG']['tl_form']['efgSendFormattedMail_legend'] = '(EFG) Per E-Mail versenden';
 $GLOBALS['TL_LANG']['tl_form']['efgSendConfirmationMail_legend'] = '(EFG) Best√§tigung per E-Mail versenden';
+$GLOBALS['TL_LANG']['tl_form']['efgDebugMode'] = array('EFG Debugmode','Set Debugmode');

@@ -12,12 +12,12 @@
  */
 
 // This file is created when saving a form in form generator
-// last created on 2021-02-26 14:03:41 by saving form "zweites Formular"
+// last created on 2021-03-02 16:14:53 by saving form "viertes"
 
 
 
 /**
- * Table tl_formdata defined by form "zweites Formular"
+ * Table tl_formdata defined by form "viertes"
  */
 $GLOBALS['TL_DCA']['tl_formdata'] = array
 (
@@ -45,15 +45,13 @@ $GLOBALS['TL_DCA']['tl_formdata'] = array
 		),
 		'label' => array
 		(
-			'fields'                  => array('date', 'form', 'alias', 'be_notes' , 'TNAME', 'TWERT'),
+			'fields'                  => array('date', 'form', 'alias', 'be_notes' ),
 			'format'                  => '<div class="fd_wrap">
 	<div class="fd_head">%s<span>[%s]</span><span>%s</span></div>
 		<div class="fd_notes">%s</div>
-	<div class="fd_row field_TNAME"><div class="fd_label">tname: </div><div class="fd_value">%s </div></div>
-	<div class="fd_row field_TWERT"><div class="fd_label">twert: </div><div class="fd_value">%s </div></div>
 		</div>',
 			/*
-			'label_callback'          => array('tl_fd_zweites_formular','getRowLabel')
+			'label_callback'          => array('tl_fd_viertes','getRowLabel')
 			*/
 		),
 		'global_operations' => array
@@ -114,7 +112,7 @@ $GLOBALS['TL_DCA']['tl_formdata'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'default'                     => 'form,alias,date,ip,published,sorting;{confirmation_legend},confirmationSent,confirmationDate;{fdNotes_legend:hide},be_notes;{fdOwner_legend:hide},fd_member,fd_user,fd_member_group,fd_user_group;{fdDetails_legend},TNAME,TWERT'
+		'default'                     => 'form,alias,date,ip,published,sorting;{confirmation_legend},confirmationSent,confirmationDate;{fdNotes_legend:hide},be_notes;{fdOwner_legend:hide},fd_member,fd_user,fd_member_group,fd_user_group;{fdDetails_legend},'
 	),
 
 	// Base fields in table tl_formdata
@@ -249,36 +247,16 @@ $GLOBALS['TL_DCA']['tl_formdata'] = array
 	'tl_formdata' => array
 	(
 		'baseFields'                 => array('id','sorting','tstamp','form','ip','date','fd_member','fd_user','fd_member_group','fd_user_group','published','alias','be_notes','confirmationSent','confirmationDate'),
-		'detailFields'               => array('TNAME','TWERT'),
+		'detailFields'               => array(),
 		'formFilterKey'              => 'form',
-		'formFilterValue'            => 'zweites Formular'
+		'formFilterValue'            => 'viertes'
 	)
 );
 
 // Detail fields in table tl_formdata_details
-// 'TNAME'
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['TNAME']['label'] = array('tname', '[TNAME] tname');
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['TNAME']['inputType'] = 'text';
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['TNAME']['formfieldType'] = 'text';
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['TNAME']['exclude'] = false;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['TNAME']['search'] = true;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['TNAME']['sorting'] = true;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['TNAME']['filter'] = false;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['TNAME']['ff_id'] = 9;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['TNAME']['f_id'] = 10;
-// 'TWERT'
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['TWERT']['label'] = array('twert', '[TWERT] twert');
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['TWERT']['inputType'] = 'text';
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['TWERT']['formfieldType'] = 'text';
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['TWERT']['exclude'] = false;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['TWERT']['search'] = true;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['TWERT']['sorting'] = true;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['TWERT']['filter'] = false;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['TWERT']['ff_id'] = 10;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['TWERT']['f_id'] = 10;
 
 /**
- * Class tl_fd_zweites_formular
+ * Class tl_fd_viertes
  *
  * Provide miscellaneous methods that are used by the data configuration array.
  *
@@ -290,8 +268,8 @@ $GLOBALS['TL_DCA']['tl_formdata']['fields']['TWERT']['f_id'] = 10;
  * erweitert fuer contao 4
  * PBD verhinderung der doppeldefinition der class bei delete eines Eintrags aus der Tabelle
  */
-if (!class_exists('tl_fd_zweites_formular', false)) {
-class tl_fd_zweites_formular extends \Backend
+if (!class_exists('tl_fd_viertes', false)) {
+class tl_fd_viertes extends \Backend
 {
 
 	/**
@@ -320,20 +298,6 @@ class tl_fd_zweites_formular extends \Backend
 		$strRowLabel .= '<div class="fd_head">' . date($GLOBALS['TL_CONFIG']['datimFormat'], $arrRow['date']) . '<span>[' . $arrRow['form'] . ']</span><span>' . $arrRow['alias'] . '</span></div>';
 		$strRowLabel .= '<div class="fd_notes">' . $arrRow['be_notes'] . '</div>';
 		$strRowLabel .= '<div class="mark_links">';
-		if (strlen($arrRow['TNAME']))
-		{
-			$strRowLabel .= '<div class="fd_row field_TNAME">';
-			$strRowLabel .= '<div class="fd_label">' . $GLOBALS['TL_DCA']['tl_formdata']['fields']['TNAME']['label'][0] . ': </div>';
-			$strRowLabel .= '<div class="fd_value">' . $arrRow['TNAME'] . ' </div>';
-			$strRowLabel .= '</div>';
-		}
-		if (strlen($arrRow['TWERT']))
-		{
-			$strRowLabel .= '<div class="fd_row field_TWERT">';
-			$strRowLabel .= '<div class="fd_label">' . $GLOBALS['TL_DCA']['tl_formdata']['fields']['TWERT']['label'][0] . ': </div>';
-			$strRowLabel .= '<div class="fd_value">' . $arrRow['TWERT'] . ' </div>';
-			$strRowLabel .= '</div>';
-		}
 		$strRowLabel .= '</div></div>';
 
 		return $strRowLabel;

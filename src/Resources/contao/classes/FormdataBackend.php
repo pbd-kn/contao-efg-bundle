@@ -55,10 +55,18 @@ class FormdataBackend extends \Backend
 	{
 
 		parent::__construct();
-$this->log("PBD FormdataBackend construct", __METHOD__, TL_GENERAL);
+$this->log("PBD FormdataBackend construct do '" . \Input::get('do') . "'", __METHOD__, TL_GENERAL);
 
 		$this->loadDataContainer('tl_form_field');
 		$this->import('Formdata');
+        if (!(strpos ( \Input::get('do'), 'fd_', 0 ) === false))        // Start des Debugs
+        {
+		  $deb = $this->Formdata->arrStoringForms[str_replace('fd_', '', \Input::get('do'))]['efgDebugMode'];
+EfgLog::EfgwriteLog(1,'## START ##' . "::$deb", __METHOD__ . " " . __LINE__, "PBD Formdata construct do '" . \Input::get('do') . "'");
+
+$this->log("PBD FormdataBackend construct fd exist deb $deb  do " . \Input::get('do'), __METHOD__, TL_GENERAL);
+        }
+
 
 		// Types of form fields with storable data
 		$this->arrFFstorable = $this->Formdata->arrFFstorable;
@@ -114,7 +122,7 @@ $this->log("PBD FormdataBackend createFormdataDca strFormKey $strFormKey formid 
 	 */
 	public function callbackEditButton($row, $href, $label, $title, $icon, $attributes, $strTable, $arrRootIds, $arrChildRecordIds, $blnCircularReference, $strPrevious, $strNext)
 	{
-$this->log("PBD FormdataBackend callbackEditButton title $title", __METHOD__, TL_GENERAL);
+//$this->log("PBD FormdataBackend callbackEditButton title $title", __METHOD__, TL_GENERAL);
 		$return = '';
 
 		$strDcaKey = array_search($row['form'], $this->Formdata->arrFormsDcaKey);
@@ -136,23 +144,20 @@ $this->log("PBD FormdataBackend callbackEditButton title $title", __METHOD__, TL
     /*
     * PBD
     * Get all forms marked to store data in tl_formdata (Formdata.php)
-    				$this->arrStoringForms[$strFormKey] = $objForms->row(); id,title,alias,formID,useFormValues,useFieldNames
-				$this->arrFormsDcaKey[$strFormKey] = $objForms->title;
+    * das sind alle Forms die gekennzechnet sind, dass die Daten gespeichtert werden sollen
+      $this->arrStoringForms[$strFormKey] = $objForms->row(); id,title,alias,formID,useFormValues,useFieldNames,efgDebugMode
+	  $this->arrFormsDcaKey[$strFormKey] = $objForms->title;
     */
 $this->log("PBD FormdataBackend updateConfig ", __METHOD__, TL_GENERAL);
 		$arrStoringForms = $this->Formdata->arrStoringForms;  
-foreach ($arrStoringForms as $k=>$v) {
-$this->log("PBD a FormdataBackend updateConfig arrStoringForms[$k] " . implode(",", $v), __METHOD__, TL_GENERAL);
-}
-        
 
 		if ($arrForms == null)
 		{
-$this->log("PBD FormdataBackend updateConfig arrForms  null", __METHOD__, TL_GENERAL);
+$this->log("PBD FormdataBackend updateConfig aktuelle storingForms bearbeiten", __METHOD__, TL_GENERAL);
 			$arrForms = $arrStoringForms;
 		} else {
 foreach ($arrForms as $k=>$v) {
-$this->log("PBD FormdataBackend updateConfig arrForms[$k] " . implode(", ", $v), __METHOD__, TL_GENERAL);
+$this->log("PBD FormdataBackend neue Form updateConfig arrForms[$k] " . implode(", ", $v), __METHOD__, TL_GENERAL);
 }        
         }
     //APP_ENV environment variable can contain either prod or dev
@@ -203,12 +208,14 @@ $this->log("PBD FormdataBackend updateConfig remove cached File " . $cachepath .
     }
 	// config/config.php
 	$tplConfig = $this->newTemplate('efg_internal_config');
-	$tplConfig->arrStoringForms = $arrStoringForms;
-foreach ($arrStoringForms as $k=>$v) {
+	$tplConfig->arrStoringForms = $arrStoringForms;    /* StoringForms in Config Template */
+
+/*foreach ($arrStoringForms as $k=>$v) {
   foreach ($v as $k1=>$v1) {
 $this->log("PBD b FormdataBackend updateConfig arrStoringForms[$k][$k1]$v1 ", __METHOD__, TL_GENERAL); 
   }  
 }
+*/
 
 	$objConfig = new \File('vendor/pbd-kn/contao-efg-bundle/src/Resources/contao/config/config.php');
 
@@ -224,11 +231,10 @@ $this->log("PBD efg_co4 rewrite vendor/pbd-kn/contao-efg-bundle/src/Resources/co
 	// languages/modules.php
     $arrModLangs = scan(TL_ROOT . '/vendor/pbd-kn/contao-efg-bundle/src/Resources/contao/languages');
 	$arrLanguages = $this->getLanguages();
-$cachepathlang = "/var/cache/$env/contao/languages/";
-      $cachepath =  $cp . "dca/";
-	foreach ($arrModLangs as $strModLang)
+    $cachepathlang = "/var/cache/$env/contao/languages/";
+    $cachepath =  $cp . "dca/";
+	foreach ($arrModLangs as $strModLang)   /* über alle Sprachen */
 	{
-
 		// Remove cached language files
 		if (is_file(TL_ROOT . $cachepathlang . $strModLang .'/modules.php'))
 		{
@@ -266,7 +272,7 @@ $this->log("PBD FormdataBackend neu erzeugt " . 'vendor/pbd-kn/contao-efg-bundle
 	// dca/fd_FORMKEY.php
 	if (is_array($arrForms) && !empty($arrForms))
 	{
-		foreach ($arrForms as $arrForm)
+		foreach ($arrForms as $arrForm)        /* bearbeite neu angelegte Forms ($arrForms)*/
 		{
 			if (!empty($arrForm))
 			{
@@ -457,7 +463,7 @@ $this->log("PBD FormdataBackend vor rebuild internal cache ", __METHOD__, TL_GEN
 	{
 		$this->import('Automator');        // PBD korrektur im Automator existieren die Routinen nicht mehr
 
-//      PBD   das gibts in contao4 nicht mehr 
+//      PBD   das gibts in contao 4 nicht mehr 
 //			$this->Automator->generateConfigCache();
 //			$this->Automator->generateDcaCache();
 //			$this->Automator->generateDcaExtracts();
