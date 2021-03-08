@@ -86,14 +86,15 @@ class EfgLog
       $method = trim($method);   
       $arrNamespace = StringUtil::trimsplit('::', $method);
       $arrClass =  StringUtil::trimsplit('\\', $arrNamespace[0]);
-      $vclass = $arrClass[\count($arrClass)-1]; // class that will write the log
+      $vclass = $arrClass[\count($arrClass)-1] . "::" . $arrNamespace[1] ; // class that will write the log
 
         if (\is_array($value))
         {
             $value = print_r($value, true);
         }
-        if ($level & self::$myefgdebuglevel) {
-          self::logMessage(sprintf('[%s] [%s] [%s] [%s] %s', self::$uniqid,$level, $method, $line, '('.$vclass.')'.$value), 'efg_debug');
+        if (($level & self::$myefgdebuglevel) == $level) {
+          //self::logMessage(sprintf('[level: %s] [$myefgdebuglevel %s] [and %s] ', $level, self::$myefgdebuglevel, self::$myefgdebuglevel&$level), 'efg_debug');
+          self::logMessage(sprintf('[%s] [%s] [%s] [%s] %s', self::$uniqid,$level, '(' . $vclass . ')', $line, $value), 'efg_debug');
         }
 /*   
       $handle = fopen('C:\wampneu\www\co4\websites\co4raw\var\logs\myLog.log', 'a+');

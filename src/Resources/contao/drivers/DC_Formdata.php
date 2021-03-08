@@ -3185,7 +3185,7 @@ EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"PBD DC_Formdata.php reviseTa
 	protected function listView()
 	{
 //$this->log("PBD DC_Formdata.php listView strTable " . $this->strTable , __METHOD__, TL_GENERAL);
-EfgLog::EfgwriteLog(debmedium, __METHOD__ , __LINE__,"PBD DC_Formdata.php listView strTable " . $this->strTable);
+EfgLog::EfgwriteLog(debsmall, __METHOD__ , __LINE__,"PBD DC_Formdata.php listView strTable " . $this->strTable);
 
 		$return = '';
 		$table = ($GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] == 6) ? $this->ptable : $this->strTable;
