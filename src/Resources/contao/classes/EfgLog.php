@@ -94,7 +94,7 @@ class EfgLog
         }
         if (($level & self::$myefgdebuglevel) == $level) {
           //self::logMessage(sprintf('[level: %s] [$myefgdebuglevel %s] [and %s] ', $level, self::$myefgdebuglevel, self::$myefgdebuglevel&$level), 'efg_debug');
-          self::logMessage(sprintf('[%s] [%s] [%s] [%s] %s', self::$uniqid,$level, '(' . $vclass . ')', $line, $value), 'efg_debug');
+          self::logMessage(sprintf('[%s] [%s] [%s] [%s] %s', self::$uniqid,$level, '(' . $vclass . ')', $line, 'PBD ' . $value), 'efg_debug');
         }
 /*   
       $handle = fopen('C:\wampneu\www\co4\websites\co4raw\var\logs\myLog.log', 'a+');
