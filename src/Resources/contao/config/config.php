@@ -19,8 +19,11 @@
 */
 
 define('SENDMAILCOMMAND', ini_get ('sendmail_path') . ' -t');    // set mailtransport for Swiftmailer
+define('debsmall',1);
+define('debmedium',2+debsmall);
+define('debfull',4+debmedium);
 
-
+//$GLOBALS['efgdebug']['debug']['xxxfirst']=47;
 /**
 * to fix height of style class w50 in backend
 */

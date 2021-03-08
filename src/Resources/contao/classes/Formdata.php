@@ -68,10 +68,11 @@ class Formdata extends \Contao\Frontend
 
 	public function __construct()
 	{
-
 		parent::__construct();
 $this->log("PBD Formdata construct do " . \Input::get('do') . "'", __METHOD__, 'TL_GENERAL');
-EfgLog::EfgwriteLog(1, __METHOD__ , __LINE__, "PBD Formdata construct do '" . \Input::get('do') . "'");
+        EfgLog::setEfgDebugmode(substr(\Input::get('do'), 3));
+
+EfgLog::EfgwriteLog(debsmall, __METHOD__ , __LINE__, "PBD Formdata construct do '" . \Input::get('do') . "'");
 
 		// Types of form fields with storable data
 		$this->arrFFstorable = array
@@ -113,6 +114,7 @@ EfgLog::EfgwriteLog(1, __METHOD__ , __LINE__, "PBD Formdata construct do '" . \I
 		}
 		$this->getStoringForms();
 		$this->arrBaseFields = array_filter(array_diff(\Database::getInstance()->getFieldNames('tl_formdata'), array('PRIMARY')));
+EfgLog::EfgwriteLog(debsmall, __METHOD__ , __LINE__, "PBD Formdata construct end");
 	}
 
 	/**

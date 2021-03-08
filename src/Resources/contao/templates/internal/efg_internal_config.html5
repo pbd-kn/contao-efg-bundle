@@ -23,6 +23,9 @@
 ?>
 
 define('SENDMAILCOMMAND', ini_get ('sendmail_path') . ' -t');    // set mailtransport for Swiftmailer
+define('debsmall',1);
+define('debmedium',2+debsmall);
+define('debfull',4+debmedium);
 
 
 /**

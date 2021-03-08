@@ -250,7 +250,7 @@ $GLOBALS['TL_DCA']['tl_form']['fields']['efgDebugMode'] = array
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'select',
-			'options'                 => array('0' => "-", '1' => 'small', '3' => 'medium', '7' => 'full','9'=>'email'),
+			'options'                 => array('0' => "-", '1' => 'small', '3' => 'medium', '7' => 'full','8'=>'emailsmall','24'=>'emailmedium','56'=>'emailfull'),
 			'eval'                    => array('tl_class'=>'w50'),
 			'sql'                     => "varchar(12) default '-'"
 );

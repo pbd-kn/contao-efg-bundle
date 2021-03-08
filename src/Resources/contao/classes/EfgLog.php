@@ -15,7 +15,6 @@
 
 namespace PBDKN\Efgco4\Resources\contao\classes;
 use Contao\StringUtil;
-\System::log("PBD EfgwriteLog load me ", "LOAD", TL_GENERAL);
 
 /**
  * Class EfgLog
@@ -27,43 +26,115 @@ use Contao\StringUtil;
 class EfgLog
 {
 
-    public static $myFirst = 'anton';
-    protected static $level;
+    protected static $cnt=0;
+    protected static $debFormKey;                    // Formularkey fuer den Altuellen Debug
+    protected static $uniqid;
+    protected static $myefgdebuglevel;
+    /* debugkeys binary key 
+               => array('0' => kein debug, 
+                        '1' => 'small', 
+                        '01' => 'medium' = 2  small + medium (3)
+                        '001' => 'full' = 4   small + medium + full (7)
+                        '0001 '=>'emailsmall= 8  (8)
+                        '00001'=>'emailmedium' = 16 (24)
+                        '000001'=>'emailfull' =32 (56)
+    */
+    static public function setefgDebugmode($key)
+	{
+		if (!isset(self::$debFormKey) || $key != self::$debFormKey) 
+		{
+			// Get all forms marked to store data
+			$objForms = \Database::getInstance()->prepare("SELECT alias,title,efgDebugMode FROM tl_form WHERE storeFormdata=?")
+				->execute("1");
+
+			while ($objForms->next())
+			{  // suche Form
+                if ($key == 'form') {    // bei neuer form ist der key form nimm den höchsten wert
+                  if (!isset(self::$myefgdebuglevel) || $objForms->efgDebugMode > self::$myefgdebuglevel) {
+                    self::$myefgdebuglevel=$objForms->efgDebugMode;
+                    self::$debFormKey=$key;
+                    $arrUniqid = StringUtil::trimsplit('.', uniqid('efgc0n7a0', true));
+                    self::$uniqid = $arrUniqid[1];
+//\System::log("PBD EfgwriteLog set $myefgdebuglevel '" . self::$myefgdebuglevel . "' key $key", __METHOD__, TL_GENERAL);
+                    continue;
+                  } 
+                }
+				$strFormKey = (!empty($objForms->alias)) ? $objForms->alias : str_replace('-', '_', standardize($objForms->title));
+                if ($strFormKey==$key)  {
+                  self::$myefgdebuglevel=$objForms->efgDebugMode;
+                  self::$debFormKey=$key;
+                  $arrUniqid = StringUtil::trimsplit('.', uniqid('efgc0n7a0', true));
+                  self::$uniqid = $arrUniqid[1];
+//\System::log("PBD EfgwriteLog set $myefgdebuglevel '" . self::$myefgdebuglevel . "' key $key", __METHOD__, TL_GENERAL);
+                  break;
+                } 
+			}
+            if (!isset(self::$myefgdebuglevel)) { 
+//\System::log("PBD EfgwriteLog reset $myefgdebuglevel key $key", __METHOD__, TL_GENERAL);
+              unset (self::$myefgdebuglevel);    // key not found   reset values
+              unset(self::$debFormKey);
+              unset(self::$uniqid);
+            }
+       }
+	}
+
+    public static function EfgwriteLog($level,$method, $line, $value)
+    {
+      if (!isset(self::$debFormKey)) { 
+        return;
+      }
+      $method = trim($method);   
+      $arrNamespace = StringUtil::trimsplit('::', $method);
+      $arrClass =  StringUtil::trimsplit('\\', $arrNamespace[0]);
+      $vclass = $arrClass[\count($arrClass)-1]; // class that will write the log
+
+        if (\is_array($value))
+        {
+            $value = print_r($value, true);
+        }
+        if ($level & self::$myefgdebuglevel) {
+          self::logMessage(sprintf('[%s] [%s] [%s] [%s] %s', self::$uniqid,$level, $method, $line, '('.$vclass.')'.$value), 'efg_debug');
+        }
+/*   
+      $handle = fopen('C:\wampneu\www\co4\websites\co4raw\var\logs\myLog.log', 'a+');
+      if ($level & self::$myefgdebuglevel) {
+        fwrite ( $handle , self::$cnt . " [self::myefgdebuglevel: " . self::$myefgdebuglevel . " level [$level] $method $line $value\n");
+      } else {
+        fwrite ( $handle , self::$cnt . " !!!! Not [$level] $method $line $value\n");
+      }
+      fclose ( $handle );
+        self::$cnt++;
+*/
+    }
     /**
      * Write in log file, if debug is enabled
      *
      * @param string  $method
      * @param integer $line
      */
-    public static function EfgwriteLog($level,$method, $line, $value)
+    public static function EfgwriteLog1($level,$method, $line, $value)
     {
         $method = trim($method);       
-\System::log("PBD EfgwriteLog myTest " . EfgLog::$myFirst . " level $level method $method  first '" . $GLOBALS['efgdebug']['debug']['first'] . "'", __METHOD__, TL_GENERAL);
-
+\System::log("PBD EfgwriteLog cnt " . self::$cnt . " level $level method $method  first '" . $GLOBALS['efgdebug']['debug']['first'] . "'", __METHOD__, TL_GENERAL);
         if (!(strpos ( $method, '## START ##', 0 ) === false))        // Start des Debugs
         {
-\System::log("PBD EfgwriteLog start found level $level method $method  ", __METHOD__, TL_GENERAL);
             $arr = explode("::", $method);
             if (count($arr) < 2 ) return;              // kein debuglevel angegeben
-            //if (!isset($GLOBALS['efgdebug']['debug']['first']) || $arr[1] != $GLOBALS['efgdebug']['debug']['level']) 
-            if (EfgLog::$myFirst == 'anton' || $arr[1] != $GLOBALS['efgdebug']['debug']['level']) 
+            if (!isset($GLOBALS['efgdebug']['debug']['first'])) 
             {
-                //$GLOBALS['efgdebug']=array();
-                //$GLOBALS['efgdebug']['debug']=array();
                 $arrUniqid = StringUtil::trimsplit('.', uniqid('efgc0n7a0', true));
                 $GLOBALS['efgdebug']['debug']['first'] = $arrUniqid[1];
-                $GLOBALS['efgdebug']['debug']['level'] = $arr[1];
-\System::log("PBD EfgwriteLog set new first '" . $GLOBALS['efgdebug']['debug']['first'] . "' level '" . $GLOBALS['efgdebug']['debug']['level'] . "'", __METHOD__, TL_GENERAL);
-EfgLog::$myFirst = 'caesar';
-\System::log("PBD EfgwriteLog myTest nun " . EfgLog::$myFirst , __METHOD__, TL_GENERAL);
-                if ($level & $GLOBALS['efgdebug']['debug']['level']) {
-\System::log("PBD EfgwriteLog start level $level method $method line $line value $value efgdebuglevel '" . $GLOBALS['efgdebug']['debug']['level'] . "'", __METHOD__, TL_GENERAL);
+                $GLOBALS['efgdebug']['debug']['efgdebuglevel'] = $arr[1];
+\System::log("PBD EfgwriteLog set new first '" . $GLOBALS['efgdebug']['debug']['first'] . "' efgdebuglevel '" . $GLOBALS['efgdebug']['debug']['efgdebuglevel'] . "'", __METHOD__, TL_GENERAL);
+                if ($level & $GLOBALS['efgdebug']['debug']['efgdebuglevel']) {
+\System::log("PBD EfgwriteLog to file level $level method $method line $line value $value efgdebuglevel '" . $GLOBALS['efgdebug']['debug']['efgdebuglevel'] . "'", __METHOD__, TL_GENERAL);
                   self::logMessage(sprintf('[%s] [%s] [%s] [%s] %s', $GLOBALS['efgdebug']['debug']['first'],$level, $method, $line, $value), 'efg_debug');
                 }
                 return;
             }
             else
             {
+\System::log("PBD EfgwriteLog first schon gesetzt first '" . $GLOBALS['efgdebug']['debug']['first'] . "'", __METHOD__, TL_GENERAL);
                 return;
             }
         }
@@ -76,11 +147,12 @@ EfgLog::$myFirst = 'caesar';
         {
             $value = print_r($value, true);
         }
-\System::log("PBD EfgwriteLog no start level $level method $method line $line efgdebuglevel '" . $GLOBALS['efgdebug']['debug']['level'] . "'", __METHOD__, TL_GENERAL);
+\System::log("PBD EfgwriteLog no start level $level method $method line $line efgdebuglevel '" . $GLOBALS['efgdebug']['debug']['efgdebuglevel'] . "'", __METHOD__, TL_GENERAL);
   
-        if ($level & $GLOBALS['efgdebug']['debug']['level']) {
+        //if ($level & $GLOBALS['efgdebug']['debug']['efgdebuglevel']) {
+\System::log("PBD EfgwriteLog to file start level $level efgdebuglevel '" . $GLOBALS['efgdebug']['debug']['efgdebuglevel'] . "'", __METHOD__, TL_GENERAL);
           self::logMessage(sprintf('[%s] [%s] [%s] [%s] %s', $GLOBALS['efgdebug']['debug']['first'],$level, $method, $line, '('.$vclass.')'.$value), 'efg_debug');
-        }
+        //}
         return;
 /*
         switch ($vclass)

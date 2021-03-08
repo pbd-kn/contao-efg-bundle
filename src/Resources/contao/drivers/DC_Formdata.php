@@ -202,21 +202,9 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 	{
 
 		parent::__construct();
-    	$this->import('Formdata');
-        $do = \Input::get('do');
-$this->log("PBD DC_Formdata constructor  do " . $do . " strTable '$strTable' id '" . \Input::get('id') . "'", __METHOD__, TL_GENERAL);
-EfgLog::EfgwriteLog(1, __METHOD__ , __LINE__, "PBD DC_Formdata constructor do '$do' deb '$deb' tit '$tit' formID '$formID'");
-/*
-        if (\Input::get('do')) {
-          $do = \Input::get('do');  
-          $strFormKey = \Input::get('do');
-		  $deb = $this->Formdata->arrStoringForms[substr($strFormKey, 3)]['efgDebugMode'];        
-		  $tit = $this->Formdata->arrStoringForms[substr($strFormKey, 3)]['title'];        
-		  $formID = $this->Formdata->arrStoringForms[substr($strFormKey, 3)]['formID'];        
-$this->log("PBD DC_Formdata.php constructor deb '$deb' tit '$tit' formID '$formID'", __METHOD__, TL_GENERAL);
-EfgLog::EfgwriteLog(1, __METHOD__ , __LINE__, "PBD DC_Formdata constructor do '$do' deb '$deb' tit '$tit' formID '$formID'");
-        }
-*/
+//$this->log("PBD DC_Formdata constructor  do '" . \Input::get('do') . "' strTable '$strTable' id '" . \Input::get('id') . "'", __METHOD__, TL_GENERAL);
+        $efgDebugMode = EfgLog::setEfgDebugmode(substr(\Input::get('do'), 3));
+EfgLog::EfgwriteLog(debsmall, __METHOD__ , __LINE__, "PBD DC_Formdata constructor do '" . \Input::get('do') . "' strTable '$strTable' id '" . \Input::get('id') . "'" );
 		// Check the request token (see #4007)
 		if (isset($_GET['act']))
 		{
@@ -237,7 +225,7 @@ EfgLog::EfgwriteLog(1, __METHOD__ , __LINE__, "PBD DC_Formdata constructor do '$
 		}
 
 		$this->loadDataContainer('tl_form_field');
-		//$this->import('Formdata');
+		$this->import('Formdata');
 
 		// in Backend: Check BE User, Admin...
 		if (TL_MODE == 'BE' || BE_USER_LOGGED_IN)
@@ -300,7 +288,7 @@ EfgLog::EfgwriteLog(1, __METHOD__ , __LINE__, "PBD DC_Formdata constructor do '$
 		if ($strTable == '' || !isset($GLOBALS['TL_DCA'][$strTable]))
 		{
 			$this->log('Could not load the data container configuration for "' . $strTable . '"', __METHOD__, TL_ERROR);
-			trigger_error('Could not load the data container configuration', E_USER_ERROR);
+			trigger_error('Could not load the data container configuration for "' . $strTable . '"', E_USER_ERROR);
 		}
 
 		// Set IDs and redirect
@@ -362,8 +350,7 @@ EfgLog::EfgwriteLog(1, __METHOD__ , __LINE__, "PBD DC_Formdata constructor do '$
 			{
 				if (array_key_exists(\Input::get('do'), $GLOBALS['BE_MOD']['formdata']))
 				{
-$this->log("PBD DC_Formdata constructor strTable $strTable do " . \Input::get('do') , __METHOD__, TL_GENERAL);
-//EfgLog::EfgwriteLog(1, __METHOD__ , __LINE__, "PBD DC_Formdata constructor strTable $strTable do " . \Input::get('do'));
+EfgLog::EfgwriteLog(debmedium, __METHOD__ , __LINE__, "PBD DC_Formdata constructor strTable $strTable NE feedback do " . \Input::get('do'));
 
 					$this->strFormKey = \Input::get('do');
 					$this->strFormFilterKey = 'form';
@@ -439,6 +426,7 @@ $this->log("PBD DC_Formdata constructor strTable $strTable do " . \Input::get('d
 			$session[TL_REFERER_ID][$this->strTable] = substr(\Environment::get('requestUri'), strlen(TL_PATH) + 1);
 			$this->Session->set('referer', $session);
 		}
+EfgLog::EfgwriteLog(debsmall, __METHOD__ , __LINE__, "PBD DC_Formdata constructor end do '" . \Input::get('do') . "' strTable '$strTable' id '" . \Input::get('id') . "'" );
 	}
 
 
@@ -799,8 +787,9 @@ $this->log("PBD DC_Formdata constructor strTable $strTable do " . \Input::get('d
 	 */
 	public function create($set=array())
 	{
-$this->log("PBD DC_Formdata.php create strTable " . $this->strTable . " setarray '" . implode(",",$set) . "'", __METHOD__, TL_GENERAL);
-$this->log("PBD DC_Formdata.php create strFormKey '" . $this->strFormKey . "'", __METHOD__, TL_GENERAL);
+//$this->log("PBD DC_Formdata.php create strTable " . $this->strTable . " setarray '" . implode(",",$set) . "'", __METHOD__, TL_GENERAL);
+//$this->log("PBD DC_Formdata.php create strFormKey '" . $this->strFormKey . "'", __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debmedium, __METHOD__ , __LINE__, "PBD DC_Formdata.php create strFormKey '" . $this->strFormKey . "'");
 
 		if (!empty($this->strFormKey))
 		{
@@ -859,7 +848,8 @@ $this->log("PBD DC_Formdata.php create strFormKey '" . $this->strFormKey . "'", 
 			{
 				$s2e = $GLOBALS['TL_DCA'][$this->strTable]['config']['switchToEdit'] ? '&s2e=1' : '';  // switch to edit
 				$insertID = $objInsertStmt->insertId;
-$this->log("PBD DC_Formdata.php create in " . $this->strTable . " insertID $insertID " . $objInsertStmt->insertId , __METHOD__, TL_GENERAL);
+//$this->log("PBD DC_Formdata.php create in " . $this->strTable . " insertID $insertID " . $objInsertStmt->insertId , __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debmedium, __METHOD__ , __LINE__, "PBD DC_Formdata.php create in " . $this->strTable . " insertID $insertID " . $objInsertStmt->insertId );
 
 				foreach ($this->arrDetailFields as $strDetailField)
 				{
@@ -897,13 +887,15 @@ $this->log("PBD DC_Formdata.php create in " . $this->strTable . " insertID $inse
 						->execute();
 //$this->log("PBD DC_Formdata.php create changed rows tl_formdata_details" . $objInsertStmt->affectedRows , __METHOD__, TL_GENERAL);
 				$insertIDdetail = $objInsertStmt->insertId;
-$this->log("PBD DC_Formdata.php create tl_formdata_details insertIDdetail " . $objInsertStmt->insertId , __METHOD__, TL_GENERAL);
+//$this->log("PBD DC_Formdata.php create tl_formdata_details insertIDdetail " . $objInsertStmt->insertId , __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__, "PBD DC_Formdata.php create tl_formdata_details insertIDdetail " . $objInsertStmt->insertId );
 				}
 
 				// Save new record in the session
 				$new_records = $this->Session->get('new_records');
 				$new_records[$this->strTable][] = $insertID;
-$this->log("PBD DC_Formdata.php create in session insertID $insertID " . $this->strTable . " len " . count($new_records[$this->strTable]), __METHOD__, TL_GENERAL);
+//$this->log("PBD DC_Formdata.php create in session insertID $insertID " . $this->strTable . " len " . count($new_records[$this->strTable]), __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__, "PBD DC_Formdata.php create in session insertID $insertID " . $this->strTable . " len " . count($new_records[$this->strTable]));
 				$this->Session->set('new_records', $new_records);
 
 				// Call the oncreate_callback
@@ -913,7 +905,8 @@ $this->log("PBD DC_Formdata.php create in session insertID $insertID " . $this->
 					{
 						if (is_array($callback))
 						{
-$this->log("PBD DC_Formdata.php create call callback" . $callback[0] , __METHOD__, TL_GENERAL);
+//$this->log("PBD DC_Formdata.php create call callback" . $callback[0] , __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__, "PBD DC_Formdata.php create call callback" . $callback[0] );
 							$this->import($callback[0]);
 							$this->{$callback[0]}->{$callback[1]}($this->strTable, $insertID, $this->set, $this);    //Änderung PBD
 						}
@@ -928,11 +921,11 @@ $this->log("PBD DC_Formdata.php create call callback" . $callback[0] , __METHOD_
 				$this->log('A new entry in table "'.$this->strTable.'" has been created (ID: '.$insertID.')', __METHOD__, TL_GENERAL);
 				\Controller::redirect($this->switchToEdit($insertID).$s2e);
 			} else {
-$this->log("PBD DC_Formdata.php create keine Aenderungen rows " , __METHOD__, TL_GENERAL);
-
+//$this->log("PBD DC_Formdata.php create keine Aenderungen rows " , __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__, "PBD DC_Formdata.php create keine Aenderungen rows " . $callback[0] );
             }
 		}
-$this->log("PBD DC_Formdata.php create vor redirect " , __METHOD__, TL_GENERAL);
+//$this->log("PBD DC_Formdata.php create vor redirect " , __METHOD__, TL_GENERAL);
 
 		\Controller::redirect($this->getReferer());
 	}
@@ -1232,7 +1225,8 @@ $this->log("PBD DC_Formdata.php create vor redirect " , __METHOD__, TL_GENERAL);
 	 */
 	public function edit($intID=null, $ajaxId=null)
 	{
-$this->log("PBD DC_Formdata edit intID $intID this->intId " . $this->intId, __METHOD__, TL_GENERAL);
+//$this->log("PBD DC_Formdata edit intID $intID this->intId " . $this->intId, __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debmedium, __METHOD__ , __LINE__, "PBD DC_Formdata edit intID $intID this->intId " . $this->intId);
 
 		$table_alias = ($this->strTable == 'tl_formdata' ? ' f' : '');
 
@@ -1259,12 +1253,13 @@ $this->log("PBD DC_Formdata edit intID $intID this->intId " . $this->intId, __ME
 		{
 			$sqlQuery .= $sqlWhere;
 		}
-$this->log("PBD DC_Formdata edit sqlQuery $sqlQuery", __METHOD__, TL_GENERAL);
+//$this->log("PBD DC_Formdata edit sqlQuery $sqlQuery", __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"PBD DC_Formdata edit sqlQuery $sqlQuery");
 
 		$objRow = \Database::getInstance()->prepare($sqlQuery)
 			->limit(1)
 			->execute($this->intId);
-$this->log("PBD DC_Formdata edit nach sql", __METHOD__, TL_GENERAL);
+//$this->log("PBD DC_Formdata edit nach sql", __METHOD__, TL_GENERAL);
 
 		// Redirect if there is no record with the given ID
 		if ($objRow->numRows < 1)
@@ -1871,7 +1866,8 @@ $this->log("PBD DC_Formdata edit nach sql", __METHOD__, TL_GENERAL);
 		// Reload the page to prevent _POST variables from being sent twice
 		if (\Input::post('FORM_SUBMIT') == $this->strTable && !$this->noReload)
 		{
-$this->log("PBD DC_Formdata.php edit FORM_SUBMIT this->strTable " . $this->strTable, __METHOD__, TL_GENERAL);
+//$this->log("PBD DC_Formdata.php edit FORM_SUBMIT this->strTable " . $this->strTable, __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debmedium, __METHOD__ , __LINE__,"PBD DC_Formdata.php edit FORM_SUBMIT this->strTable " . $this->strTable);
 			$arrValues = $this->values;
 			array_unshift($arrValues, time());
 
@@ -1937,8 +1933,9 @@ $this->log("PBD DC_Formdata.php edit FORM_SUBMIT this->strTable " . $this->strTa
 				}
 
 				$strUrl .= strlen($GLOBALS['TL_DCA'][$this->strTable]['config']['ptable']) ? '&amp;act=create&amp;mode=2&amp;pid=' . CURRENT_ID : '&amp;act=create';
-$this->log("PBD DC_Formdata.php edit controler redirekt strUrl $strUrl ", __METHOD__, TL_GENERAL);
-$this->log("PBD DC_Formdata.php edit controler redirekt referrer " . $this->getReferer(), __METHOD__, TL_GENERAL);
+//$this->log("PBD DC_Formdata.php edit controler redirekt strUrl $strUrl ", __METHOD__, TL_GENERAL);
+//$this->log("PBD DC_Formdata.php edit controler redirekt referrer " . $this->getReferer(), __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"PBD DC_Formdata.php edit controler redirekt strUrl $strUrl referrer " . $this->getReferer());
 				\Controller::redirect($strUrl . '&amp;rt=' . REQUEST_TOKEN);
 			}
 
@@ -1969,7 +1966,8 @@ $this->log("PBD DC_Formdata.php edit controler redirekt referrer " . $this->getR
 	 */
 	public function editAll($intId=null, $ajaxId=null)
 	{
-$this->log("PBD DC_Formdata editAll ", __METHOD__, TL_GENERAL);
+//$this->log("PBD DC_Formdata editAll ", __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debmedium, __METHOD__ , __LINE__,"PBD DC_Formdata editAll");
 
 		if ($GLOBALS['TL_DCA'][$this->strTable]['config']['notEditable'])
 		{
@@ -3081,7 +3079,8 @@ $this->log("PBD DC_Formdata editAll ", __METHOD__, TL_GENERAL);
 		$ctable = $GLOBALS['TL_DCA'][$this->strTable]['config']['ctable'];
 
 		$new_records = $this->Session->get('new_records');
-$this->log("PBD DC_Formdata.php reviseTable in session new_records ", __METHOD__, TL_GENERAL);
+//$this->log("PBD DC_Formdata.php reviseTable in session new_records ", __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debmedium, __METHOD__ , __LINE__,"PBD DC_Formdata.php reviseTable in session new_records ");
 
 		// HOOK: add custom logic
 		if (isset($GLOBALS['TL_HOOKS']['reviseTable']) && is_array($GLOBALS['TL_HOOKS']['reviseTable']))
@@ -3106,7 +3105,8 @@ $this->log("PBD DC_Formdata.php reviseTable in session new_records ", __METHOD__
 				}
 			}
 		}
-$this->log("PBD DC_Formdata.php reviseTable in session new_records this->strTable " . $this->strTable . " len " . count($new_records[$this->strTable]), __METHOD__, TL_GENERAL);
+//$this->log("PBD DC_Formdata.php reviseTable in session new_records this->strTable " . $this->strTable . " len " . count($new_records[$this->strTable]), __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"PBD DC_Formdata.php reviseTable in session new_records this->strTable " . $this->strTable . " len " . count($new_records[$this->strTable]));
 
 //foreach ($new_records[$this->strTable] as $k=>$v) {
 //$this->log("PBD DC_Formdata.php reviseTable in session new_records this->strTable[$k]$v ", __METHOD__, TL_GENERAL);
@@ -3184,7 +3184,8 @@ $this->log("PBD DC_Formdata.php reviseTable in session new_records this->strTabl
 	 */
 	protected function listView()
 	{
-$this->log("PBD DC_Formdata.php listView strTable " . $this->strTable , __METHOD__, TL_GENERAL);
+//$this->log("PBD DC_Formdata.php listView strTable " . $this->strTable , __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debmedium, __METHOD__ , __LINE__,"PBD DC_Formdata.php listView strTable " . $this->strTable);
 
 		$return = '';
 		$table = ($GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] == 6) ? $this->ptable : $this->strTable;
@@ -3258,17 +3259,21 @@ $this->log("PBD DC_Formdata.php listView strTable " . $this->strTable , __METHOD
 			$arrLimit = explode(',', $this->limit);
 			$objRowStmt->limit($arrLimit[1], $arrLimit[0]);
 		}
-$this->log("PBD DC_Formdata.php listView query $query values '" . implode(", ",$this->values) . "'" , __METHOD__, TL_GENERAL);
+//$this->log("PBD DC_Formdata.php listView query $query values '" . implode(", ",$this->values) . "'" , __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"PBD DC_Formdata.php listView query $query values '" . implode(", ",$this->values) . "'");
 
 		$objRow = $objRowStmt->execute($this->values);
 		$this->bid = ($return != '') ? $this->bid : 'tl_buttons';
 //$this->log("PBD DC_Formdata.php listView closed " . " global_operations " . $GLOBALS['TL_DCA'][$this->strTable]['list']['global_operations'], __METHOD__, TL_GENERAL);
-$this->log("PBD DC_Formdata.php listView Display !closed '" . !($GLOBALS['TL_DCA'][$this->strTable]['config']['closed']) . "'"  , __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"PBD DC_Formdata.php listView closed " . " global_operations " . $GLOBALS['TL_DCA'][$this->strTable]['list']['global_operations']);
+//$this->log("PBD DC_Formdata.php listView Display !closed '" . !($GLOBALS['TL_DCA'][$this->strTable]['config']['closed']) . "'"  , __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"PBD DC_Formdata.php listView Display !closed '" . !($GLOBALS['TL_DCA'][$this->strTable]['config']['closed']) . "'" );
 
 		// Display buttons
 		if (!$GLOBALS['TL_DCA'][$this->strTable]['config']['closed'] || !empty($GLOBALS['TL_DCA'][$this->strTable]['list']['global_operations']))
 		{
-$this->log("PBD DC_Formdata.php listView Display buttons act '" . \Input::get('act') . "'"  , __METHOD__, TL_GENERAL);
+//$this->log("PBD DC_Formdata.php listView Display buttons act '" . \Input::get('act') . "'"  , __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"PBD DC_Formdata.php listView Display buttons act '" . \Input::get('act') . "'");
 //$this->log("PBD DC_Formdata.php listView Display buttons sort mode '" . $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] . "'"  , __METHOD__, TL_GENERAL);
 			$return .= '
 
@@ -3278,7 +3283,8 @@ $this->log("PBD DC_Formdata.php listView Display buttons act '" . \Input::get('a
 '.(!$GLOBALS['TL_DCA'][$this->strTable]['config']['closed'] ? '<a href="'.(($this->ptable != '') ? \Backend::addToUrl('act=create' . (($GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] < 4) ? '&amp;mode=2' : '') . '&amp;pid=' . $this->intId) : \Backend::addToUrl('act=create')).'" class="header_new" title="'.specialchars($GLOBALS['TL_LANG'][$this->strTable]['new'][1]).'" accesskey="n" onclick="Backend.getScrollOffset()">'.$GLOBALS['TL_LANG'][$this->strTable]['new'][0].'</a> ' : 'PBDleer1') . $this->generateGlobalButtons() : '') . '
 </div>' . \Message::generate(true);
 		}
-$this->log("PBD DC_Formdata.php listView Display buttons numRows" . $objRow->numRows, __METHOD__, TL_GENERAL);
+//$this->log("PBD DC_Formdata.php listView Display buttons numRows" . $objRow->numRows, __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"PBD DC_Formdata.php listView Display buttons numRows" . $objRow->numRows);
 
 		// Return "no records found" message
 		if ($objRow->numRows < 1)
@@ -3594,7 +3600,9 @@ $this->log("PBD DC_Formdata.php listView Display buttons numRows" . $objRow->num
 </form>';
 			}
 		}
-$this->log("PBD DC_Formdata.php listView return $return", __METHOD__, TL_GENERAL);
+//$this->log("PBD DC_Formdata.php listView return $return", __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debsmall, __METHOD__ , __LINE__,"PBD DC_Formdata.php listView return");
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"PBD DC_Formdata.php listView return $return");
 
 		return $return;
 	}
@@ -4821,7 +4829,8 @@ $this->log("PBD DC_Formdata.php listView return $return", __METHOD__, TL_GENERAL
 		}
 
 		$arrForm = $objForm->row();
-$this->log("PBD DC_Formdata e) bearbeite FORM id:  " . $arrForm['id'] . " title: " . $arrForm['title'], __METHOD__, TL_GENERAL);
+//$this->log("PBD DC_Formdata e) bearbeite FORM id:  " . $arrForm['id'] . " title: " . $arrForm['title'], __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debsmall, __METHOD__ , __LINE__,"PBD DC_Formdata e) bearbeite FORM id:  " . $arrForm['id'] . " title: " . $arrForm['title']);
 		$arrFormFields = $this->Formdata->getFormfieldsAsArray($arrForm['id']);
 
 		if (empty($arrForm['confirmationMailSubject']) || (empty($arrForm['confirmationMailText']) && empty($arrForm['confirmationMailTemplate'])))
@@ -5245,7 +5254,8 @@ $this->log('PBD DC_Formdata importFile import_source ' . \Input::post('import_so
 
 				if ($objForm !== null)
 				{
-$this->log("PBD DC_Formdata e) bearbeite FORM id:  " . $objForm->id, __METHOD__, TL_GENERAL);
+//$this->log("PBD DC_Formdata ef) bearbeite FORM id:  " . $objForm->id, __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debsmall, __METHOD__ , __LINE__,"PBD DC_Formdata f) bearbeite FORM id:  " . $objForm->id);
 					$arrFormFields = $this->Formdata->getFormfieldsAsArray($objForm->id);
 				}
 
