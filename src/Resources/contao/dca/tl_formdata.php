@@ -255,6 +255,7 @@ $GLOBALS['TL_DCA']['tl_formdata'] = array
  * @author     Thomas Kuhn <mail@th-kuhn.de>
  * @package    efg
  */
+use PBDKN\Efgco4\Resources\contao\classes\EfgLog;
 class tl_formdata extends \Backend
 {
 
@@ -272,7 +273,10 @@ class tl_formdata extends \Backend
 	 */
 	function loadDCA(\DataContainer $dca, $varFormKey = '')                      
 	{
-$this->log("PBD tl_formdata loadDCA -> varFormKey $varFormKey", __METHOD__, 'ERROR');
+//$this->log("PBD !!!!!tl_formdata loadDCA -> varFormKey $varFormKey", __METHOD__, 'ERROR');
+        EfgLog::setEfgDebugmode(substr(\Input::get('do'), 3));
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"-> varFormKey $varFormKey do " . \Input::get('do'));
+
 		$strModule = 'efg_co4';
 		$strName = 'feedback';
 		$strFileName = 'tl_formdata';
@@ -296,7 +300,8 @@ $this->log("PBD tl_formdata loadDCA -> varFormKey $varFormKey", __METHOD__, 'ERR
 		{
 			$strFileName = (\Input::get('do') == 'feedback' ? 'fd_feedback' : \Input::get('do'));
 		}
-$this->log("PBD tl_formdata loadDCA varFormKey '$varFormKey' strFileName '$strFileName'", __METHOD__, 'ERROR');
+//$this->log("PBD tl_formdata loadDCA varFormKey '$varFormKey' strFileName '$strFileName'", __METHOD__, 'ERROR');
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"varFormKey $varFormKey do " . \Input::get('do'));
 		if ($varFormKey != '' && is_string($varFormKey))
 		{
 			if ($varFormKey != 'tl_formdata' )
@@ -305,7 +310,8 @@ $this->log("PBD tl_formdata loadDCA varFormKey '$varFormKey' strFileName '$strFi
 				{
 					//$strFile = sprintf('%s/system/modules/%s/dca/%s.php', TL_ROOT, $strModule, $strFileName);
 			        $strFile = sprintf('%s/vendor/pbd-kn/contao-efg-bundle/src/Resources/contao/dca/%s.php', TL_ROOT,  \Input::get('do'));
-$this->log("PBD tl_formdata loadDCA varformkey in FE strFile $strFile", __METHOD__, 'ERROR');
+//$this->log("PBD tl_formdata loadDCA varformkey in FE strFile $strFile", __METHOD__, 'ERROR');
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"varformkey in FE strFile $strFile");
 
 					if (file_exists($strFile))
 					{
@@ -325,7 +331,7 @@ $this->log("PBD tl_formdata loadDCA varformkey in FE strFile $strFile", __METHOD
 							foreach ($GLOBALS['TL_HOOKS']['loadDataContainer'] as $callback)
 							{
 								$this->import($callback[0]);
-								$this->{$callback[0]}->{$callback[1]}('tl_formdata');  //Änderung PBD
+								$this->{$callback[0]}->{$callback[1]}('tl_formdata');  //Aenderung PBD
 							}
 						}
 
@@ -336,16 +342,19 @@ $this->log("PBD tl_formdata loadDCA varformkey in FE strFile $strFile", __METHOD
 		}
 		else
 		{
-$this->log("PBD tl_formdata ohne varformkey input do " . \Input::get('do'), __METHOD__, 'ERROR');
+//$this->log("PBD tl_formdata ohne varformkey input do " . \Input::get('do'), __METHOD__, 'ERROR');
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"ohne varformkey input do " . \Input::get('do'));
 
 			if (array_key_exists(\Input::get('do'), $GLOBALS['BE_MOD']['formdata']))
 			{
-$this->log("PBD tl_formdata do exist in BE_MOD strFileName $strFileName input do=" . \Input::get('do'), __METHOD__, 'ERROR');
+//$this->log("PBD tl_formdata do exist in BE_MOD strFileName $strFileName input do=" . \Input::get('do'), __METHOD__, 'ERROR');
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"do exist in BE_MOD strFileName $strFileName input do=" . \Input::get('do'));
 			    $strFile = sprintf('%s/vendor/pbd-kn/contao-efg-bundle/src/Resources/contao/dca/%s.php', TL_ROOT, $strFileName);
 			    //$strFile = sprintf('%s/vendor/pbd-kn/contao-efg-bundle/src/Resources/contao/dca/%s.php', TL_ROOT,  \Input::get('do'));
 
 				//$strFile = sprintf('%s/system/modules/%s/dca/%s.php', TL_ROOT, $strModule, $strFileName);
-$this->log("PBD tl_formdata strFile $strFile ", __METHOD__, 'ERROR');
+//$this->log("PBD tl_formdata strFile $strFile ", __METHOD__, 'ERROR');
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"include_once ?? strFile '$strFile' ");
 
 				if (file_exists($strFile))
 				{
@@ -370,13 +379,15 @@ $this->log("PBD tl_formdata strFile $strFile ", __METHOD__, 'ERROR');
 					}
 
 				} else {
-$this->log("PBD tl_formdata strFile '$strFile' not exist'", __METHOD__, 'ERROR');
+//$this->log("PBD tl_formdata strFile '$strFile' not exist'", __METHOD__, 'ERROR');
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"strFile '$strFile' not exist");
                 }
 			}
 		}
 
 		@include(TL_ROOT . '/system/config/dcaconfig.php');
-$this->log("PBD tl_formdata loadDCA <- ", __METHOD__, 'ERROR');
+//$this->log("PBD tl_formdata loadDCA <- ", __METHOD__, 'ERROR');
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"<- ");
 	}
 
 
@@ -426,7 +437,7 @@ $this->log("PBD tl_formdata loadDCA <- ", __METHOD__, 'ERROR');
 	*/
 	public function getRowLabel($arrRow)
 	{
-$this->log("PBD tl_formdata getRowLabel -> ", __METHOD__, 'ERROR');
+//$this->log("PBD tl_formdata getRowLabel -> ", __METHOD__, 'ERROR');
 		$strRet = '';
 
 		// Titles of all forms
@@ -452,11 +463,11 @@ $this->log("PBD tl_formdata getRowLabel -> ", __METHOD__, 'ERROR');
 		// Details from table tl_formdata_details
 		$strSql = "SELECT ff_name,value FROM tl_formdata_details WHERE pid=? ORDER BY sorting ASC";
 		$objDetails = \Database::getInstance()->prepare($strSql)->execute($arrRow['id']);
-$this->log("PBD tl_formdata getRowLabel select $strSql id " . $arrRow['id'] , __METHOD__, 'ERROR');
+//$this->log("PBD tl_formdata getRowLabel select $strSql id " . $arrRow['id'] , __METHOD__, 'ERROR');
 
 		while ($objDetails->next())
 		{
-$this->log("PBD tl_formdata getRowLabel add name " . $objDetails->ff_name . " Value: " . $objDetails->value, __METHOD__, 'ERROR');
+//$this->log("PBD tl_formdata getRowLabel add name " . $objDetails->ff_name . " Value: " . $objDetails->value, __METHOD__, 'ERROR');
 			$strRet .=  '<div class="fd_row"><div class="fd_label">' .$objDetails->ff_name . ':&nbsp;</div><div class="fd_value">' . $objDetails->value . '&nbsp;</div></div>';
 		}
 

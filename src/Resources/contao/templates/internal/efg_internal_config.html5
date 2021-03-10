@@ -26,6 +26,9 @@ define('SENDMAILCOMMAND', ini_get ('sendmail_path') . ' -t');    // set mailtran
 define('debsmall',1);
 define('debmedium',2+debsmall);
 define('debfull',4+debmedium);
+define('debmailsmall',8);
+define('debmailmedium',16+debmailsmall);
+define('debmailfull',32+debmailmedium);
 
 
 /**

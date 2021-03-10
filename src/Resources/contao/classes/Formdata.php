@@ -69,10 +69,10 @@ class Formdata extends \Contao\Frontend
 	public function __construct()
 	{
 		parent::__construct();
-$this->log("PBD Formdata construct do " . \Input::get('do') . "'", __METHOD__, 'TL_GENERAL');
+//$this->log("PBD Formdata construct do " . \Input::get('do') . "'", __METHOD__, 'TL_GENERAL');
         EfgLog::setEfgDebugmode(substr(\Input::get('do'), 3));
 
-EfgLog::EfgwriteLog(debsmall, __METHOD__ , __LINE__, "PBD Formdata construct do '" . \Input::get('do') . "'");
+EfgLog::EfgwriteLog(debsmall, __METHOD__ , __LINE__, "do '" . \Input::get('do') . "'");
 
 		// Types of form fields with storable data
 		$this->arrFFstorable = array
@@ -114,7 +114,7 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__ , __LINE__, "PBD Formdata construct do 
 		}
 		$this->getStoringForms();
 		$this->arrBaseFields = array_filter(array_diff(\Database::getInstance()->getFieldNames('tl_formdata'), array('PRIMARY')));
-EfgLog::EfgwriteLog(debsmall, __METHOD__ , __LINE__, "PBD Formdata construct end");
+EfgLog::EfgwriteLog(debsmall, __METHOD__ , __LINE__, "end");
 	}
 
 	/**
@@ -186,7 +186,8 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__ , __LINE__, "PBD Formdata construct end
 	 */
 	public function generateAlias($varValue=null, $strFormTitle=null, $intRecId=null)
 	{
-$this->log("PBD Formdata generateAlias input varValue=$varValue, strFormTitle=$strFormTitle, intRecId=$intRecId ", __METHOD__, TL_GENERAL);
+//$this->log("PBD Formdata generateAlias input varValue=$varValue, strFormTitle=$strFormTitle, intRecId=$intRecId ", __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debmedium, __METHOD__ , __LINE__,"input varValue=$varValue, strFormTitle=$strFormTitle, intRecId=$intRecId ");
 
 		$autoAlias = false;
 		$strAliasField = '';
@@ -271,8 +272,8 @@ $this->log("PBD Formdata generateAlias input varValue=$varValue, strFormTitle=$s
 		{
 			$varValue .= (!empty($varValue) ? '.' : '') . $intRecId;
 		}
-$this->log("PBD Formdata generateAlias return $varValue" , __METHOD__, TL_GENERAL);
-
+//$this->log("PBD Formdata generateAlias return $varValue" , __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debmedium, __METHOD__ , __LINE__,"return $varValue");
 		return $varValue;
 	}
 
@@ -442,7 +443,8 @@ $this->log("PBD Formdata generateAlias return $varValue" , __METHOD__, TL_GENERA
 				$strFormKey = (!empty($objForms->alias)) ? $objForms->alias : str_replace('-', '_', standardize($objForms->title));
 				$this->arrStoringForms[$strFormKey] = $objForms->row();
 				$this->arrFormsDcaKey[$strFormKey] = $objForms->title;
-$this->log("PBD Formdata getStoringForms erzeugt fuer title[$strFormKey]" . $objForms->title . " efgDebugMode " . $objForms->efgDebugMode , __METHOD__, 'TL_GENERAL');
+//$this->log("PBD Formdata getStoringForms erzeugt fuer title[$strFormKey]" . $objForms->title . " efgDebugMode " . $objForms->efgDebugMode , __METHOD__, 'TL_GENERAL');
+EfgLog::EfgwriteLog(debmedium, __METHOD__ , __LINE__,"erzeugt fuer title[$strFormKey]" . $objForms->title . " efgDebugMode " . $objForms->efgDebugMode );
 			}
 		}
 	}
@@ -553,7 +555,8 @@ $this->log("PBD Formdata getStoringForms erzeugt fuer title[$strFormKey]" . $obj
 	 */
 	public function getFormfieldsAsArray($intId=0)
 	{
-$this->log("PBD Formdata getFormfieldsAsArray formId $intId"  , __METHOD__, TL_GENERAL);
+//$this->log("PBD Formdata getFormfieldsAsArray formId $intId"  , __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"formId $intId");
 
 		$varReturn = array();
 
@@ -566,7 +569,8 @@ $this->log("PBD Formdata getFormfieldsAsArray formId $intId"  , __METHOD__, TL_G
 			while ($objFormFields->next())
 			{
 				$varKey = (!empty($objFormFields->name) && !in_array($objFormFields->name, array_keys($varReturn))) ? $objFormFields->name : $objFormFields->id;
-$this->log("PBD Formdata getFormfieldsAsArray varKey $varKey"  , __METHOD__, TL_GENERAL);
+//$this->log("PBD Formdata getFormfieldsAsArray varKey $varKey"  , __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"formFields varKey $varKey");
 				$arrField = $objFormFields->row();
 
 				// Set type of frontend widget
@@ -2244,7 +2248,7 @@ if ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['label'][0] =
 								foreach ($GLOBALS['TL_HOOKS']['loadFormField'] as $callback)
 								{
 									$this->import($callback[0]);
-									$objWidget = $this->{$callback[0]}->{$callback[1]}($objWidget, $arrField['pid'], array()); //Änderung PBD
+									$objWidget = $this->{$callback[0]}->{$callback[1]}($objWidget, $arrField['pid'], array()); //Aenderung PBD
 								}
 							}
 							$arrOptions = $objWidget->options;
@@ -2818,7 +2822,8 @@ if ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['label'][0] =
 	 */
 	public function executePostActions($strAction, $dc)
 	{
-$this->log("PBD Formdata executePostActions strAction $strAction ", __METHOD__, TL_GENERAL);
+//$this->log("PBD Formdata executePostActions strAction $strAction ", __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"strAction $strAction ");
 
 
 		switch ($strAction)
@@ -2833,7 +2838,8 @@ $this->log("PBD Formdata executePostActions strAction $strAction ", __METHOD__, 
 						if (in_array(\Input::post('field'), $this->arrBaseFields))
 						{
 $up= "UPDATE tl_formdata SET " . \Input::post('field') . "='" . (intval(\Input::post('state')) == 1 ? 1 : '') . "' WHERE id=" .$this->strAjaxId ;
-$this->log("PBD Formdata executePostActions generate Up1 $up  ", __METHOD__, TL_GENERAL);
+//$this->log("PBD Formdata executePostActions generate Up1 $up  ", __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"generate Update (Up1) $up  ");
 							\Database::getInstance()->prepare("UPDATE tl_formdata SET " . \Input::post('field') . "='" . (intval(\Input::post('state')) == 1 ? 1 : '') . "' WHERE id=?")->execute($this->strAjaxId);
 						}
 						else
@@ -2875,7 +2881,8 @@ $this->log("PBD Formdata executePostActions generate Up1 $up  ", __METHOD__, TL_
 						if (in_array(\Input::post('field'), $this->arrBaseFields))
 						{
 $up= "UPDATE tl_formdata SET " . \Input::post('field') . "='" . (intval(\Input::post('state')) == 1 ? 1 : '') . "' WHERE id=" .$dc->strAjaxId ;
-$this->log("PBD Formdata executePostActions generate Up2 $up  ", __METHOD__, TL_GENERAL);
+//$this->log("PBD Formdata executePostActions generate Up2 $up  ", __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"generate Update (Up2) $up  ");
 							\Database::getInstance()->prepare("UPDATE tl_formdata SET " . \Input::post('field') . "='" . (intval(\Input::post('state')) == 1 ? 1 : '') . "' WHERE id=?")->execute($dc->id);
 						}
 						else
@@ -2917,12 +2924,14 @@ $this->log("PBD Formdata executePostActions generate Up2 $up  ", __METHOD__, TL_
 
 			// Load nodes of the file tree
 			case 'loadFiletree':
-$this->log("PBD Formdata executePostActions loadFiletree ", __METHOD__, 'TL_GENERAL');
+//$this->log("PBD Formdata executePostActions loadFiletree ", __METHOD__, 'TL_GENERAL');
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"loadFiletree");
 
 				$arrData['strTable'] = $dc->table;
 				$arrData['id'] = $this->strAjaxName ?: $dc->id;
 				$arrData['name'] = \Input::post('name');
-$this->log("PBD Formdata executePostActions loadFiletree name " . \Input::post('name') . " id " . $arrData['id'] , __METHOD__, 'TL_GENERAL');
+//$this->log("PBD Formdata executePostActions loadFiletree name " . \Input::post('name') . " id " . $arrData['id'] , __METHOD__, 'TL_GENERAL');
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"loadFiletree name " . \Input::post('name') . " id " . $arrData['id']);
 
 				$objWidget = new $GLOBALS['BE_FFL']['fileSelector']($arrData, $dc);
 
@@ -2935,12 +2944,13 @@ $this->log("PBD Formdata executePostActions loadFiletree name " . \Input::post('
 				{
 					echo $objWidget->generate();
 				}
-$this->log("PBD Formdata loadFiletree vor exit", __METHOD__, 'TL_GENERAL');
+//$this->log("PBD Formdata loadFiletree vor exit", __METHOD__, 'TL_GENERAL');
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"loadFiletree vor exit");
 				exit; break;
 
              
 			case 'reloadEfgFiletree':
-			case 'reloadFiletree':              // PBD  ob das in Allen Fällen funktioniert ??
+			case 'reloadFiletree':              // PBD  ob das in Allen Faellen funktioniert ??
                                           // Im Javascript erzeugen in DC_FORMDATA wird reloadEfgFiletree eingetragen
                                           // Warum hier dann reloadFiletree ankommt habe ich nicht verstanden.
 				$intId = \Input::get('id');
@@ -2952,12 +2962,14 @@ $this->log("PBD Formdata loadFiletree vor exit", __METHOD__, 'TL_GENERAL');
 					$intId = preg_replace('/.*_([0-9a-zA-Z]+)$/', '$1', $strField);
 					$strField = preg_replace('/(.*)_[0-9a-zA-Z]+$/', '$1', $strField);
 				}
-$this->log("PBD Formdata reloadFiletree validate strFieldName $strFieldName strField $strField intId $intId",  __METHOD__, TL_GENERAL);
+//$this->log("PBD Formdata reloadFiletree validate strFieldName $strFieldName strField $strField intId $intId",  __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"validate strFieldName $strFieldName strField $strField intId $intId");
 
 				// Validate the request data
 				if (\Database::getInstance()->tableExists($dc->table))
 				{
-$this->log('PBD Formdata reloadFiletree tabelle da ' . $dc->table . " Feld $strField " ,  __METHOD__, TL_GENERAL);
+//$this->log('PBD Formdata reloadFiletree tabelle da ' . $dc->table . " Feld $strField " ,  __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"reloadFiletree tabelle da '" . $dc->table . " Feld $strField ");
 					// The field does not exist
 					if (!in_array($strField, $dc->arrBaseFields) && !in_array($strField, $dc->arrDetailFields))
 					{
@@ -3022,23 +3034,26 @@ $this->log('PBD Formdata reloadFiletree tabelle da ' . $dc->table . " Feld $strF
 
 				$varValue = \Input::post('value');
 				$strKey = 'fileTree';
-$this->log("PBD Formdata reloadEfgImportSource intId $intId strField $strField varValue $varValue" ,  __METHOD__, TL_GENERAL);
+//$this->log("PBD Formdata reloadEfgImportSource intId $intId strField $strField varValue $varValue" ,  __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"reloadEfgImportSource intId $intId strField $strField varValue $varValue");
 
 				// Convert the selected values
 				if ($varValue != '')
 				{
 					//$varValue = trimsplit("\t", $varValue);
 					$varValue = explode("\t", $varValue);
-$this->log("PBD Formdata reloadEfgImportSource nach trim varValue $varValue" ,  __METHOD__, TL_GENERAL);
+//$this->log("PBD Formdata reloadEfgImportSource nach trim varValue $varValue" ,  __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"reloadEfgImportSource nach trim varValue $varValue");
 
 					// Automatically add resources to the DBAFS
 					if ($strKey == 'fileTree')
 					{
 						foreach ($varValue as $k=>$v)
 						{
-$this->log("PBD Formdata reloadEfgImportSource vor set uuid von $v varvalue " . $v,  __METHOD__, TL_GENERAL);
+//$this->log("PBD Formdata reloadEfgImportSource vor set uuid von $v varvalue " . $v,  __METHOD__, TL_GENERAL);
 							$varValue[$k] = \Dbafs::addResource($v)->uuid;
-$this->log("PBD Formdata reloadEfgImportSource nach set uuid von $v uuid " . $varValue[$k]->uuid ,  __METHOD__, TL_GENERAL);
+//$this->log("PBD Formdata reloadEfgImportSource nach set uuid von $v uuid " . $varValue[$k]->uuid ,  __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"reloadEfgImportSource nach set uuid von $v uuid " . $varValue[$k]->uuid);
 						}
 					}
 
@@ -3051,10 +3066,12 @@ $this->log("PBD Formdata reloadEfgImportSource nach set uuid von $v uuid " . $va
 				$arrAttribs['strField'] = $strField;
 
 				$objWidget = new $GLOBALS['BE_FFL'][$strKey]($arrAttribs);
-$this->log("PBD Formdata reloadEfgImportSource vor generate Widget gloabals " . $GLOBALS['BE_FFL'][$strKey],  __METHOD__, TL_GENERAL);
-$this->log("PBD Formdata reloadEfgImportSource vor generate Widget strFieldName $strFieldName strField $strField table " . $dc->table,  __METHOD__, TL_GENERAL);
+//$this->log("PBD Formdata reloadEfgImportSource vor generate Widget gloabals " . $GLOBALS['BE_FFL'][$strKey],  __METHOD__, TL_GENERAL);
+//$this->log("PBD Formdata reloadEfgImportSource vor generate Widget strFieldName $strFieldName strField $strField table " . $dc->table,  __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"reloadEfgImportSource vor generate Widget globals " . $GLOBALS['BE_FFL'][$strKey] . "strFieldName $strFieldName strField $strField table " . $dc->table);
 				echo $objWidget->generate() . '<script>handleEfgFileselectorButton();</script>';
-$this->log("PBD Formdata reloadEfgImportSource nach generate Widget " ,  __METHOD__, TL_GENERAL);
+//$this->log("PBD Formdata reloadEfgImportSource nach generate Widget " ,  __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__,"reloadEfgImportSource vor generate Widget globals " . $GLOBALS['BE_FFL'][$strKey] . "strFieldName $strFieldName strField $strField table " . $dc->table);
         exit;                                      // PBD bei Ajax Request mit exit verlassen
 				break; exit;
 

@@ -49,7 +49,7 @@ class EfgLog
 
 			while ($objForms->next())
 			{  // suche Form
-                if ($key == 'form') {    // bei neuer form ist der key form nimm den höchsten wert
+                if ($key == 'm') {    // bei neuer form ist der key form nimm den höchsten wert
                   if (!isset(self::$myefgdebuglevel) || $objForms->efgDebugMode > self::$myefgdebuglevel) {
                     self::$myefgdebuglevel=$objForms->efgDebugMode;
                     self::$debFormKey=$key;

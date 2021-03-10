@@ -12,7 +12,7 @@
  */
 
 // This file is created when saving a form in form generator
-// last created on 2021-03-03 14:13:04
+// last created on 2021-03-10 13:53:28
 /*
  * you can set the swiftmail transport set in efg_internal_config.html
  * example define('SENDMAILCOMMAND', ini_get ('sendmail_path') . ' -t')
@@ -22,8 +22,11 @@ define('SENDMAILCOMMAND', ini_get ('sendmail_path') . ' -t');    // set mailtran
 define('debsmall',1);
 define('debmedium',2+debsmall);
 define('debfull',4+debmedium);
+define('debmailsmall',8);
+define('debmailmedium',16+debmailsmall);
+define('debmailfull',32+debmailmedium);
 
-//$GLOBALS['efgdebug']['debug']['xxxfirst']=47;
+
 /**
 * to fix height of style class w50 in backend
 */
@@ -72,13 +75,6 @@ $GLOBALS['BE_MOD']['formdata']['fd_zweites-formular'] = array
 	'stylesheet' => 'PBDKN/Efgco4/Resources/contao/assets/style.css'
 );
 $GLOBALS['BE_MOD']['formdata']['fd_drittes'] = array
-(
-	'tables'     => array('tl_formdata', 'tl_formdata_details'),
-	'import'     => array('FormdataBackend', 'importCsv'),
-	'icon'       => 'PBDKN/Efgco4/Resources/contao/assets/formdata_all.gif',
-	'stylesheet' => 'PBDKN/Efgco4/Resources/contao/assets/style.css'
-);
-$GLOBALS['BE_MOD']['formdata']['fd_viertes'] = array
 (
 	'tables'     => array('tl_formdata', 'tl_formdata_details'),
 	'import'     => array('FormdataBackend', 'importCsv'),

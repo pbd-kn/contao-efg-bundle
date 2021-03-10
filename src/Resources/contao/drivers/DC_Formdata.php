@@ -203,7 +203,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
 		parent::__construct();
 //$this->log("PBD DC_Formdata constructor  do '" . \Input::get('do') . "' strTable '$strTable' id '" . \Input::get('id') . "'", __METHOD__, TL_GENERAL);
-        $efgDebugMode = EfgLog::setEfgDebugmode(substr(\Input::get('do'), 3));
+        EfgLog::setEfgDebugmode(substr(\Input::get('do'), 3));
 EfgLog::EfgwriteLog(debsmall, __METHOD__ , __LINE__, "do '" . \Input::get('do') . "' strTable '$strTable' id '" . \Input::get('id') . "'" );
 		// Check the request token (see #4007)
 		if (isset($_GET['act']))

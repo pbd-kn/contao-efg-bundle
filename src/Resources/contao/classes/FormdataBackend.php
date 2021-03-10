@@ -387,7 +387,7 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__ , __LINE__, "PBD FormdataBackend neu er
 				$strFormKey = (!empty($arrForm['alias'])) ? $arrForm['alias'] : str_replace('-', '_', standardize($arrForm['title']));
 //$this->log("PBD FormdataBackend felder vor newTemplate bearbeitet: $strFormKey ", __METHOD__, TL_GENERAL);
 EfgLog::EfgwriteLog(debfull, __METHOD__ , __LINE__, "PBD FormdataBackend felder vor newTemplate bearbeitet: $strFormKey ");
-
+				$tplDca = $this->newTemplate('efg_internal_dca_formdata');
 				$tplDca->strFormKey = $strFormKey;
 				$tplDca->arrForm = $arrForm;
 				$tplDca->arrStoringForms = $arrStoringForms;
