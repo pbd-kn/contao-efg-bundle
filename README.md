@@ -15,7 +15,7 @@ Based on EFG Contao 3
  * @copyright Thomas Kuhn 2007-2014
  * 
  * @package   contao-efg-bundle
- * @author    Peter Broghammer
+ * @author    Peter Broghammer <pb-contao@gmx.de>
  * @license   http://www.gnu.org/licenses/lgpl-3.0.html LGPL
  * @copyright Peter Broghammer 2021-
  * 
