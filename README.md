@@ -21,7 +21,7 @@ Based on EFG Contao 3
  * 
  * Thomas Kuhn's Efg package has been completely converted to contao 4.9 
 
- * extended by insert_tag  {{efg_insert::Liste::aliasvalue::column(::format)}}
+ * extended by insert_tag  {{efg_insert::formalias::aliasvalue::column(::format)}}
  * supplies a value from an Efg form.
  * Selection field is the efgalias field that is specified in the form
  * Parameters
