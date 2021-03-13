@@ -25,7 +25,7 @@ Based on EFG Contao 3
  * supplies a value from an Efg form.
  * Selection field is the efgalias field that is specified in the form
  * Parameters
- * List: Alias name of the form (input)
+ * formalias: Alias name of the form (input)
  * aliasvalue: value of the alias field should have (input)
  * column: columnname for result
  * format: optional result sprintf (format, $result) 
