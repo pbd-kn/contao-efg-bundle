@@ -1,17 +1,33 @@
 <?php
 
-/**
- * Contao Open Source CMS
+declare(strict_types=1);
+
+/*
  *
- * Copyright (c) 2005-2014 Leo Feyer
+ *  Contao Open Source CMS
  *
- * @package   Efg
- * @author    Thomas Kuhn <mail@th-kuhn.de>
- * @license   http://www.gnu.org/licenses/lgpl-3.0.html LGPL
- * @copyright Thomas Kuhn 2007-2014
+ *  Copyright (c) 2005-2014 Leo Feyer
+ *
+ *  @package   Efg
+ *  @author    Thomas Kuhn <mail@th-kuhn.de>
+ *  @license   http://www.gnu.org/licenses/lgpl-3.0.html LGPL
+ *  @copyright Thomas Kuhn 2007-2014
+ *
+ *
+ *  Porting EFG to Contao 4
+ *  Based on EFG Contao 3 from Thomas Kuhn
+ *
+ *  @package   contao-efg-bundle
+ *  @author    Peter Broghammer <mail@pb-contao@gmx.de>
+ *  @license   http://www.gnu.org/licenses/lgpl-3.0.html LGPL
+ *  @copyright Peter Broghammer 2021-
+ *
+ *  Thomas Kuhn's Efg package has been completely converted to contao 4.9
+ *  extended by insert_tag  {{efg_insert::formalias::aliasvalue::column(::format)}}
+ *
  */
 
-/* PBD 
+/* PBD
  * Korrektur zum senden von Mails mittels Contao 4
  * Das sendmail Komanndo wird aus dm Configfile define(SENDMAILCOMMAND,...)
  * gelesen.
@@ -19,820 +35,695 @@
 /**
  * Namespace
  */
+
 namespace PBDKN\Efgco4\Resources\contao\classes;
 
 /**
- * Class FormdataProcessor
+ * Class FormdataProcessor.
  *
  * @copyright  Thomas Kuhn 2007-2014
- * @author     Thomas Kuhn <mail@th-kuhn.de>
- * @package    Efg
  */
 class FormdataProcessor extends \Contao\Frontend
 {
+    protected $strFdDcaKey = '';
+    protected $myMailer;
 
-	protected $strFdDcaKey = '';
-  protected $myMailer;
+    protected $strFormdataDetailsKey = 'details';
 
-	protected $strFormdataDetailsKey = 'details';
-	public function __construct()  
-	{
-    $this->myMailer = \Contao\System::getContainer()->get('swiftmailer.mailer');
-$this->log("PBD FormdataProcessor co4 construct nach Parent", __METHOD__, TL_GENERAL);
+    public function __construct()
+    {
+        $this->myMailer = \Contao\System::getContainer()->get('swiftmailer.mailer');
+        $this->log('PBD FormdataProcessor co4 construct nach Parent', __METHOD__, TL_GENERAL);
+    }
 
-  }
+    /**
+     * Process submitted form data
+     * Send mail, store data in backend.
+     *
+     * @param array      $arrSubmitted Submitted data
+     * @param array|bool $arrForm      Form configuration
+     * @param array|bool $arrFiles     Files uploaded
+     * @param array|bool $arrLabels    Form field labels
+     */
+    public function processSubmittedData($arrSubmitted, $arrForm = false, $arrFiles = false, $arrLabels = false): void
+    {
+        $this->log('PBD FormdataProcessor co4 processSubmittedData', __METHOD__, TL_GENERAL);
 
-	/**
-	 * Process submitted form data
-	 * Send mail, store data in backend
-	 * @param array $arrSubmitted Submitted data
-	 * @param array|bool $arrForm Form configuration
-	 * @param array|bool $arrFiles Files uploaded
-	 * @param array|bool $arrLabels Form field labels
-	 * @return void
-	 */
-	public function processSubmittedData($arrSubmitted, $arrForm=false, $arrFiles=false, $arrLabels=false) {
-$this->log("PBD FormdataProcessor co4 processSubmittedData", __METHOD__, TL_GENERAL);
+        // Form config
+        if (!$arrForm) {
+            return;
+        }
 
-		// Form config
-		if (!$arrForm)
-		{
-			return;
-		}
+        $arrFormFields = [];
 
-		$arrFormFields = array();
+        $this->import('FrontendUser', 'Member');
+        $this->import('Formdata');
 
-		$this->import('FrontendUser', 'Member');
-		$this->import('Formdata');
+        $this->strFdDcaKey = 'fd_'.(!empty($arrForm['alias']) ? $arrForm['alias'] : str_replace('-', '_', standardize($arrForm['title'])));
+        $this->Formdata->FdDcaKey = $this->strFdDcaKey;
+        $this->log('PBD FormdataProcessor co4 this->Formdata->FdDcaKey '.$this->Formdata->FdDcaKey, __METHOD__, TL_GENERAL);
 
-		$this->strFdDcaKey = 'fd_' . (!empty($arrForm['alias']) ? $arrForm['alias'] : str_replace('-', '_', standardize($arrForm['title'])) );
-		$this->Formdata->FdDcaKey = $this->strFdDcaKey;
-$this->log("PBD FormdataProcessor co4 this->Formdata->FdDcaKey " . $this->Formdata->FdDcaKey, __METHOD__, TL_GENERAL);
+        // Get params of related listing formdata
+        $intListingId = (int) ($_SESSION['EFP']['LISTING_MOD']['id']);
+        $this->log("PBD FormdataProcessor co4 intListingId $intListingId ", __METHOD__, TL_GENERAL);
+        if ($intListingId > 0) {
+            $objListing = \Database::getInstance()->prepare('SELECT * FROM tl_module WHERE id=?')
+                ->execute($intListingId)
+            ;
+            if ($objListing->numRows) {
+                $arrListing = $objListing->fetchAssoc();
 
-		// Get params of related listing formdata
-		$intListingId = intval($_SESSION['EFP']['LISTING_MOD']['id']);
-$this->log("PBD FormdataProcessor co4 intListingId $intListingId ", __METHOD__, TL_GENERAL);
-		if ($intListingId > 0)
-		{
-			$objListing = \Database::getInstance()->prepare("SELECT * FROM tl_module WHERE id=?")
-				->execute($intListingId);
-			if ($objListing->numRows)
-			{
-				$arrListing = $objListing->fetchAssoc();
+                // Mail delivery defined in frontend listing module
+                $arrForm['sendConfirmationMailOnFrontendEditing'] = ($arrListing['efg_fe_no_confirmation_mail']) ? false : true;
+                $arrForm['sendFormattedMailOnFrontendEditing'] = ($arrListing['efg_fe_no_formatted_mail']) ? false : true;
+            }
+        }
 
-				// Mail delivery defined in frontend listing module
-				$arrForm['sendConfirmationMailOnFrontendEditing'] = ($arrListing['efg_fe_no_confirmation_mail']) ? false : true;
-				$arrForm['sendFormattedMailOnFrontendEditing'] = ($arrListing['efg_fe_no_formatted_mail']) ? false : true;
-			}
-		}
+        if (!empty($arrListing['efg_DetailsKey'])) {
+            $this->strFormdataDetailsKey = $arrListing['efg_DetailsKey'];
+        }
 
-		if (!empty($arrListing['efg_DetailsKey']))
-		{
-			$this->strFormdataDetailsKey = $arrListing['efg_DetailsKey'];
-		}
+        $blnFEedit = false;
+        $intOldId = 0;
+        $strRedirectTo = '';
 
-		$blnFEedit = false;
-		$intOldId = 0;
-		$strRedirectTo = '';
+        $strUrl = preg_replace('/\?.*$/', '', \Environment::get('request'));
+        $strUrlParams = '';
+        $blnQuery = false;
+        foreach (preg_split('/&(amp;)?/', $_SERVER['QUERY_STRING']) as $fragment) {
+            if (\strlen($fragment)) {
+                if (0 !== strncasecmp($fragment, $this->strFormdataDetailsKey, \strlen($this->strFormdataDetailsKey)) && 0 !== strncasecmp($fragment, 'act', 3)) {
+                    $strUrlParams .= (!$blnQuery ? '' : '&amp;').$fragment;
+                    $blnQuery = true;
+                }
+            }
+        }
 
-		$strUrl = preg_replace('/\?.*$/', '', \Environment::get('request'));
-		$strUrlParams = '';
-		$blnQuery = false;
-		foreach (preg_split('/&(amp;)?/', $_SERVER['QUERY_STRING']) as $fragment)
-		{
-			if (strlen($fragment))
-			{
-				if (strncasecmp($fragment, $this->strFormdataDetailsKey, strlen($this->strFormdataDetailsKey)) !== 0 && strncasecmp($fragment, 'act', 3) !== 0)
-				{
-					$strUrlParams .= (!$blnQuery ? '' : '&amp;') . $fragment;
-					$blnQuery = true;
-				}
-			}
-		}
+        if (\in_array($arrListing['efg_fe_edit_access'], ['public', 'groupmembers', 'member'], true)) {
+            if ('edit' === \Input::get('act')) {
+                $blnFEedit = true;
 
-		if (in_array($arrListing['efg_fe_edit_access'], array('public','groupmembers','member')))
-		{
-			if (\Input::get('act') == 'edit')
-			{
-				$blnFEedit = true;
+                $objCheck = \Database::getInstance()->prepare('SELECT id FROM tl_formdata WHERE id=? OR alias=?')
+                    ->execute(\Input::get($this->strFormdataDetailsKey), \Input::get($this->strFormdataDetailsKey))
+                ;
 
-				$objCheck = \Database::getInstance()->prepare("SELECT id FROM tl_formdata WHERE id=? OR alias=?")
-					->execute(\Input::get($this->strFormdataDetailsKey), \Input::get($this->strFormdataDetailsKey));
+                if (1 === $objCheck->numRows) {
+                    $intOldId = (int) ($objCheck->id);
+                } else {
+                    $this->log('Could not identify record by ID "'.\Input::get($this->strFormdataDetailsKey).'"', __METHOD__, TL_GENERAL);
+                }
+            }
+        }
 
-				if ($objCheck->numRows == 1)
-				{
-					$intOldId = intval($objCheck->id);
-				}
-				else
-				{
-					$this->log('Could not identify record by ID "' . \Input::get($this->strFormdataDetailsKey) . '"', __METHOD__, TL_GENERAL);
-				}
-			}
-		}
+        // Types of form fields with storable data
+        $arrFFstorable = $this->Formdata->arrFFstorable;
 
-		// Types of form fields with storable data
-		$arrFFstorable = $this->Formdata->arrFFstorable;
+        if (($arrForm['storeFormdata'] || $arrForm['sendConfirmationMail'] || $arrForm['sendFormattedMail']) && !empty($arrSubmitted)) {
+            $timeNow = time();
 
-		if (($arrForm['storeFormdata'] || $arrForm['sendConfirmationMail'] || $arrForm['sendFormattedMail']) && !empty($arrSubmitted))
-		{
-			$timeNow = time();
+            $this->loadDataContainer($this->strFdDcaKey);
+            $this->loadDataContainer('tl_formdata_details');
+            $this->loadDataContainer('tl_files');
+            $this->log('PBD FormdataProcessor c) bearbeite FORM id:  '.$arrForm['id'].' title: '.$arrForm['title'], __METHOD__, TL_GENERAL);
 
-			$this->loadDataContainer($this->strFdDcaKey);
-			$this->loadDataContainer('tl_formdata_details');
-			$this->loadDataContainer('tl_files');
-$this->log("PBD FormdataProcessor c) bearbeite FORM id:  " . $arrForm['id'] . " title: " . $arrForm['title'], __METHOD__, TL_GENERAL);
+            $arrFormFields = $this->Formdata->getFormfieldsAsArray($arrForm['id']);
 
-			$arrFormFields = $this->Formdata->getFormfieldsAsArray($arrForm['id']);
+            $arrBaseFields = [];
+            $arrDetailFields = [];
+            if (!empty($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['baseFields'])) {
+                $arrBaseFields = $GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['baseFields'];
+            }
+            if (!empty($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['detailFields'])) {
+                $arrDetailFields = $GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['detailFields'];
+            }
+            $arrHookFields = array_merge($arrBaseFields, $arrDetailFields);
 
-			$arrBaseFields = array();
-			$arrDetailFields = array();
-			if (!empty($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['baseFields']))
-			{
-				$arrBaseFields = $GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['baseFields'];
-			}
-			if (!empty($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['detailFields']))
-			{
-				$arrDetailFields = $GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['detailFields'];
-			}
-			$arrHookFields = array_merge($arrBaseFields, $arrDetailFields);
+            $arrToSave = [];
+            foreach ($arrSubmitted as $k => $varVal) {
+                if (\in_array($k, ['id'], true)) {
+                    continue;
+                }
+                if (\in_array($k, $arrHookFields, true) || \in_array($k, array_keys($arrFormFields), true) || \in_array($k, ['FORM_SUBMIT', 'MAX_FILE_SIZE'], true)) {
+                    $arrToSave[$k] = $varVal;
+                }
+            }
 
-			$arrToSave = array();
-			foreach($arrSubmitted as $k => $varVal)
-			{
-				if (in_array($k, array('id')))
-				{
-					continue;
-				}
-				elseif (in_array($k, $arrHookFields) || in_array($k, array_keys($arrFormFields)) || in_array($k, array('FORM_SUBMIT','MAX_FILE_SIZE')))
-				{
-					$arrToSave[$k] = $varVal;
-				}
-			}
+            // HOOK: process efg form data callback
+            if (\array_key_exists('processEfgFormData', $GLOBALS['TL_HOOKS']) && \is_array($GLOBALS['TL_HOOKS']['processEfgFormData'])) {
+                foreach ($GLOBALS['TL_HOOKS']['processEfgFormData'] as $key => $callback) {
+                    $this->import($callback[0]);
+                    $arrResult = $this->{$callback[0]}->{$callback[1]}($arrToSave, $arrFiles, $intOldId, $arrForm, $arrLabels);     //Änderung PBD
+                    if (!empty($arrResult)) {
+                        $arrSubmitted = $arrResult;
+                        $arrToSave = $arrSubmitted;
+                    }
+                }
+            }
+        }
 
-			// HOOK: process efg form data callback
-			if (array_key_exists('processEfgFormData', $GLOBALS['TL_HOOKS']) && is_array($GLOBALS['TL_HOOKS']['processEfgFormData']))
-			{
-				foreach ($GLOBALS['TL_HOOKS']['processEfgFormData'] as $key => $callback)
-				{
-					$this->import($callback[0]);
-					$arrResult = $this->{$callback[0]}->{$callback[1]}($arrToSave, $arrFiles, $intOldId, $arrForm, $arrLabels);     //Änderung PBD
-					if (!empty($arrResult))
-					{
-						$arrSubmitted = $arrResult;
-						$arrToSave = $arrSubmitted;
-					}
-				}
-			}
+        // Formdata storage
+        if ($arrForm['storeFormdata'] && !empty($arrSubmitted)) {
+            $blnStoreOptionsValue = ($arrForm['efgStoreValues']) ? true : false;
 
-		}
+            // Get old record on frontend editing
+            if ($intOldId > 0) {
+                $arrOldData = $this->Formdata->getFormdataAsArray($intOldId);
+                $arrOldFormdata = $arrOldData['fd_base'];
+                $arrOldFormdataDetails = $arrOldData['fd_details'];
+            }
 
-		// Formdata storage
-		if ($arrForm['storeFormdata'] && !empty($arrSubmitted))
-		{
-			$blnStoreOptionsValue = ($arrForm['efgStoreValues']) ? true : false;
+            // Prepare record tl_formdata
+            $arrSet = [
+                'form' => $arrForm['title'],
+                'tstamp' => $timeNow,
+                'date' => $timeNow,
+                'ip' => \System::anonymizeIp(\Environment::get('ip')),
+                'published' => ($GLOBALS['TL_DCA']['tl_formdata']['fields']['published']['default'] ? '1' : ''),
+                'fd_member' => (int) ($this->Member->id),
+                'fd_member_group' => (int) ($this->Member->groups[0]),
+                'fd_user' => (int) ($this->User->id),
+                'fd_user_group' => (int) ($this->User->groups[0]),
+            ];
 
-			// Get old record on frontend editing
-			if ($intOldId > 0)
-			{
-				$arrOldData = $this->Formdata->getFormdataAsArray($intOldId);
-				$arrOldFormdata = $arrOldData['fd_base'];
-				$arrOldFormdataDetails = $arrOldData['fd_details'];
-			}
+            // Keep some values from existing record on frontend editing
+            if ($intOldId > 0) {
+                $arrSet['form'] = $arrOldFormdata['form'];
+                $arrSet['be_notes'] = $arrOldFormdata['be_notes'];
+                $arrSet['fd_member'] = $arrOldFormdata['fd_member'];
+                $arrSet['fd_member_group'] = $arrOldFormdata['fd_member_group'];
+                if ((int) ($this->Member->id) > 0) {
+                    $arrSet['fd_member'] = (int) ($this->Member->id);
+                    if (1 === \count($this->Member->groups) && (int) ($this->Member->groups[0]) > 0) {
+                        $arrSet['fd_member_group'] = (int) ($this->Member->groups[0]);
+                    }
+                } else {
+                    $arrSet['fd_member'] = 0;
+                }
+                $arrSet['fd_user'] = $arrOldFormdata['fd_user'];
+                $arrSet['fd_user_group'] = $arrOldFormdata['fd_user_group'];
 
-			// Prepare record tl_formdata
-			$arrSet = array
-			(
-				'form' => $arrForm['title'],
-				'tstamp' => $timeNow,
-				'date' => $timeNow,
-				'ip' => \System::anonymizeIp(\Environment::get('ip')),
-				'published' => ($GLOBALS['TL_DCA']['tl_formdata']['fields']['published']['default'] ? '1' : '' ),
-				'fd_member' => intval($this->Member->id),
-				'fd_member_group' => intval($this->Member->groups[0]),
-				'fd_user' => intval($this->User->id),
-				'fd_user_group' => intval($this->User->groups[0])
-			);
+                // Set published to value of old record, if no default value is defined
+                if (!isset($GLOBALS['TL_DCA']['tl_formdata']['fields']['published']['default'])) {
+                    $arrSet['published'] = $arrOldFormdata['published'];
+                }
+            }
 
-			// Keep some values from existing record on frontend editing
-			if ($intOldId > 0)
-			{
-				$arrSet['form'] = $arrOldFormdata['form'];
-				$arrSet['be_notes'] = $arrOldFormdata['be_notes'];
-				$arrSet['fd_member'] = $arrOldFormdata['fd_member'];
-				$arrSet['fd_member_group'] = $arrOldFormdata['fd_member_group'];
-				if (intval($this->Member->id) > 0)
-				{
-					$arrSet['fd_member'] = intval($this->Member->id);
-					if (count($this->Member->groups) == 1 && intval($this->Member->groups[0]) > 0)
-					{
-						$arrSet['fd_member_group'] = intval($this->Member->groups[0]);
-					}
-				}
-				else
-				{
-					$arrSet['fd_member'] = 0;
-				}
-				$arrSet['fd_user'] = $arrOldFormdata['fd_user'];
-				$arrSet['fd_user_group'] = $arrOldFormdata['fd_user_group'];
+            // Store formdata: Update or insert and delete
+            if ($blnFEedit && \strlen($arrListing['efg_fe_keep_id'])) {
+                $intNewId = $intOldId;
+                \Database::getInstance()->prepare('UPDATE tl_formdata %s WHERE id=?')->set($arrSet)->execute($intOldId);
+                \Database::getInstance()->prepare('DELETE FROM tl_formdata_details WHERE pid=?')->execute($intOldId);
+            } else {
+                $objNewFormdata = \Database::getInstance()->prepare('INSERT INTO tl_formdata %s')->set($arrSet)->execute();
+                $intNewId = $objNewFormdata->insertId;
 
-				// Set published to value of old record, if no default value is defined
-				if (!isset($GLOBALS['TL_DCA']['tl_formdata']['fields']['published']['default']))
-				{
-					$arrSet['published'] = $arrOldFormdata['published'];
-				}
-			}
+                // Update related comments
+                if (\in_array('comments', \ModuleLoader::getActive(), true)) {
+                    \Database::getInstance()->prepare("UPDATE tl_comments %s WHERE `source` = 'tl_formdata' AND parent=?")
+                        ->set(['parent' => $intNewId])
+                        ->execute($intOldId)
+                ;
+                }
+            }
 
-			// Store formdata: Update or insert and delete
-			if ($blnFEedit && strlen($arrListing['efg_fe_keep_id']))
-			{
-				$intNewId = $intOldId;
-				\Database::getInstance()->prepare("UPDATE tl_formdata %s WHERE id=?")->set($arrSet)->execute($intOldId);
-				\Database::getInstance()->prepare("DELETE FROM tl_formdata_details WHERE pid=?")->execute($intOldId);
-			}
-			else
-			{
-				$objNewFormdata = \Database::getInstance()->prepare("INSERT INTO tl_formdata %s")->set($arrSet)->execute();
-				$intNewId = $objNewFormdata->insertId;
+            // Store details data
+            foreach ($arrFormFields as $k => $arrField) {
+                $strType = $arrField['formfieldType'];
+                $strVal = '';
 
-				// Update related comments
-				if (in_array('comments', \ModuleLoader::getActive()))
-				{
-					\Database::getInstance()->prepare("UPDATE tl_comments %s WHERE `source` = 'tl_formdata' AND parent=?")
-						->set(array('parent' => $intNewId))
-						->execute($intOldId);
-				}
-			}
+                if (\in_array($strType, $arrFFstorable, true)) {
+                    if ($blnStoreOptionsValue) {
+                        $arrField['eval']['efgStoreValues'] = true;
+                    } else {
+                        $arrField['eval']['efgStoreValues'] = false;
+                    }
 
-			// Store details data
-			foreach ($arrFormFields as $k => $arrField)
-			{
+                    // Set rgxp 'date' for field type 'calendar' if not set
+                    if ('calendar' === $strType) {
+                        if (!isset($arrField['rgxp'])) {
+                            $arrField['rgxp'] = 'date';
+                        }
+                    }
+                    // Set rgxp 'date' and dateFormat for field type 'xdependentcalendarfields'
+                    elseif ('xdependentcalendarfields' === $strType) {
+                        $arrField['rgxp'] = 'date';
+                        $arrField['dateFormat'] = $arrField['xdateformat'];
+                    }
 
-				$strType = $arrField['formfieldType'];
-				$strVal = '';
+                    $strVal = $this->Formdata->preparePostValueForDatabase($arrSubmitted[$k], $arrField, $arrFiles[$k]);
 
-				if (in_array($strType, $arrFFstorable))
-				{
+                    // Special treatment for type upload
+                    // Keep old file on frontend editing, if no new file has been uploaded
+                    if ('upload' === $strType) {
+                        if ($intOldId) {
+                            if (!$arrFiles[$k]['name']) {
+                                if (\strlen($arrOldFormdataDetails[$k]['value'])) {
+                                    $strVal = $arrOldFormdataDetails[$k]['value'];
+                                }
+                            }
+                        }
+                    }
 
-					if ($blnStoreOptionsValue)
-					{
-						$arrField['eval']['efgStoreValues'] = true;
-					}
-					else
-					{
-						$arrField['eval']['efgStoreValues'] = false;
-					}
+                    if (isset($arrSubmitted[$k]) || ('upload' === $strType && \strlen($strVal))) {
+                        // Prepare data
+                        $arrFieldSet = [
+                            'pid' => $intNewId,
+                            'sorting' => $arrField['sorting'],
+                            'tstamp' => $timeNow,
+                            'ff_id' => $arrField['id'],
+                            'ff_name' => $arrField['name'],
+                            'value' => $strVal,
+                        ];
 
-					// Set rgxp 'date' for field type 'calendar' if not set
-					if ($strType == 'calendar')
-					{
-						if (!isset($arrField['rgxp']))
-						{
-							$arrField['rgxp'] = 'date';
-						}
-					}
-					// Set rgxp 'date' and dateFormat for field type 'xdependentcalendarfields'
-					elseif ($strType == 'xdependentcalendarfields')
-					{
-						$arrField['rgxp'] = 'date';
-						$arrField['dateFormat'] = $arrField['xdateformat'];
-					}
+                        $objNewFormdataDetails = \Database::getInstance()
+                            ->prepare('INSERT INTO tl_formdata_details %s')
+                            ->set($arrFieldSet)
+                            ->execute()
+                        ;
+                    }
+                }
+            }
 
-					$strVal = $this->Formdata->preparePostValueForDatabase($arrSubmitted[$k], $arrField, $arrFiles[$k]);
+            // Delete old record after frontend editing
+            if ($blnFEedit) {
+                if (!isset($arrListing['efg_fe_keep_id']) || '1' !== $arrListing['efg_fe_keep_id']) {
+                    if ($intNewId > 0 && (int) $intOldId > 0 && (int) $intNewId !== (int) $intOldId) {
+                        \Database::getInstance()->prepare('DELETE FROM tl_formdata_details WHERE pid=?')
+                            ->execute($intOldId)
+                        ;
+                        \Database::getInstance()->prepare('DELETE FROM tl_formdata WHERE id=?')
+                            ->execute($intOldId)
+                        ;
+                    }
+                }
+                $strRedirectTo = preg_replace('/\?.*$/', '', \Environment::get('request'));
+            }
 
-					// Special treatment for type upload
-					// Keep old file on frontend editing, if no new file has been uploaded
-					if ($strType == 'upload')
-					{
-						if ($intOldId)
-						{
-							if (!$arrFiles[$k]['name'])
-							{
-								if (strlen($arrOldFormdataDetails[$k]['value']))
-								{
-									$strVal = $arrOldFormdataDetails[$k]['value'];
-								}
-							}
-						}
-					}
+            // Auto-generate alias
+            $strAlias = $this->Formdata->generateAlias($arrOldFormdata['alias'], $arrForm['title'], $intNewId);
+            if (\strlen($strAlias)) {
+                $arrUpd = ['alias' => $strAlias];
+                \Database::getInstance()->prepare('UPDATE tl_formdata %s WHERE id=?')
+                    ->set($arrUpd)
+                    ->execute($intNewId)
+                ;
+            }
+        }
 
-					if (isset($arrSubmitted[$k]) || ($strType == 'upload' && strlen($strVal)))
-					{
-						// Prepare data
-						$arrFieldSet = array(
-							'pid' => $intNewId,
-							'sorting' => $arrField['sorting'],
-							'tstamp' => $timeNow,
-							'ff_id' => $arrField['id'],
-							'ff_name' => $arrField['name'],
-							'value' => $strVal
-						);
+        // Store data in the session to display on confirmation page
+        unset($_SESSION['EFP']['FORMDATA']);
+        $blnSkipEmptyFields = ($arrForm['confirmationMailSkipEmpty']) ? true : false;
 
-						$objNewFormdataDetails = \Database::getInstance()
-							->prepare("INSERT INTO tl_formdata_details %s")
-							->set($arrFieldSet)
-							->execute();
+        foreach ($arrFormFields as $k => $arrField) {
+            $strType = $arrField['formfieldType'];
+            $strVal = '';
+            if (\in_array($strType, $arrFFstorable, true)) {
+                $strVal = $this->Formdata->preparePostValueForMail($arrSubmitted[$k], $arrField, $arrFiles[$k], $blnSkipEmptyFields);
+            }
 
-					}
+            $_SESSION['EFP']['FORMDATA'][$k] = $strVal;
+        }
+        $_SESSION['EFP']['FORMDATA']['_formId_'] = $arrForm['id'];
 
-				}
-			}
+        // Confirmation Mail
+        if ($blnFEedit && !$arrForm['sendConfirmationMailOnFrontendEditing']) {
+            $arrForm['sendConfirmationMail'] = false;
+        }
 
-			// Delete old record after frontend editing
-			if ($blnFEedit)
-			{
-				if (!isset($arrListing['efg_fe_keep_id']) || $arrListing['efg_fe_keep_id'] != "1")
-				{
-					if ($intNewId > 0 && intval($intOldId)>0 && intval($intNewId) != intval($intOldId))
-					{
-						\Database::getInstance()->prepare("DELETE FROM tl_formdata_details WHERE pid=?")
-							->execute($intOldId);
-						\Database::getInstance()->prepare("DELETE FROM tl_formdata WHERE id=?")
-							->execute($intOldId);
-					}
-				}
-				$strRedirectTo = preg_replace('/\?.*$/', '', \Environment::get('request'));
-			}
+        if ($arrForm['sendConfirmationMail']) {
+            $objMailProperties = new \stdClass();
+            $objMailProperties->subject = '';
+            $objMailProperties->sender = '';
+            $objMailProperties->senderName = '';
+            $objMailProperties->replyTo = '';
+            $objMailProperties->recipients = [];
+            $objMailProperties->messageText = '';
+            $objMailProperties->messageHtmlTmpl = '';
+            $objMailProperties->messageHtml = '';
+            $objMailProperties->attachments = [];
+            $objMailProperties->skipEmptyFields = false;
 
-			// Auto-generate alias
-			$strAlias = $this->Formdata->generateAlias($arrOldFormdata['alias'], $arrForm['title'], $intNewId);
-			if (strlen($strAlias))
-			{
-				$arrUpd = array('alias' => $strAlias);
-				\Database::getInstance()->prepare("UPDATE tl_formdata %s WHERE id=?")
-					->set($arrUpd)
-					->execute($intNewId);
-			}
-		}
+            $objMailProperties->skipEmptyFields = ($arrForm['confirmationMailSkipEmpty']) ? true : false;
 
-		// Store data in the session to display on confirmation page
-		unset($_SESSION['EFP']['FORMDATA']);
-		$blnSkipEmptyFields = ($arrForm['confirmationMailSkipEmpty']) ? true : false;
+            // Set the sender as given in form configuration
+            [$senderName, $sender] = \StringUtil::splitFriendlyEmail($arrForm['confirmationMailSender']);
+            $objMailProperties->sender = $sender;
+            $objMailProperties->senderName = $senderName;
 
-		foreach ($arrFormFields as $k => $arrField)
-		{
-			$strType = $arrField['formfieldType'];
-			$strVal = '';
-			if (in_array($strType, $arrFFstorable))
-			{
-				$strVal = $this->Formdata->preparePostValueForMail($arrSubmitted[$k], $arrField, $arrFiles[$k], $blnSkipEmptyFields);
-			}
+            // Set the 'reply to' address, if given in form configuration
+            if (!empty($arrForm['confirmationMailReplyto'])) {
+                [$replyToName, $replyTo] = \StringUtil::splitFriendlyEmail($arrForm['confirmationMailReplyto']);
+                $objMailProperties->replyTo = (\strlen($replyToName) ? $replyToName.' <'.$replyTo.'>' : $replyTo);
+            }
 
-			$_SESSION['EFP']['FORMDATA'][$k] = $strVal;
-		}
-		$_SESSION['EFP']['FORMDATA']['_formId_'] = $arrForm['id'];
+            // Set recipient(s)
+            $recipientFieldName = $arrForm['confirmationMailRecipientField'];
+            $varRecipient = $arrSubmitted[$recipientFieldName];
 
-		// Confirmation Mail
-		if ($blnFEedit && !$arrForm['sendConfirmationMailOnFrontendEditing'])
-		{
-			$arrForm['sendConfirmationMail'] = false;
-		}
+            if (\is_array($varRecipient)) {
+                $arrRecipient = $varRecipient;
+            } else {
+                $arrRecipient = trimsplit(',', $varRecipient);
+            }
 
-		if ($arrForm['sendConfirmationMail'])
-		{
-			$objMailProperties = new \stdClass();
-			$objMailProperties->subject = '';
-			$objMailProperties->sender = '';
-			$objMailProperties->senderName = '';
-			$objMailProperties->replyTo = '';
-			$objMailProperties->recipients = array();
-			$objMailProperties->messageText = '';
-			$objMailProperties->messageHtmlTmpl = '';
-			$objMailProperties->messageHtml = '';
-			$objMailProperties->attachments = array();
-			$objMailProperties->skipEmptyFields = false;
+            if (!empty($arrForm['confirmationMailRecipient'])) {
+                $varRecipient = $arrForm['confirmationMailRecipient'];
+                $arrRecipient = array_merge($arrRecipient, trimsplit(',', $varRecipient));
+            }
+            $arrRecipient = array_filter(array_unique($arrRecipient));
 
-			$objMailProperties->skipEmptyFields = ($arrForm['confirmationMailSkipEmpty']) ? true : false;
+            if (!empty($arrRecipient)) {
+                foreach ($arrRecipient as $kR => $recipient) {
+                    [$recipientName, $recipient] = \StringUtil::splitFriendlyEmail($this->replaceInsertTags($recipient, false));
+                    $arrRecipient[$kR] = (\strlen($recipientName) ? $recipientName.' <'.$recipient.'>' : $recipient);
+                }
+            }
+            $objMailProperties->recipients = $arrRecipient;
 
-			// Set the sender as given in form configuration
-			list($senderName, $sender) = \StringUtil::splitFriendlyEmail($arrForm['confirmationMailSender']);
-			$objMailProperties->sender = $sender;
-			$objMailProperties->senderName = $senderName;
+            // Check if we want custom attachments... (Thanks to Torben Schwellnus)
+            if ($arrForm['addConfirmationMailAttachments']) {
+                if ($arrForm['confirmationMailAttachments']) {
+                    $arrCustomAttachments = deserialize($arrForm['confirmationMailAttachments'], true);
 
-			// Set the 'reply to' address, if given in form configuration
-			if (!empty($arrForm['confirmationMailReplyto']))
-			{
-				list($replyToName, $replyTo) = \StringUtil::splitFriendlyEmail($arrForm['confirmationMailReplyto']);
-				$objMailProperties->replyTo = (strlen($replyToName) ? $replyToName . ' <' . $replyTo . '>' : $replyTo);
-			}
+                    if (!empty($arrCustomAttachments)) {
+                        foreach ($arrCustomAttachments as $varFile) {
+                            $objFileModel = \FilesModel::findById($varFile);
 
-			// Set recipient(s)
-			$recipientFieldName = $arrForm['confirmationMailRecipientField'];
-			$varRecipient = $arrSubmitted[$recipientFieldName];
+                            if (null !== $objFileModel) {
+                                $objFile = new \File($objFileModel->path);
+                                if ($objFile->size) {
+                                    $objMailProperties->attachments[TL_ROOT.'/'.$objFile->path] = [
+                                        'file' => TL_ROOT.'/'.$objFile->path,
+                                        'name' => $objFile->basename,
+                                        'mime' => $objFile->mime, ];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
-			if (is_array($varRecipient))
-			{
-				$arrRecipient = $varRecipient;
-			}
-			else
-			{
-				$arrRecipient = trimsplit(',', $varRecipient);
-			}
+            $objMailProperties->subject = \StringUtil::decodeEntities($arrForm['confirmationMailSubject']);
+            $objMailProperties->messageText = \StringUtil::decodeEntities($arrForm['confirmationMailText']);
+            $objMailProperties->messageHtmlTmpl = $arrForm['confirmationMailTemplate'];
 
-			if (!empty($arrForm['confirmationMailRecipient']))
-			{
-				$varRecipient = $arrForm['confirmationMailRecipient'];
-				$arrRecipient = array_merge($arrRecipient, trimsplit(',', $varRecipient));
-			}
-			$arrRecipient = array_filter(array_unique($arrRecipient));
+            // Replace Insert tags and conditional tags
+            $objMailProperties = $this->Formdata->prepareMailData($objMailProperties, $arrSubmitted, $arrFiles, $arrForm, $arrFormFields);
+            //$this->log("PBD formdataProcessor 1 vor SendMail", __METHOD__, 'ERROR');
+            // Send Mail
+            $blnConfirmationSent = false;
 
-			if (!empty($arrRecipient))
-			{
-				foreach ($arrRecipient as $kR => $recipient)
-				{
-					list($recipientName, $recipient) = \StringUtil::splitFriendlyEmail($this->replaceInsertTags($recipient, false));
-					$arrRecipient[$kR] = (strlen($recipientName) ? $recipientName . ' <' . $recipient . '>' : $recipient);
-				}
-			}
-			$objMailProperties->recipients = $arrRecipient;
-
-			// Check if we want custom attachments... (Thanks to Torben Schwellnus)
-			if ($arrForm['addConfirmationMailAttachments'])
-			{
-				if($arrForm['confirmationMailAttachments'])
-				{
-					$arrCustomAttachments = deserialize($arrForm['confirmationMailAttachments'], true);
-
-					if (!empty($arrCustomAttachments))
-					{
-						foreach ($arrCustomAttachments as $varFile)
-						{
-							$objFileModel = \FilesModel::findById($varFile);
-
-							if ($objFileModel !== null)
-							{
-								$objFile = new \File($objFileModel->path);
-								if ($objFile->size)
-								{
-									$objMailProperties->attachments[TL_ROOT .'/' . $objFile->path] = array
-									(
-										'file' => TL_ROOT . '/' . $objFile->path,
-										'name' => $objFile->basename,
-										'mime' => $objFile->mime);
-								}
-							}
-						}
-					}
-				}
-			}
-
-			$objMailProperties->subject = \StringUtil::decodeEntities($arrForm['confirmationMailSubject']);
-			$objMailProperties->messageText = \StringUtil::decodeEntities($arrForm['confirmationMailText']);
-			$objMailProperties->messageHtmlTmpl = $arrForm['confirmationMailTemplate'];
-
-			// Replace Insert tags and conditional tags
-			$objMailProperties = $this->Formdata->prepareMailData($objMailProperties, $arrSubmitted, $arrFiles, $arrForm, $arrFormFields);
-//$this->log("PBD formdataProcessor 1 vor SendMail", __METHOD__, 'ERROR');
-			// Send Mail
-			$blnConfirmationSent = false;
-
-			if (!empty($objMailProperties->recipients))
-			{
-//$this->log("PBD formdataProcessor 1 vor new Email", __METHOD__, 'ERROR');
+            if (!empty($objMailProperties->recipients)) {
+                //$this->log("PBD formdataProcessor 1 vor new Email", __METHOD__, 'ERROR');
         if (SENDMAILCOMMAND) {   // PBD aus config.php
           // PBD z.B. zum setzen des -t flags
           $this->myMailer->getTransport()->setCommand(SENDMAILCOMMAND);
-          $this->log('efg_co4 formdataProcessor  SENDMAILCOMMAND SwiftMailer transport gesetzt => ' . SENDMAILCOMMAND , __METHOD__, 'TL_CONFIGURATION');    // PBD
+            $this->log('efg_co4 formdataProcessor  SENDMAILCOMMAND SwiftMailer transport gesetzt => '.SENDMAILCOMMAND, __METHOD__, 'TL_CONFIGURATION');    // PBD
         }
-				$objMail = new \Email($myMailer);
+                $objMail = new \Email($myMailer);
 
-				$objMail->from = $objMailProperties->sender;
+                $objMail->from = $objMailProperties->sender;
 
-				if (!empty($objMailProperties->senderName))
-				{
-					$objMail->fromName = $objMailProperties->senderName;
-				}
+                if (!empty($objMailProperties->senderName)) {
+                    $objMail->fromName = $objMailProperties->senderName;
+                }
 
-				if (!empty($objMailProperties->replyTo))
-				{
-					$objMail->replyTo($objMailProperties->replyTo);
-				}
+                if (!empty($objMailProperties->replyTo)) {
+                    $objMail->replyTo($objMailProperties->replyTo);
+                }
 
-				$objMail->subject = $objMailProperties->subject;
+                $objMail->subject = $objMailProperties->subject;
 
-				if (!empty($objMailProperties->attachments))
-				{
-					foreach ($objMailProperties->attachments as $strFile => $varParams)
-					{
-						$strContent = file_get_contents($varParams['file'], false);
-						$objMail->attachFileFromString($strContent, $varParams['name'], $varParams['mime']);
-					}
-				}
+                if (!empty($objMailProperties->attachments)) {
+                    foreach ($objMailProperties->attachments as $strFile => $varParams) {
+                        $strContent = file_get_contents($varParams['file'], false);
+                        $objMail->attachFileFromString($strContent, $varParams['name'], $varParams['mime']);
+                    }
+                }
 
-				if (!empty($objMailProperties->messageText))
-				{
-					$objMail->text = $objMailProperties->messageText;
-				}
+                if (!empty($objMailProperties->messageText)) {
+                    $objMail->text = $objMailProperties->messageText;
+                }
 
-				if (!empty($objMailProperties->messageHtml))
-				{
-					$objMail->html = $objMailProperties->messageHtml;
-				}
+                if (!empty($objMailProperties->messageHtml)) {
+                    $objMail->html = $objMailProperties->messageHtml;
+                }
 
-				foreach ($objMailProperties->recipients as $recipient)
-				{
-					$objMail->sendTo($recipient);
-					$blnConfirmationSent = true;
-				}
-			}
+                foreach ($objMailProperties->recipients as $recipient) {
+                    $objMail->sendTo($recipient);
+                    $blnConfirmationSent = true;
+                }
+            }
 
-			if ($blnConfirmationSent && isset($intNewId) && intval($intNewId) > 0)
-			{
-				$arrUpd = array('confirmationSent' => '1', 'confirmationDate' => $timeNow);
-				$res = \Database::getInstance()->prepare("UPDATE tl_formdata %s WHERE id=?")
-					->set($arrUpd)
-					->execute($intNewId);
-			}
+            if ($blnConfirmationSent && isset($intNewId) && (int) $intNewId > 0) {
+                $arrUpd = ['confirmationSent' => '1', 'confirmationDate' => $timeNow];
+                $res = \Database::getInstance()->prepare('UPDATE tl_formdata %s WHERE id=?')
+                    ->set($arrUpd)
+                    ->execute($intNewId)
+                ;
+            }
+        }
 
-		}
+        // Information (formatted) Mail
+        if ($blnFEedit && !$arrForm['sendFormattedMailOnFrontendEditing']) {
+            $arrForm['sendFormattedMail'] = false;
+        }
 
-		// Information (formatted) Mail
-		if ($blnFEedit && !$arrForm['sendFormattedMailOnFrontendEditing'])
-		{
-			$arrForm['sendFormattedMail'] = false;
-		}
+        if ($arrForm['sendFormattedMail']) {
+            $objMailProperties = new \stdClass();
+            $objMailProperties->subject = '';
+            $objMailProperties->sender = '';
+            $objMailProperties->senderName = '';
+            $objMailProperties->replyTo = '';
+            $objMailProperties->recipients = [];
+            $objMailProperties->messageText = '';
+            $objMailProperties->messageHtmlTmpl = '';
+            $objMailProperties->messageHtml = '';
+            $objMailProperties->attachments = [];
+            $objMailProperties->skipEmptyFields = false;
 
-		if ($arrForm['sendFormattedMail'])
-		{
-			$objMailProperties = new \stdClass();
-			$objMailProperties->subject = '';
-			$objMailProperties->sender = '';
-			$objMailProperties->senderName = '';
-			$objMailProperties->replyTo = '';
-			$objMailProperties->recipients = array();
-			$objMailProperties->messageText = '';
-			$objMailProperties->messageHtmlTmpl = '';
-			$objMailProperties->messageHtml = '';
-			$objMailProperties->attachments = array();
-			$objMailProperties->skipEmptyFields = false;
+            $objMailProperties->skipEmptyFields = ($arrForm['formattedMailSkipEmpty']) ? true : false;
 
-			$objMailProperties->skipEmptyFields = ($arrForm['formattedMailSkipEmpty']) ? true : false;
+            // Set the admin e-mail as "from" address
+            $objMailProperties->sender = $GLOBALS['TL_ADMIN_EMAIL'];
+            $objMailProperties->senderName = $GLOBALS['TL_ADMIN_NAME'];
 
-			// Set the admin e-mail as "from" address
-			$objMailProperties->sender = $GLOBALS['TL_ADMIN_EMAIL'];
-			$objMailProperties->senderName = $GLOBALS['TL_ADMIN_NAME'];
+            // Get 'reply to' address, if form contains field named 'email'
+            if (isset($arrSubmitted['email']) && !empty($arrSubmitted['email']) && !\is_bool(strpos($arrSubmitted['email'], '@'))) {
+                $replyTo = $arrSubmitted['email'];
+                // add name
+                if (isset($arrSubmitted['name']) && !empty($arrSubmitted['name'])) {
+                    $replyTo = '"'.$arrSubmitted['name'].'" <'.$arrSubmitted['email'].'>';
+                }
+                $objMailProperties->replyTo = $replyTo;
+            }
 
-			// Get 'reply to' address, if form contains field named 'email'
-			if (isset($arrSubmitted['email']) && !empty($arrSubmitted['email']) && !is_bool(strpos($arrSubmitted['email'], '@')))
-			{
-				$replyTo = $arrSubmitted['email'];
-				// add name
-				if (isset($arrSubmitted['name']) && !empty($arrSubmitted['name']))
-				{
-					$replyTo = '"'. $arrSubmitted['name'] .'" <' . $arrSubmitted['email'] . '>';
-				}
-				$objMailProperties->replyTo = $replyTo;
-			}
+            // Set recipient(s)
+            $varRecipient = $arrForm['formattedMailRecipient'];
+            if (\is_array($varRecipient)) {
+                $arrRecipient = $varRecipient;
+            } else {
+                $arrRecipient = trimsplit(',', $varRecipient);
+            }
+            $arrRecipient = array_filter(array_unique($arrRecipient));
 
-			// Set recipient(s)
-			$varRecipient = $arrForm['formattedMailRecipient'];
-			if (is_array($varRecipient))
-			{
-				$arrRecipient = $varRecipient;
-			}
-			else
-			{
-				$arrRecipient = trimsplit(',', $varRecipient);
-			}
-			$arrRecipient = array_filter(array_unique($arrRecipient));
+            if (!empty($arrRecipient)) {
+                foreach ($arrRecipient as $kR => $recipient) {
+                    [$recipientName, $recipient] = \StringUtil::splitFriendlyEmail($this->replaceInsertTags($recipient, false));
+                    $arrRecipient[$kR] = (\strlen($recipientName) ? $recipientName.' <'.$recipient.'>' : $recipient);
+                }
+            }
+            $objMailProperties->recipients = $arrRecipient;
 
-			if (!empty($arrRecipient))
-			{
-				foreach ($arrRecipient as $kR => $recipient)
-				{
-					list($recipientName, $recipient) = \StringUtil::splitFriendlyEmail($this->replaceInsertTags($recipient, false));
-					$arrRecipient[$kR] = (strlen($recipientName) ? $recipientName . ' <' . $recipient . '>' : $recipient);
-				}
-			}
-			$objMailProperties->recipients = $arrRecipient;
+            // Check if we want custom attachments... (Thanks to Torben Schwellnus)
+            if ($arrForm['addFormattedMailAttachments']) {
+                if ($arrForm['formattedMailAttachments']) {
+                    $arrCustomAttachments = deserialize($arrForm['formattedMailAttachments'], true);
 
-			// Check if we want custom attachments... (Thanks to Torben Schwellnus)
-			if ($arrForm['addFormattedMailAttachments'])
-			{
-				if ($arrForm['formattedMailAttachments'])
-				{
-					$arrCustomAttachments = deserialize($arrForm['formattedMailAttachments'], true);
+                    if (\is_array($arrCustomAttachments)) {
+                        foreach ($arrCustomAttachments as $varFile) {
+                            $objFileModel = \FilesModel::findById($varFile);
 
-					if (is_array($arrCustomAttachments))
-					{
-						foreach ($arrCustomAttachments as $varFile)
-						{
-							$objFileModel = \FilesModel::findById($varFile);
+                            if (null !== $objFileModel) {
+                                $objFile = new \File($objFileModel->path);
+                                if ($objFile->size) {
+                                    $objMailProperties->attachments[TL_ROOT.'/'.$objFile->path] = [
+                                        'file' => TL_ROOT.'/'.$objFile->path,
+                                        'name' => $objFile->basename,
+                                        'mime' => $objFile->mime,
+                                    ];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
-							if ($objFileModel !== null)
-							{
-								$objFile = new \File($objFileModel->path);
-								if ($objFile->size)
-								{
-									$objMailProperties->attachments[TL_ROOT . '/' . $objFile->path] = array
-									(
-										'file' => TL_ROOT . '/' . $objFile->path,
-										'name' => $objFile->basename,
-										'mime' => $objFile->mime
-									);
-								}
-							}
-						}
-					}
-				}
-			}
+            $objMailProperties->subject = \StringUtil::decodeEntities($arrForm['formattedMailSubject']);
+            $objMailProperties->messageText = \StringUtil::decodeEntities($arrForm['formattedMailText']);
+            $objMailProperties->messageHtmlTmpl = $arrForm['formattedMailTemplate'];
 
-			$objMailProperties->subject = \StringUtil::decodeEntities($arrForm['formattedMailSubject']);
-			$objMailProperties->messageText = \StringUtil::decodeEntities($arrForm['formattedMailText']);
-			$objMailProperties->messageHtmlTmpl = $arrForm['formattedMailTemplate'];
+            // Replace Insert tags and conditional tags
+            $objMailProperties = $this->Formdata->prepareMailData($objMailProperties, $arrSubmitted, $arrFiles, $arrForm, $arrFormFields);
+            //$this->log("PBD formdataProcessor 2 vor SendMail", __METHOD__, 'ERROR');
 
-			// Replace Insert tags and conditional tags
-			$objMailProperties = $this->Formdata->prepareMailData($objMailProperties, $arrSubmitted, $arrFiles, $arrForm, $arrFormFields);
-//$this->log("PBD formdataProcessor 2 vor SendMail", __METHOD__, 'ERROR');
+            // Send Mail
+            $blnInformationSent = false;
 
-			// Send Mail
-			$blnInformationSent = false;
-
-			if (!empty($objMailProperties->recipients))
-			{
-//$this->log("PBD formdataProcessor 2 vor new Email", __METHOD__, 'ERROR');
+            if (!empty($objMailProperties->recipients)) {
+                //$this->log("PBD formdataProcessor 2 vor new Email", __METHOD__, 'ERROR');
         if (SENDMAILCOMMAND) {   // PBD aus config.php
           // PBD z.B. zum setzen des -t flags
           $this->myMailer->getTransport()->setCommand(SENDMAILCOMMAND);
-          $this->log('efg_co4 formdataProcessor  SENDMAILCOMMAND SwiftMailer transport gesetzt => ' . SENDMAILCOMMAND , __METHOD__, 'TL_CONFIGURATION');    // PBD
+            $this->log('efg_co4 formdataProcessor  SENDMAILCOMMAND SwiftMailer transport gesetzt => '.SENDMAILCOMMAND, __METHOD__, 'TL_CONFIGURATION');    // PBD
         }
 
-				$objMail = new \Email($myMailer);
-				$objMail->from = $objMailProperties->sender;
-				if (!empty($objMailProperties->senderName))
-				{
-					$objMail->fromName = $objMailProperties->senderName;
-				}
+                $objMail = new \Email($myMailer);
+                $objMail->from = $objMailProperties->sender;
+                if (!empty($objMailProperties->senderName)) {
+                    $objMail->fromName = $objMailProperties->senderName;
+                }
 
-				if (!empty($objMailProperties->replyTo))
-				{
-					$objMail->replyTo($objMailProperties->replyTo);
-				}
+                if (!empty($objMailProperties->replyTo)) {
+                    $objMail->replyTo($objMailProperties->replyTo);
+                }
 
-				$objMail->subject = $objMailProperties->subject;
+                $objMail->subject = $objMailProperties->subject;
 
-				if (!empty($objMailProperties->attachments))
-				{
-					foreach ($objMailProperties->attachments as $strFile => $varParams)
-					{
-						$strContent = file_get_contents($varParams['file'], false);
-						$objMail->attachFileFromString($strContent, $varParams['name'], $varParams['mime']);
-					}
-				}
+                if (!empty($objMailProperties->attachments)) {
+                    foreach ($objMailProperties->attachments as $strFile => $varParams) {
+                        $strContent = file_get_contents($varParams['file'], false);
+                        $objMail->attachFileFromString($strContent, $varParams['name'], $varParams['mime']);
+                    }
+                }
 
-				if (!empty($objMailProperties->messageText))
-				{
-					$objMail->text = $objMailProperties->messageText;
-				}
+                if (!empty($objMailProperties->messageText)) {
+                    $objMail->text = $objMailProperties->messageText;
+                }
 
-				if (!empty($objMailProperties->messageHtml))
-				{
-					$objMail->html = $objMailProperties->messageHtml;
-				}
+                if (!empty($objMailProperties->messageHtml)) {
+                    $objMail->html = $objMailProperties->messageHtml;
+                }
 
-				foreach ($objMailProperties->recipients as $recipient)
-				{
-//$this->log("PBD formdataProcessor 2 vor sendTo", __METHOD__, 'ERROR');
-					$objMail->sendTo($recipient);
-//$this->log("PBD formdataProcessor 2 nach sendTo", __METHOD__, 'ERROR');
-					$blnInformationSent = true;
-				}
-			}
+                foreach ($objMailProperties->recipients as $recipient) {
+                    //$this->log("PBD formdataProcessor 2 vor sendTo", __METHOD__, 'ERROR');
+                    $objMail->sendTo($recipient);
+                    //$this->log("PBD formdataProcessor 2 nach sendTo", __METHOD__, 'ERROR');
+                    $blnInformationSent = true;
+                }
+            }
+        }
 
-		}
+        // Redirect after frontend editing
+        if ($blnFEedit) {
+            if (!empty($strRedirectTo)) {
+                $strRed = preg_replace(['/\/'.$this->strFormdataDetailsKey.'\/'.\Input::get($this->strFormdataDetailsKey).'/i', '/'.$this->strFormdataDetailsKey.'='.\Input::get($this->strFormdataDetailsKey).'/i', '/act=edit/i'], ['', '', ''], $strUrl).(!empty($strUrlParams) ? '?'.$strUrlParams : '');
+                \Controller::redirect($strRed);
+            }
+        }
+    }
 
-		// Redirect after frontend editing
-		if ($blnFEedit)
-		{
-			if (!empty($strRedirectTo))
-			{
-				$strRed = preg_replace(array('/\/' . $this->strFormdataDetailsKey . '\/' . \Input::get($this->strFormdataDetailsKey) . '/i', '/' . $this->strFormdataDetailsKey . '=' . \Input::get($this->strFormdataDetailsKey) . '/i', '/act=edit/i'), array('','',''), $strUrl) . (!empty($strUrlParams) ? '?'.$strUrlParams : '');
-				\Controller::redirect($strRed);
-			}
-		}
+    /*
+     * Callback function to display submitted data on confirmation page
+     */
+    public function processConfirmationContent($strContent)
+    {
+        $arrSubmitted = $_SESSION['EFP']['FORMDATA'];
 
-	}
+        // fix: after submission of normal single page form array $_SESSION['EFP']['FORMDATA'] is empty
+        if (null === $arrSubmitted || (1 === \count($arrSubmitted) && array_keys($arrSubmitted) === ['_formId_'])) {
+            $arrSubmitted = $_SESSION['FORM_DATA'];
+            $arrSubmitted['_formId_'] = $_SESSION['EFP']['FORMDATA'];
+        }
 
-	/*
-	 * Callback function to display submitted data on confirmation page
-	 */
-	public function processConfirmationContent($strContent)
-	{
-		$arrSubmitted = $_SESSION['EFP']['FORMDATA'];
+        $blnProcess = false;
+        if (preg_match('/\{\{form::/si', $strContent)) {
+            $blnProcess = true;
+        }
 
-		// fix: after submission of normal single page form array $_SESSION['EFP']['FORMDATA'] is empty
-		if (null === $arrSubmitted || (count($arrSubmitted) == 1 && array_keys($arrSubmitted) === array('_formId_')))
-		{
-			$arrSubmitted = $_SESSION['FORM_DATA'];
-			$arrSubmitted['_formId_'] = $_SESSION['EFP']['FORMDATA'];
-		}
+        if (!empty($arrSubmitted) && isset($arrSubmitted['_formId_']) && $blnProcess) {
+            $blnSkipEmptyFields = false;
 
-		$blnProcess = false;
-		if (preg_match('/\{\{form::/si', $strContent))
-		{
-			$blnProcess = true;
-		}
+            $objSkip = \Database::getInstance()->prepare('SELECT confirmationMailSkipEmpty FROM tl_form WHERE id=?')->execute($arrSubmitted['_formId_']);
+            if (1 === $objSkip->confirmationMailSkipEmpty) {
+                $blnSkipEmptyFields = true;
+            }
 
-		if (!empty($arrSubmitted) && isset($arrSubmitted['_formId_']) && $blnProcess)
-		{
-			$blnSkipEmptyFields = false;
+            $this->import('Formdata');
+            $this->log('PBD FormdataProcessor d) bearbeite FORM id:  '.$arrForm['id'].' title: '.$arrForm['title'], __METHOD__, TL_GENERAL);
 
-			$objSkip = \Database::getInstance()->prepare("SELECT confirmationMailSkipEmpty FROM tl_form WHERE id=?")->execute($arrSubmitted['_formId_']);
-			if ($objSkip->confirmationMailSkipEmpty == 1)
-			{
-				$blnSkipEmptyFields = true;
-			}
+            $arrFormFields = $this->Formdata->getFormfieldsAsArray((int) ($arrSubmitted['_formId_']));
 
-			$this->import('Formdata');
-$this->log("PBD FormdataProcessor d) bearbeite FORM id:  " . $arrForm['id'] . " title: " . $arrForm['title'], __METHOD__, TL_GENERAL);
+            preg_match('/<body[^>]*?>.*?<\/body>/si', $strContent, $arrMatch);
 
-			$arrFormFields = $this->Formdata->getFormfieldsAsArray(intval($arrSubmitted['_formId_']));
+            if (!empty($arrMatch)) {
+                for ($m = 0; $m < \count($arrMatch); ++$m) {
+                    $strTemp = $arrMatch[$m];
+                    $strTemp = preg_replace(['/\{\{/', '/\}\}/'], ['__BRCL__', '__BRCR__'], $strTemp);
+                    $blnEval = $this->Formdata->replaceConditionTags($strTemp);
 
-			preg_match('/<body[^>]*?>.*?<\/body>/si', $strContent, $arrMatch);
+                    // Replace tags
+                    $tags = [];
+                    preg_match_all('/__BRCL__.*?__BRCR__/si', $strTemp, $tags);
 
-			if (!empty($arrMatch))
-			{
+                    // Replace tags of type {{form::<form field name>}}
+                    // .. {{form::fieldname?label=Label for this field: }}
+                    foreach ($tags[0] as $tag) {
+                        $elements = explode('::', preg_replace(['/^__BRCL__/i', '/__BRCR__$/i'], ['', ''], $tag));
+                        switch (strtolower($elements[0])) {
+                            // Form
+                            case 'form':
+                                $strKey = $elements[1];
+                                $arrKey = explode('?', $strKey);
+                                $strKey = $arrKey[0];
 
-				for ($m = 0; $m < count($arrMatch); $m++)
-				{
-					$strTemp = $arrMatch[$m];
-					$strTemp = preg_replace(array('/\{\{/', '/\}\}/'), array('__BRCL__', '__BRCR__'), $strTemp);
-					$blnEval = $this->Formdata->replaceConditionTags($strTemp);
+                                $arrTagParams = null;
+                                if (isset($arrKey[1]) && \strlen($arrKey[1])) {
+                                    $arrTagParams = $this->Formdata->parseInsertTagParams($tag);
+                                }
 
-					// Replace tags
-					$tags = array();
-					preg_match_all('/__BRCL__.*?__BRCR__/si', $strTemp, $tags);
+                                $arrField = $arrFormFields[$strKey];
 
-					// Replace tags of type {{form::<form field name>}}
-					// .. {{form::fieldname?label=Label for this field: }}
-					foreach ($tags[0] as $tag)
-					{
-						$elements = explode('::', preg_replace(array('/^__BRCL__/i', '/__BRCR__$/i'), array('',''), $tag));
-						switch (strtolower($elements[0]))
-						{
-							// Form
-							case 'form':
-								$strKey = $elements[1];
-								$arrKey = explode('?', $strKey);
-								$strKey = $arrKey[0];
+                                $strLabel = '';
+                                $strVal = '';
+                                if ($arrTagParams && \strlen($arrTagParams['label'])) {
+                                    $strLabel = $arrTagParams['label'];
+                                }
 
-								$arrTagParams = null;
-								if (isset($arrKey[1]) && strlen($arrKey[1]))
-								{
-									$arrTagParams = $this->Formdata->parseInsertTagParams($tag);
-								}
+                                $strVal = $arrSubmitted[$strKey];
+                                if (\is_array($strVal)) {
+                                    $strVal = implode(', ', $strVal);
+                                }
 
-								$arrField = $arrFormFields[$strKey];
+                                if (\strlen($strVal)) {
+                                    $strVal = nl2br($strVal);
+                                }
 
-								$strLabel = '';
-								$strVal = '';
-								if ($arrTagParams && strlen($arrTagParams['label']))
-								{
-									$strLabel = $arrTagParams['label'];
-								}
+                                if ($arrTagParams['attachment']) {
+                                    $strVal = '';
+                                }
 
-								$strVal = $arrSubmitted[$strKey];
-								if (is_array($strVal))
-								{
-									$strVal = implode(', ', $strVal);
-								}
+                                if (!\strlen($strVal) && $blnSkipEmptyFields) {
+                                    $strLabel = '';
+                                }
 
-								if (strlen($strVal))
-								{
-									$strVal = nl2br($strVal);
-								}
+                                $strTemp = str_replace($tag, $strLabel.$strVal, $strTemp);
+                                break;
+                        }
+                    }
 
-								if ($arrTagParams['attachment'])
-								{
-									$strVal = '';
-								}
+                    $strTemp = preg_replace(['/__BRCL__/', '/__BRCR__/'], ['{{', '}}'], $strTemp);
 
-								if (!strlen($strVal) && $blnSkipEmptyFields)
-								{
-									$strLabel = '';
-								}
+                    // Eval the code
+                    if ($blnEval) {
+                        $strTemp = $this->Formdata->evalConditionTags($strTemp);
+                    }
 
-								$strTemp = str_replace($tag, $strLabel . $strVal, $strTemp);
-								break;
-						}
-					}
+                    $strContent = str_replace($arrMatch[$m], $strTemp, $strContent);
+                }
+            }
+        }
 
-					$strTemp = preg_replace(array('/__BRCL__/', '/__BRCR__/'), array('{{', '}}'), $strTemp);
-
-					// Eval the code
-					if ($blnEval)
-					{
-						$strTemp = $this->Formdata->evalConditionTags($strTemp);
-					}
-
-					$strContent = str_replace($arrMatch[$m], $strTemp, $strContent);
-
-				}
-			}
-
-		}
-
-		return $strContent;
-
-	}
-
+        return $strContent;
+    }
 }

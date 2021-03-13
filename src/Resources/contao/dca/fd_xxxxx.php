@@ -28,10 +28,10 @@ declare(strict_types=1);
  */
 
 // This file is created when saving a form in form generator
-// last created on 2021-02-15 13:58:29 by saving form "MyTESTFORMULAR"
+// last created on 2021-03-11 16:15:04 by saving form "xxxxx"
 
 /*
- * Table tl_formdata defined by form "MyTESTFORMULAR"
+ * Table tl_formdata defined by form "xxxxx"
  */
 $GLOBALS['TL_DCA']['tl_formdata'] = [
     // Config
@@ -54,15 +54,13 @@ $GLOBALS['TL_DCA']['tl_formdata'] = [
             'panelLayout' => 'filter;search,sort,limit',
         ],
         'label' => [
-            'fields' => ['date', 'form', 'alias', 'be_notes', 'MYNAME', 'MYWERT'],
+            'fields' => ['date', 'form', 'alias', 'be_notes'],
             'format' => '<div class="fd_wrap">
 	<div class="fd_head">%s<span>[%s]</span><span>%s</span></div>
 		<div class="fd_notes">%s</div>
-	<div class="fd_row field_MYNAME"><div class="fd_label">MyName: </div><div class="fd_value">%s </div></div>
-	<div class="fd_row field_MYWERT"><div class="fd_label">MyWert: </div><div class="fd_value">%s </div></div>
 		</div>',
             /*
-            'label_callback'          => array('tl_fd_aliasmytestformular','getRowLabel')
+            'label_callback'          => array('tl_fd_xxxxx','getRowLabel')
             */
         ],
         'global_operations' => [
@@ -113,7 +111,7 @@ $GLOBALS['TL_DCA']['tl_formdata'] = [
     ],
     // Palettes
     'palettes' => [
-        'default' => 'form,alias,date,ip,published,sorting;{confirmation_legend},confirmationSent,confirmationDate;{fdNotes_legend:hide},be_notes;{fdOwner_legend:hide},fd_member,fd_user,fd_member_group,fd_user_group;{fdDetails_legend},MYNAME,MYWERT',
+        'default' => 'form,alias,date,ip,published,sorting;{confirmation_legend},confirmationSent,confirmationDate;{fdNotes_legend:hide},be_notes;{fdOwner_legend:hide},fd_member,fd_user,fd_member_group,fd_user_group;{fdDetails_legend},',
     ],
 
     // Base fields in table tl_formdata
@@ -231,36 +229,16 @@ $GLOBALS['TL_DCA']['tl_formdata'] = [
     ],
     'tl_formdata' => [
         'baseFields' => ['id', 'sorting', 'tstamp', 'form', 'ip', 'date', 'fd_member', 'fd_user', 'fd_member_group', 'fd_user_group', 'published', 'alias', 'be_notes', 'confirmationSent', 'confirmationDate'],
-        'detailFields' => ['MYNAME', 'MYWERT'],
+        'detailFields' => [],
         'formFilterKey' => 'form',
-        'formFilterValue' => 'MyTESTFORMULAR',
+        'formFilterValue' => 'xxxxx',
     ],
 ];
 
 // Detail fields in table tl_formdata_details
-// 'MYNAME'
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['MYNAME']['label'] = ['MyName', '[MYNAME] MyName'];
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['MYNAME']['inputType'] = 'text';
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['MYNAME']['formfieldType'] = 'text';
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['MYNAME']['exclude'] = false;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['MYNAME']['search'] = true;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['MYNAME']['sorting'] = true;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['MYNAME']['filter'] = false;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['MYNAME']['ff_id'] = 7;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['MYNAME']['f_id'] = 9;
-// 'MYWERT'
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['MYWERT']['label'] = ['MyWert', '[MYWERT] MyWert'];
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['MYWERT']['inputType'] = 'text';
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['MYWERT']['formfieldType'] = 'text';
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['MYWERT']['exclude'] = false;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['MYWERT']['search'] = true;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['MYWERT']['sorting'] = true;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['MYWERT']['filter'] = false;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['MYWERT']['ff_id'] = 8;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['MYWERT']['f_id'] = 9;
 
 /*
- * Class tl_fd_aliasmytestformular
+ * Class tl_fd_xxxxx
  *
  * Provide miscellaneous methods that are used by the data configuration array.
  *
@@ -272,8 +250,8 @@ $GLOBALS['TL_DCA']['tl_formdata']['fields']['MYWERT']['f_id'] = 9;
  * erweitert fuer contao 4
  * PBD verhinderung der doppeldefinition der class bei delete eines Eintrags aus der Tabelle
  */
-if (!class_exists('tl_fd_aliasmytestformular', false)) {
-    class fd_aliasmytestformular extends \Backend
+if (!class_exists('tl_fd_xxxxx', false)) {
+    class fd_xxxxx extends \Backend
     {
         /**
          * Database result.
@@ -301,18 +279,6 @@ if (!class_exists('tl_fd_aliasmytestformular', false)) {
             $strRowLabel .= '<div class="fd_head">'.date($GLOBALS['TL_CONFIG']['datimFormat'], $arrRow['date']).'<span>['.$arrRow['form'].']</span><span>'.$arrRow['alias'].'</span></div>';
             $strRowLabel .= '<div class="fd_notes">'.$arrRow['be_notes'].'</div>';
             $strRowLabel .= '<div class="mark_links">';
-            if (\strlen($arrRow['MYNAME'])) {
-                $strRowLabel .= '<div class="fd_row field_MYNAME">';
-                $strRowLabel .= '<div class="fd_label">'.$GLOBALS['TL_DCA']['tl_formdata']['fields']['MYNAME']['label'][0].': </div>';
-                $strRowLabel .= '<div class="fd_value">'.$arrRow['MYNAME'].' </div>';
-                $strRowLabel .= '</div>';
-            }
-            if (\strlen($arrRow['MYWERT'])) {
-                $strRowLabel .= '<div class="fd_row field_MYWERT">';
-                $strRowLabel .= '<div class="fd_label">'.$GLOBALS['TL_DCA']['tl_formdata']['fields']['MYWERT']['label'][0].': </div>';
-                $strRowLabel .= '<div class="fd_value">'.$arrRow['MYWERT'].' </div>';
-                $strRowLabel .= '</div>';
-            }
             $strRowLabel .= '</div></div>';
 
             return $strRowLabel;

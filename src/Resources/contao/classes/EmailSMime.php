@@ -1,23 +1,51 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ *
+ *  Contao Open Source CMS
+ *
+ *  Copyright (c) 2005-2014 Leo Feyer
+ *
+ *  @package   Efg
+ *  @author    Thomas Kuhn <mail@th-kuhn.de>
+ *  @license   http://www.gnu.org/licenses/lgpl-3.0.html LGPL
+ *  @copyright Thomas Kuhn 2007-2014
+ *
+ *
+ *  Porting EFG to Contao 4
+ *  Based on EFG Contao 3 from Thomas Kuhn
+ *
+ *  @package   contao-efg-bundle
+ *  @author    Peter Broghammer <mail@pb-contao@gmx.de>
+ *  @license   http://www.gnu.org/licenses/lgpl-3.0.html LGPL
+ *  @copyright Peter Broghammer 2021-
+ *
+ *  Thomas Kuhn's Efg package has been completely converted to contao 4.9
+ *  extended by insert_tag  {{efg_insert::formalias::aliasvalue::column(::format)}}
+ *
+ */
+
 namespace PBDKN\Efgco4\Resources\contao\classes;
 
 /**
- * Class EmailSMime
- * @package Efg
+ * Class EmailSMime.
+ *
  * @version 1.0
+ *
  * @copyright 1601.communication gmbh <lb@1601.com>
  * @ToDo: Sign messages
  */
 class EmailSMime extends \Contao\Email
 {
-    protected $SwiftSigner = null;
+    protected $SwiftSigner;
 
-    protected $privateCertificate = null;
+    protected $privateCertificate;
 
-    protected $publicCertificate = null;
+    protected $publicCertificate;
 
-    protected $certPassphrase = null;
+    protected $certPassphrase;
 
     public function __construct(\Swift_Mailer $objMailer = null)
     {
@@ -28,7 +56,7 @@ class EmailSMime extends \Contao\Email
 
     public function setPrivateCertPath(string $privPath)
     {
-        if(!file_exists($privPath)) {
+        if (!file_exists($privPath)) {
             return false;
         }
 
@@ -39,7 +67,7 @@ class EmailSMime extends \Contao\Email
 
     public function setPublicCertPath(string $pubPath)
     {
-        if(!file_exists($pubPath)) {
+        if (!file_exists($pubPath)) {
             return false;
         }
 
@@ -59,8 +87,7 @@ class EmailSMime extends \Contao\Email
     {
         $arrRecipients = $this->compileRecipients(\func_get_args());
 
-        if (empty($arrRecipients))
-        {
+        if (empty($arrRecipients)) {
             return false;
         }
 
@@ -68,36 +95,30 @@ class EmailSMime extends \Contao\Email
         $this->objMessage->setCharset($this->strCharset);
 
         // Default subject
-        if ($this->strSubject == '')
-        {
+        if ('' === $this->strSubject) {
             $this->strSubject = 'No subject';
         }
 
         $this->objMessage->setSubject($this->strSubject);
 
         // HTML e-mail
-        if ($this->strHtml != '')
-        {
+        if ('' !== $this->strHtml) {
             // Embed images
-            if ($this->blnEmbedImages)
-            {
-                if ($this->strImageDir == '')
-                {
-                    $this->strImageDir = TL_ROOT . '/';
+            if ($this->blnEmbedImages) {
+                if ('' === $this->strImageDir) {
+                    $this->strImageDir = TL_ROOT.'/';
                 }
 
-                $arrCid = array();
-                $arrMatches = array();
+                $arrCid = [];
+                $arrMatches = [];
                 $strBase = \Environment::get('base');
 
                 // Thanks to @ofriedrich and @aschempp (see #4562)
                 preg_match_all('/<[a-z][a-z0-9]*\b[^>]*((src=|background=|url\()["\']??)(.+\.(jpe?g|png|gif|bmp|tiff?|swf))(["\' ]??(\)??))[^>]*>/Ui', $this->strHtml, $arrMatches);
 
                 // Check for internal images
-                if (!empty($arrMatches) && isset($arrMatches[0]))
-                {
-                    for ($i=0, $c=\count($arrMatches[0]); $i<$c; $i++)
-                    {
+                if (!empty($arrMatches) && isset($arrMatches[0])) {
+                    for ($i = 0, $c = \count($arrMatches[0]); $i < $c; ++$i) {
                         $url = $arrMatches[3][$i];
 
                         // Try to remove the base URL
@@ -105,14 +126,12 @@ class EmailSMime extends \Contao\Email
                         $src = rawurldecode($src); // see #3713
 
                         // Embed the image if the URL is now relative
-                        if (!preg_match('@^https?://@', $src) && file_exists($this->strImageDir . $src))
-                        {
-                            if (!isset($arrCid[$src]))
-                            {
-                                $arrCid[$src] = $this->objMessage->embed(\Swift_EmbeddedFile::fromPath($this->strImageDir . $src));
+                        if (!preg_match('@^https?://@', $src) && file_exists($this->strImageDir.$src)) {
+                            if (!isset($arrCid[$src])) {
+                                $arrCid[$src] = $this->objMessage->embed(\Swift_EmbeddedFile::fromPath($this->strImageDir.$src));
                             }
 
-                            $this->strHtml = str_replace($arrMatches[1][$i] . $arrMatches[3][$i] . $arrMatches[5][$i], $arrMatches[1][$i] . $arrCid[$src] . $arrMatches[5][$i], $this->strHtml);
+                            $this->strHtml = str_replace($arrMatches[1][$i].$arrMatches[3][$i].$arrMatches[5][$i], $arrMatches[1][$i].$arrCid[$src].$arrMatches[5][$i], $this->strHtml);
                         }
                     }
                 }
@@ -122,38 +141,30 @@ class EmailSMime extends \Contao\Email
         }
 
         // Text content
-        if ($this->strText != '')
-        {
-            if ($this->strHtml != '')
-            {
+        if ('' !== $this->strText) {
+            if ('' !== $this->strHtml) {
                 $this->objMessage->addPart($this->strText, 'text/plain');
-            }
-            else
-            {
+            } else {
                 $this->objMessage->setBody($this->strText, 'text/plain');
             }
         }
 
         // Add the administrator e-mail as default sender
-        if ($this->strSender == '')
-        {
-            list($this->strSenderName, $this->strSender) = \StringUtil::splitFriendlyEmail(\Config::get('adminEmail'));
+        if ('' === $this->strSender) {
+            [$this->strSenderName, $this->strSender] = \StringUtil::splitFriendlyEmail(\Config::get('adminEmail'));
         }
 
         // Sender
-        if ($this->strSenderName != '')
-        {
-            $this->objMessage->setFrom(array($this->strSender=>$this->strSenderName));
-        }
-        else
-        {
+        if ('' !== $this->strSenderName) {
+            $this->objMessage->setFrom([$this->strSender => $this->strSenderName]);
+        } else {
             $this->objMessage->setFrom($this->strSender);
         }
 
         // Set the return path (see #5004)
         $this->objMessage->setReturnPath($this->strSender);
 
-        /**
+        /*
          * @ToDo Sign Message
          */
         /*$this->SwiftSigner->setSignCertificate($this->publicCertificate , $this->privateCertificate, $this->certPassphrase);*/
@@ -166,14 +177,12 @@ class EmailSMime extends \Contao\Email
         $intSent = $this->objMailer->send($this->objMessage, $this->arrFailures);
 
         // Log failures
-        if (!empty($this->arrFailures))
-        {
-            \System::log('E-mail address rejected: ' . implode(', ', $this->arrFailures), __METHOD__, $this->strLogFile);
+        if (!empty($this->arrFailures)) {
+            \System::log('E-mail address rejected: '.implode(', ', $this->arrFailures), __METHOD__, $this->strLogFile);
         }
 
         // Return if no e-mails have been sent
-        if ($intSent < 1)
-        {
+        if ($intSent < 1) {
             return false;
         }
 
@@ -181,16 +190,14 @@ class EmailSMime extends \Contao\Email
         $arrBcc = $this->objMessage->getBcc();
 
         // Add a log entry
-        $strMessage = 'An e-mail has been sent to ' . implode(', ', array_keys($this->objMessage->getTo()));
+        $strMessage = 'An e-mail has been sent to '.implode(', ', array_keys($this->objMessage->getTo()));
 
-        if (!empty($arrCc))
-        {
-            $strMessage .= ', CC to ' . implode(', ', array_keys($arrCc));
+        if (!empty($arrCc)) {
+            $strMessage .= ', CC to '.implode(', ', array_keys($arrCc));
         }
 
-        if (!empty($arrBcc))
-        {
-            $strMessage .= ', BCC to ' . implode(', ', array_keys($arrBcc));
+        if (!empty($arrBcc)) {
+            $strMessage .= ', BCC to '.implode(', ', array_keys($arrBcc));
         }
 
         \System::log($strMessage, __METHOD__, $this->strLogFile);
