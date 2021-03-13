@@ -371,7 +371,7 @@ class FormdataBackend extends \Backend
                 $tplDca->arrPalettes = $arrPalettes;
                 // Enable backend confirmation mail
                 $blnBackendMail = false;
-                if ($arrForm['sendConfirmationMail'] || \strlen($arrForm['confirmationMailText'])) {
+                if ($arrForm['sendConfirmationMail'] || (isset($arrForm['confirmationMailText']) && \strlen($arrForm['confirmationMailText']))) {
                     $blnBackendMail = true;
                 }
                 $tplDca->blnBackendMail = $blnBackendMail;

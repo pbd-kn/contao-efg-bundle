@@ -879,6 +879,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
     public function delete($blnDoNotRedirect = false): void
     {
         //$this->log("PBD DC_Formdata call delete  ", __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "do '".\Input::get('do')."'");
 
         if ($GLOBALS['TL_DCA'][$this->strTable]['config']['notDeletable']) {
             $this->log('Table "'.$this->strTable.'" is not deletable', __METHOD__, TL_ERROR);
@@ -901,6 +902,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
             \Controller::redirect($this->getReferer());
         }
+EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "los gehts mit löschen '".\Input::get('do')."'");
 
         // If there is a PID field but no parent table
         if (\Database::getInstance()->fieldExists('pid', $this->strTable) && !\strlen($this->ptable)) {
@@ -940,6 +942,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
             }
         }
         //$this->log("PBD DC_Formdata call delete vor import Backend ", __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "vor import Backend '".\Input::get('do')."'");
 
         $this->import('BackendUser', 'User');
         //$this->log("PBD DC_Formdata call delete nach import Backend ", __METHOD__, TL_GENERAL);
@@ -947,6 +950,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         $objUndoStmt = \Database::getInstance()->prepare('INSERT INTO tl_undo (pid, tstamp, fromTable, query, affectedRows, data) VALUES (?, ?, ?, ?, ?, ?)')
             ->execute($this->User->id, time(), $this->strTable, 'DELETE FROM '.$this->strTable.' WHERE id='.$this->intId, $affected, serialize($data))
         ;
+EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "nach objUndoStmt '".\Input::get('do')."'");
         //$this->log("PBD DC_Formdata call nach objUndoStmt ", __METHOD__, TL_GENERAL);
         // Delete the records
         if ($objUndoStmt->affectedRows) {
@@ -956,6 +960,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                     //$this->log("PBD DC_Formdata call ondelete_callback " . $this->strTable, __METHOD__, TL_GENERAL);
                     if (\is_array($callback)) {       // hier wird u.U haste model delete aufgerufe
 //$this->log("PBD DC_Formdata call ondelete_callback is array import " . $callback[0], __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "ondelete_callback is array import " . $callback[0]);
                         $this->import($callback[0]);
                         //$this->log("PBD DC_Formdata call ondelete_callback is array call import " . $callback[1], __METHOD__, TL_GENERAL);
                         $this->{$callback[0]}->{$callback[1]}($this, $objUndoStmt->insertId);    //Änderung PBD
@@ -968,10 +973,12 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                 }
             }
             //$this->log("PBD DC_Formdata call vor delete entry ", __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "vor delete entry '".\Input::get('do')."'");
 
             // Delete the records
             foreach ($delete as $table => $fields) {
                 foreach ($fields as $k => $v) {
+EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "DELETE FROM '.$table.' WHERE id=$v");
                     \Database::getInstance()->prepare('DELETE FROM '.$table.' WHERE id=?')
                         ->limit(1)
                         ->execute($v)

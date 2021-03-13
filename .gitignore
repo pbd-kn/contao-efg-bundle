@@ -2,6 +2,10 @@
 /composer.lock
 /vendor/
 
+# ignore generated fd_ files,
+/src/Resources/contao/dca/fd_*
+# except fd_feedback which is maintained by hand
+/src/Resources/contao/dca/fd_feedback.php
 
 # PhpUnit
 /.phpunit.result.cache

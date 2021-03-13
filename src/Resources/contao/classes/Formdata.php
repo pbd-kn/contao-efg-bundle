@@ -90,14 +90,14 @@ class Formdata extends \Contao\Frontend
         //$this->log("PBD Formdata construct do " . \Input::get('do') . "'", __METHOD__, 'TL_GENERAL');
         EfgLog::setEfgDebugmode(\Input::get('do'));
 
-        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "do '".\Input::get('do')."'");
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "do '".\Input::get('do')."' act '" .\Input::get('do') . "'");
 
-        // Types of form fields with storable data
+        // Types of form fields with storable data                                                                    
         $this->arrFFstorable = [
             'sessionText', 'sessionOption', 'sessionCalculator',
             'hidden', 'text', 'calendar', 'xdependentcalendarfields', 'password', 'textarea',
             'select', 'efgImageSelect', 'condition', 'conditionalselect', 'countryselect', 'fp_preSelectMenu', 'efgLookupSelect',
-            'radio', 'efgLookupRadio', 'cm_alternative',
+            'radio', 'efgLookupRadio', 'cm_alternative',                                     
             'checkbox', 'efgLookupCheckbox',
             'upload', 'fileTree',
         ];
