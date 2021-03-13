@@ -259,7 +259,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['efg_com_notify'] = [
  *
  * @copyright  Thomas Kuhn 2007-2014
  */
-class tl_module extends \Backend
+class tl_module_efg extends \Backend
 {
     private $arrFormdataTables;
     private $arrFormdataFields;

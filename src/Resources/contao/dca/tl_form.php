@@ -276,7 +276,7 @@ array_insert($GLOBALS['TL_DCA']['tl_form']['subpalettes'], \count($GLOBALS['TL_D
  *
  * @copyright  Thomas Kuhn 2007-2014
  */
-class tl_form extends \Backend
+class tl_form_efg extends \Backend
 {
     /**
      * Return all possible Email fields  as array.
@@ -330,3 +330,4 @@ class tl_form extends \Backend
         return $fields;
     }
 }
+
