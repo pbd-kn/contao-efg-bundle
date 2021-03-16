@@ -117,7 +117,7 @@ class FormdataBackend extends \Backend
 
         $strFormKey = (!empty($arrForm['alias'])) ? $arrForm['alias'] : str_replace('-', '_', standardize($arrForm['title']));
         //$this->log("createFormdataDca strFormKey $strFormKey formid " . $this->intFormId . " alias " . $arrForm['alias'], __METHOD__, TL_GENERAL);
-        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "createFormdataDca strFormKey $strFormKey formid ".$this->intFormId." alias '".$arrForm['alias']."'");
+EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "createFormdataDca strFormKey $strFormKey formid ".$this->intFormId." alias '".$arrForm['alias']."'");
         $this->updateConfig([$strFormKey => $arrForm]);
     }
 
@@ -129,12 +129,28 @@ class FormdataBackend extends \Backend
     public function callbackEditButton($row, $href, $label, $title, $icon, $attributes, $strTable, $arrRootIds, $arrChildRecordIds, $blnCircularReference, $strPrevious, $strNext)
     {
         //$this->log("callbackEditButton title $title", __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "title $title");
         $return = '';
 
         $strDcaKey = array_search($row['form'], $this->Formdata->arrFormsDcaKey, true);
         if ($strDcaKey) {
+EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "title $title dcakey find $strDcaKey");
             $return .= '<a href="'.\Backend::addToUrl($href.'&amp;do=fd_'.$strDcaKey.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ';
         }
+
+        return $return;
+    }
+    /**
+     * Callback delete button.
+     *
+     * @return string
+     */
+    public function callbackDeleteButton($row, $href, $label, $title, $icon, $attributes, $strTable, $arrRootIds, $arrChildRecordIds, $blnCircularReference, $strPrevious, $strNext)
+    {
+        //$this->log("callbackEditButton title $title", __METHOD__, TL_GENERAL);
+EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "title $title");
+        $return = '';
+
 
         return $return;
     }

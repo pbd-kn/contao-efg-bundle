@@ -12,7 +12,7 @@
  */
 
 // This file is created when saving a form in form generator
-// last created on 2021-03-13 18:07:27 by saving form ""
+// last created on 2021-03-15 11:59:16 by saving form ""
 
 
 
@@ -82,7 +82,8 @@ $GLOBALS['TL_DCA']['tl_formdata'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_formdata']['delete'],
 				'href'                => 'act=delete',
 				'icon'                => 'delete.gif',
-				'attributes'          => 'onclick="if (!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\')) return false; Backend.getScrollOffset();"'
+				'attributes'          => 'onclick="if (!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\')) return false; Backend.getScrollOffset();"',
+                'button_callback'     => array('FormdataBackend', 'callbackDeleteButton')
 			),
 			'show' => array
 			(

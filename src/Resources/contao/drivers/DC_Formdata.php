@@ -35,14 +35,6 @@ namespace PBDKN\Efgco4\Resources\contao\drivers;
 
 use PBDKN\Efgco4\Resources\contao\classes\EfgLog;
 
-/**
- * Class DC_Formdata
- * modified version of DC_Table by Leo Feyer.
- *
- * Provide methods to modify data stored in tables tl_formdata and tl_formdata_details.
- *
- * @copyright  Thomas Kuhn 2007-2014
- */
 class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 {
     /**
@@ -879,7 +871,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
     public function delete($blnDoNotRedirect = false): void
     {
         //$this->log("PBD DC_Formdata call delete  ", __METHOD__, TL_GENERAL);
-EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "do '".\Input::get('do')."'");
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "do '".\Input::get('do')."'");
 
         if ($GLOBALS['TL_DCA'][$this->strTable]['config']['notDeletable']) {
             $this->log('Table "'.$this->strTable.'" is not deletable', __METHOD__, TL_ERROR);
@@ -902,7 +894,7 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "do '".\Input::get('do')."'"
 
             \Controller::redirect($this->getReferer());
         }
-EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "los gehts mit löschen '".\Input::get('do')."'");
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "los gehts mit löschen '".\Input::get('do')."'");
 
         // If there is a PID field but no parent table
         if (\Database::getInstance()->fieldExists('pid', $this->strTable) && !\strlen($this->ptable)) {
@@ -942,7 +934,7 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "los gehts mit löschen '".\
             }
         }
         //$this->log("PBD DC_Formdata call delete vor import Backend ", __METHOD__, TL_GENERAL);
-EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "vor import Backend '".\Input::get('do')."'");
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "vor import Backend '".\Input::get('do')."'");
 
         $this->import('BackendUser', 'User');
         //$this->log("PBD DC_Formdata call delete nach import Backend ", __METHOD__, TL_GENERAL);
@@ -950,7 +942,7 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "vor import Backend '".\Inpu
         $objUndoStmt = \Database::getInstance()->prepare('INSERT INTO tl_undo (pid, tstamp, fromTable, query, affectedRows, data) VALUES (?, ?, ?, ?, ?, ?)')
             ->execute($this->User->id, time(), $this->strTable, 'DELETE FROM '.$this->strTable.' WHERE id='.$this->intId, $affected, serialize($data))
         ;
-EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "nach objUndoStmt '".\Input::get('do')."'");
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "nach objUndoStmt '".\Input::get('do')."'");
         //$this->log("PBD DC_Formdata call nach objUndoStmt ", __METHOD__, TL_GENERAL);
         // Delete the records
         if ($objUndoStmt->affectedRows) {
@@ -960,7 +952,7 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "nach objUndoStmt '".\Input:
                     //$this->log("PBD DC_Formdata call ondelete_callback " . $this->strTable, __METHOD__, TL_GENERAL);
                     if (\is_array($callback)) {       // hier wird u.U haste model delete aufgerufe
 //$this->log("PBD DC_Formdata call ondelete_callback is array import " . $callback[0], __METHOD__, TL_GENERAL);
-EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "ondelete_callback is array import " . $callback[0]);
+EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array import '.$callback[0]);
                         $this->import($callback[0]);
                         //$this->log("PBD DC_Formdata call ondelete_callback is array call import " . $callback[1], __METHOD__, TL_GENERAL);
                         $this->{$callback[0]}->{$callback[1]}($this, $objUndoStmt->insertId);    //Änderung PBD
@@ -973,12 +965,12 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "ondelete_callback is array 
                 }
             }
             //$this->log("PBD DC_Formdata call vor delete entry ", __METHOD__, TL_GENERAL);
-EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "vor delete entry '".\Input::get('do')."'");
+            EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "vor delete entry '".\Input::get('do')."'");
 
             // Delete the records
             foreach ($delete as $table => $fields) {
                 foreach ($fields as $k => $v) {
-EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "DELETE FROM '.$table.' WHERE id=$v");
+                    EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "DELETE FROM '.$table.' WHERE id=$v");
                     \Database::getInstance()->prepare('DELETE FROM '.$table.' WHERE id=?')
                         ->limit(1)
                         ->execute($v)
@@ -2840,6 +2832,7 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "DELETE FROM '.$table.' WHER
         if ('import' !== \Input::get('key')) {
             return '';
         }
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'key '.\Input::get('key'));
 
         if (null === $this->arrImportIgnoreFields) {
             $this->arrImportIgnoreFields = ['id', 'pid', 'tstamp', 'form', 'ip', 'date', 'confirmationSent', 'confirmationDate', 'import_source'];
@@ -2862,6 +2855,8 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "DELETE FROM '.$table.' WHER
         // Import CSV
         //$this->log('PBD DC_Formdata importFile FORM_SUBMIT  ' . \Input::post('FORM_SUBMIT') , __METHOD__, TL_GENERAL);
         if ('tl_formdata_import' === $_POST['FORM_SUBMIT']) {
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'tl_formdata_import ');
+
             $this->loadDataContainer('tl_files');
 
             $strMode = 'preview';
@@ -3821,10 +3816,11 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "DELETE FROM '.$table.' WHER
 
         $new_records = $this->Session->get('new_records');
         //$this->log("PBD DC_Formdata.php reviseTable in session new_records ", __METHOD__, TL_GENERAL);
-        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'in session new_records ');
+EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'in session new_records this->strTable ' . $this->strTable . ' len new_records ' . \count($new_records[$this->strTable]));
 
         // HOOK: add custom logic
         if (isset($GLOBALS['TL_HOOKS']['reviseTable']) && \is_array($GLOBALS['TL_HOOKS']['reviseTable'])) {
+EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'hook da ');
             foreach ($GLOBALS['TL_HOOKS']['reviseTable'] as $callback) {
                 $status = null;
 
@@ -3840,14 +3836,14 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "DELETE FROM '.$table.' WHER
                 }
             }
         }
-        //$this->log("PBD DC_Formdata.php reviseTable in session new_records this->strTable " . $this->strTable . " len " . count($new_records[$this->strTable]), __METHOD__, TL_GENERAL);
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'in session new_records this->strTable '.$this->strTable.' len '.\count($new_records[$this->strTable]));
+EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'in session new_records this->strTable ' . $this->strTable . ' len '.\count($new_records[$this->strTable]));
 
         //foreach ($new_records[$this->strTable] as $k=>$v) {
         //$this->log("PBD DC_Formdata.php reviseTable in session new_records this->strTable[$k]$v ", __METHOD__, TL_GENERAL);
         //}
         // Delete all new but incomplete records (tstamp=0)
         if (!empty($new_records[$this->strTable]) && \is_array($new_records[$this->strTable])) {
+EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'DELETE FROM '.$this->strTable.' WHERE id IN('.implode(',', array_map('intval', $new_records[$this->strTable])).') AND tstamp=0');
             $objStmt = \Database::getInstance()->execute('DELETE FROM '.$this->strTable.' WHERE id IN('.implode(',', array_map('intval', $new_records[$this->strTable])).') AND tstamp=0');
 
             if ($objStmt->affectedRows > 0) {
@@ -3856,17 +3852,25 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "DELETE FROM '.$table.' WHER
         }
 
         // Delete all records of the current table that are not related to the parent table
-        if ('' !== $ptable) {
-            if ($GLOBALS['TL_DCA'][$this->strTable]['config']['dynamicPtable']) {
-                $objStmt = \Database::getInstance()->execute('DELETE FROM '.$this->strTable." WHERE ptable='".$ptable."' AND NOT EXISTS (SELECT * FROM ".$ptable.' WHERE '.$this->strTable.'.pid = '.$ptable.'.id)');
-            } else {
-                $objStmt = \Database::getInstance()->execute('DELETE FROM '.$this->strTable.' WHERE NOT EXISTS (SELECT * FROM '.$ptable.' WHERE '.$this->strTable.'.pid = '.$ptable.'.id)');
-            }
+		if ($ptable != '')
+		{
+EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "ptable $ptable");
+			if ($GLOBALS['TL_DCA'][$this->strTable]['config']['dynamicPtable'])
+			{
+EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "dynamic ptable  (DELETE FROM " . $this->strTable . " WHERE ptable='" . $ptable . "' AND NOT EXISTS (SELECT * FROM " . $ptable . " WHERE " . $this->strTable . ".pid = " . $ptable . ".id)");
+				$objStmt = \Database::getInstance()->execute("DELETE FROM " . $this->strTable . " WHERE ptable='" . $ptable . "' AND NOT EXISTS (SELECT * FROM " . $ptable . " WHERE " . $this->strTable . ".pid = " . $ptable . ".id)");
+			}
+			else
+			{
+EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "DELETE FROM " . $this->strTable . " WHERE NOT EXISTS (SELECT * FROM " . $ptable . " WHERE " . $this->strTable . ".pid = " . $ptable . ".id)");
+				$objStmt = \Database::getInstance()->execute("DELETE FROM " . $this->strTable . " WHERE NOT EXISTS (SELECT * FROM " . $ptable . " WHERE " . $this->strTable . ".pid = " . $ptable . ".id)");
+			}
 
-            if ($objStmt->affectedRows > 0) {
-                $reload = true;
-            }
-        }
+			if ($objStmt->affectedRows > 0)
+			{
+				$reload = true;
+			}
+		}
 
         // Delete all records of the child table that are not related to the current table
         if (!empty($ctable) && \is_array($ctable)) {
@@ -3968,14 +3972,14 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "DELETE FROM '.$table.' WHER
             $objRowStmt->limit($arrLimit[1], $arrLimit[0]);
         }
         //$this->log("PBD DC_Formdata.php listView query $query values '" . implode(", ",$this->values) . "'" , __METHOD__, TL_GENERAL);
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "query $query values '".implode(', ', $this->values)."'");
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "query $query values '".implode(', ', $this->values)."'");
 
         $objRow = $objRowStmt->execute($this->values);
         $this->bid = ('' !== $return) ? $this->bid : 'tl_buttons';
         //$this->log("PBD DC_Formdata.php listView closed " . " global_operations " . $GLOBALS['TL_DCA'][$this->strTable]['list']['global_operations'], __METHOD__, TL_GENERAL);
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'closed '.' global_operations '.$GLOBALS['TL_DCA'][$this->strTable]['list']['global_operations']);
+EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'closed '.' global_operations '.$GLOBALS['TL_DCA'][$this->strTable]['list']['global_operations']);
         //$this->log("PBD DC_Formdata.php listView Display !closed '" . !($GLOBALS['TL_DCA'][$this->strTable]['config']['closed']) . "'"  , __METHOD__, TL_GENERAL);
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "Display !closed '".!($GLOBALS['TL_DCA'][$this->strTable]['config']['closed'])."'");
+EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "Display !closed '".!($GLOBALS['TL_DCA'][$this->strTable]['config']['closed'])."'");
 
         // Display buttons
         if (!$GLOBALS['TL_DCA'][$this->strTable]['config']['closed'] || !empty($GLOBALS['TL_DCA'][$this->strTable]['list']['global_operations'])) {
@@ -3991,7 +3995,7 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "DELETE FROM '.$table.' WHER
 </div>'.\Message::generate(true);
         }
         //$this->log("PBD DC_Formdata.php listView Display buttons numRows" . $objRow->numRows, __METHOD__, TL_GENERAL);
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Display buttons numRows'.$objRow->numRows);
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'Display buttons numRows'.$objRow->numRows);
 
         // Return "no records found" message
         if ($objRow->numRows < 1) {
@@ -4483,7 +4487,7 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "DELETE FROM '.$table.' WHER
         }
 
         // Overwrite the "orderBy" value with the session value
-        elseif (\strlen($session['sorting'][$strSessionKey])) {
+        elseif (isset($session['sorting'][$strSessionKey]) && $session['sorting'][$strSessionKey]) {
             $overwrite = preg_quote(preg_replace('/\s+.*$/', '', $session['sorting'][$strSessionKey]), '/');
             $orderBy = array_diff($orderBy, preg_grep('/^'.$overwrite.'/i', $orderBy));
 
@@ -4503,7 +4507,7 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "DELETE FROM '.$table.' WHER
                 $options_label = $options_label[0];
             }
 
-            $options_sorter[$options_label] = '  <option value="'.specialchars($field).'"'.((!\strlen($session['sorting'][$strSessionKey]) && $field === $firstOrderBy || $field === str_replace(' DESC', '', $session['sorting'][$strSessionKey])) ? ' selected="selected"' : '').'>'.$options_label.'</option>';
+            $options_sorter[$options_label] = '  <option value="'.specialchars($field).'"'.((isset($session['sorting'][$strSessionKey])&&!\strlen($session['sorting'][$strSessionKey]) && $field === $firstOrderBy || $field === str_replace(' DESC', '', $session['sorting'][$strSessionKey])) ? ' selected="selected"' : '').'>'.$options_label.'</option>';
         }
 
         // Sort by option values
@@ -4528,6 +4532,8 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "DELETE FROM '.$table.' WHER
      */
     protected function limitMenu($blnOptional = false)
     {
+EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'this->procedure len ' . count($this->procedure) . ' this->value len ' . count($this->value));
+        if (count($this->value) < 2) return false; 
         $session = $this->Session->getData();
         $filter = (4 === $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode']) ? $this->strTable.'_'.CURRENT_ID : (\strlen($this->strFormKey)) ? $this->strFormKey : $this->strTable;
         $fields = '';
@@ -4556,30 +4562,34 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "DELETE FROM '.$table.' WHER
 
         // Set limit from table configuration
         else {
-            $this->limit = \strlen($session['filter'][$filter]['limit']) ? (('all' === $session['filter'][$filter]['limit']) ? null : $session['filter'][$filter]['limit']) : '0,'.$GLOBALS['TL_CONFIG']['resultsPerPage'];
+            $this->limit = (isset($session['filter'][$filter]['limit'])&&\strlen($session['filter'][$filter]['limit'])) ? (('all' === $session['filter'][$filter]['limit']) ? null : $session['filter'][$filter]['limit']) : '0,'.$GLOBALS['TL_CONFIG']['resultsPerPage'];
 
-            $sqlQuery = '';
-            $sqlSelect = '';
-            $sqlDetailFields = '';
-            $sqlWhere = '';
+			$sqlQuery = '';
+			$sqlSelect = '';
+			$sqlDetailFields = '';
+			$sqlWhere = '';
 
-            if (!empty($this->procedure)) {
-                $arrProcedure = $this->procedure;
-                foreach ($arrProcedure as $kProc => $vProc) {
-                    $arrParts = preg_split('/[\s=><\!]/si', $vProc);
-                    $strProcField = $arrParts[0];
-                    if (\in_array($strProcField, $this->arrDetailFields, true)) {
-                        $arrProcedure[$kProc] = "(SELECT value FROM tl_formdata_details WHERE ff_name='".$strProcField."' AND pid=f.id)=?";
-                    }
-                }
-                $sqlWhere = ' WHERE '.implode(' AND ', $arrProcedure);
-            }
-            $sqlSelect = 'SELECT COUNT(*) AS count FROM '.$this->strTable.' f';
-            $sqlQuery = $sqlSelect.$sqlWhere;
+			if (!empty($this->procedure))
+			{
+				$arrProcedure = $this->procedure;
+				foreach ($arrProcedure as $kProc => $vProc)
+				{
+					$arrParts = preg_split('/[\s=><\!]/si', $vProc);
+					$strProcField = $arrParts[0];
+					if (in_array($strProcField, $this->arrDetailFields))
+					{
+						$arrProcedure[$kProc] = "(SELECT value FROM tl_formdata_details WHERE ff_name='" . $strProcField . "' AND pid=f.id)=?";
+					}
 
-            $objTotal = \Database::getInstance()->prepare($sqlQuery)
-                ->execute($this->values)
-            ;
+				}
+				$sqlWhere = " WHERE " . implode(' AND ', $arrProcedure);
+			}
+			$sqlSelect = "SELECT COUNT(*) AS count FROM " . $this->strTable . " f";
+			$sqlQuery = $sqlSelect . $sqlWhere;
+EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "sqlQuery $sqlQuery");
+
+			$objTotal = \Database::getInstance()->prepare($sqlQuery)
+				->execute($this->values);
             $total = $objTotal->count;
             $options_total = 0;
             $blnIsMaxResultsPerPage = false;
