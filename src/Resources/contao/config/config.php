@@ -12,7 +12,7 @@
  */
 
 // This file is created when saving a form in form generator
-// last created on 2021-03-15 11:59:16
+// last created on 2021-03-18 12:49:55
 /*
  * you can set the swiftmail transport set in efg_internal_config.html
  * example define('SENDMAILCOMMAND', ini_get ('sendmail_path') . ' -t')
@@ -60,28 +60,7 @@ $GLOBALS['BE_MOD']['formdata']['feedback'] = array
 );
 
 // following are used for the form dependent modules
-$GLOBALS['BE_MOD']['formdata']['fd_mytestformular'] = array
-(
-	'tables'     => array('tl_formdata', 'tl_formdata_details'),
-	'import'     => array('FormdataBackend', 'importCsv'),
-	'icon'       => 'PBDKN/Efgco4/Resources/contao/assets/formdata_all.gif',
-	'stylesheet' => 'PBDKN/Efgco4/Resources/contao/assets/style.css'
-);
-$GLOBALS['BE_MOD']['formdata']['fd_zweites-formular'] = array
-(
-	'tables'     => array('tl_formdata', 'tl_formdata_details'),
-	'import'     => array('FormdataBackend', 'importCsv'),
-	'icon'       => 'PBDKN/Efgco4/Resources/contao/assets/formdata_all.gif',
-	'stylesheet' => 'PBDKN/Efgco4/Resources/contao/assets/style.css'
-);
-$GLOBALS['BE_MOD']['formdata']['fd_tef3'] = array
-(
-	'tables'     => array('tl_formdata', 'tl_formdata_details'),
-	'import'     => array('FormdataBackend', 'importCsv'),
-	'icon'       => 'PBDKN/Efgco4/Resources/contao/assets/formdata_all.gif',
-	'stylesheet' => 'PBDKN/Efgco4/Resources/contao/assets/style.css'
-);
-$GLOBALS['BE_MOD']['formdata']['fd_tef4'] = array
+$GLOBALS['BE_MOD']['formdata']['fd_neuesformular'] = array
 (
 	'tables'     => array('tl_formdata', 'tl_formdata_details'),
 	'import'     => array('FormdataBackend', 'importCsv'),

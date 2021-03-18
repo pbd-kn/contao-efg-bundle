@@ -13,7 +13,7 @@
 
 
 // This file is created when saving a form in form generator
-// last created on 2021-03-15 11:59:16
+// last created on 2021-03-18 12:49:55
 
 
 /**
@@ -23,10 +23,7 @@ $GLOBALS['TL_LANG']['MOD']['formdata'] = 'Form data';
 $GLOBALS['TL_LANG']['MOD']['efg_co4'] = 'Form data';
 $GLOBALS['TL_LANG']['MOD']['feedback'] = array('All results', 'Stored data from forms.');
 // Eintraege der Forms
-$GLOBALS['TL_LANG']['MOD']['fd_mytestformular'] = array('MyTESTFORMULAR', 'Stored data from form "MyTESTFORMULAR".');
-$GLOBALS['TL_LANG']['MOD']['fd_zweites-formular'] = array('zweites Formular', 'Stored data from form "zweites Formular".');
-$GLOBALS['TL_LANG']['MOD']['fd_tef3'] = array('tef3', 'Stored data from form "tef3".');
-$GLOBALS['TL_LANG']['MOD']['fd_tef4'] = array('tef4', 'Stored data from form "tef4".');
+$GLOBALS['TL_LANG']['MOD']['fd_neuesformular'] = array('neuesFormular', 'Stored data from form "neuesFormular".');
 
 /**
  * Front end modules

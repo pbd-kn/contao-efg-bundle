@@ -1126,7 +1126,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
     public function edit($intID = null, $ajaxId = null)
     {
         //$this->log("PBD DC_Formdata edit intID $intID this->intId " . $this->intId, __METHOD__, TL_GENERAL);
-        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "intID $intID this->intId ".$this->intId);
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "intID '$intID' this->intId '".$this->intId . "'");
 
         $table_alias = ('tl_formdata' === $this->strTable ? ' f' : '');
 
@@ -1135,7 +1135,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
             \Controller::redirect('contao/main.php?act=error');
         }
 
-        if ('' !== $intID) {
+        if (isset($intID) && ('' !== $intID)) {
             $this->intId = $intID;
         }
 
@@ -1151,7 +1151,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
             $sqlQuery .= $sqlWhere;
         }
         //$this->log("PBD DC_Formdata edit sqlQuery $sqlQuery", __METHOD__, TL_GENERAL);
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "sqlQuery $sqlQuery");
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "sqlQuery $sqlQuery this->intId " . $this->intId);
 
         $objRow = \Database::getInstance()->prepare($sqlQuery)
             ->limit(1)
@@ -1170,10 +1170,12 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
 
         // Build an array from boxes and rows
         $this->strPalette = $this->getPalette();
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "this->strPalette " . $this->strPalette);
         $boxes = trimsplit(';', $this->strPalette);
         $legends = [];
 
         if (!empty($boxes)) {
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "boxes exists");
             foreach ($boxes as $k => $v) {
                 $eCount = 1;
                 $boxes[$k] = trimsplit(',', $v);
@@ -1204,6 +1206,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
 
             // Render boxes
             //$this->log("PBD DC_Formdata getFilepickerJavascript Render boxes ", __METHOD__, TL_GENERAL);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "Render boxes");
             foreach ($boxes as $k => $v) {
                 $strAjax = '';
                 $blnAjax = false;
@@ -1248,6 +1251,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
                     $this->strField = $vv;
                     $this->strInputName = $vv;
                     $this->varValue = $objRow->$vv;
+          EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "this->strField '" . $this->strField. "' this->strInputName '" . $this->strInputName . "' this->varValue '" . $this->varValue . "'");
 
                     // Autofocus the first text field
                     if ($blnIsFirst && 'text' === $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['inputType']) {
@@ -1307,7 +1311,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
                             }
                         } else {
                             // foreignKey fields
-                            if ('select' === $strInputType && \strlen($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['foreignKey'])) {
+                            if ('select' === $strInputType && (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['foreignKey']) && \strlen($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['foreignKey']))) {
                                 // include blank Option
                                 $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['includeBlankOption'] = true;
 
@@ -2349,6 +2353,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
 
             $table_alias = ('tl_formdata' === $this->strTable ? ' f' : '');
             $sqlQuery = 'SELECT * '.(!empty($this->arrSqlDetails) ? ', '.implode(',', array_values($this->arrSqlDetails)) : '').' FROM '.$this->strTable.$table_alias.' WHERE id=?';
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "sqlquery $sqlquery this->intId " . $this->intId);
 
             $objFields = \Database::getInstance()->prepare($sqlQuery)
                 ->limit(1)
@@ -2359,6 +2364,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
             if ($objFields->numRows > 0) {
                 foreach ($GLOBALS['TL_DCA'][$this->strTable]['palettes']['__selector__'] as $name) {
                     $trigger = $objFields->$name;
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "trigger $trigger FORM_SUBMIT '" . \Input::post('FORM_SUBMIT') . "'");
 
                     // Overwrite the trigger
                     if (\Input::post('FORM_SUBMIT') === $this->strTable) {
@@ -3242,7 +3248,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
             $query .= $sqlWhere;
         }
 
-        if (\is_array($orderBy) && \strlen($orderBy[0])) {
+        if (\is_array($orderBy) && isset($orderBy[0]) && \strlen($orderBy[0])) {
             foreach ($orderBy as $o => $strVal) {
                 $arrOrderField = explode(' ', $strVal);
                 $strOrderField = $arrOrderField[0];
@@ -3597,6 +3603,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
         if (\Input::post('FORM_SUBMIT') !== $this->strTable) {
             return;
         }
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "varValue $varValue");
 
         $arrField = $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField];
 
@@ -3615,6 +3622,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
         if ('' !== $varValue && \in_array($arrField['eval']['rgxp'], ['date', 'time', 'datim'], true)) {
             $objDate = new \Date($varValue, $GLOBALS['TL_CONFIG'][$arrField['eval']['rgxp'].'Format']);
             $varValue = $objDate->tstamp;
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "timestamp varValue $varValue");
         }
 
         if (!\in_array($this->strField, $this->arrOwnerFields, true) && !\in_array($this->strField, $this->arrBaseFields, true)) {
@@ -3705,7 +3713,10 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
         }
 
         // Make sure unique fields are unique
-        if (!\is_array($varValue) && \strlen($varValue) && $arrField['eval']['unique']) {
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "unique varValue $varValue");
+
+        if (!\is_array($varValue) && (isset($varValue) && \strlen((string) $varValue)) && $arrField['eval']['unique']) {
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "query " . 'SELECT * FROM '.$this->strTable.' WHERE '.$this->strField.'='.$varValue .' AND id!='.$this->intId);
             $objUnique = \Database::getInstance()->prepare('SELECT * FROM '.$this->strTable.' WHERE '.$this->strField.'=? AND id!=?')
                 ->execute($varValue, $this->intId)
             ;
@@ -3948,7 +3959,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "DELETE FROM " . $this->str
             $query .= $sqlWhere;
         }
 
-        if (\is_array($orderBy) && '' !== $orderBy[0]) {
+        if (\is_array($orderBy) && (isset($orderBy[0]) && '' !== $orderBy[0])) {
             foreach ($orderBy as $o => $strVal) {
                 $arrOrderField = explode(' ', $strVal);
                 $strOrderField = $arrOrderField[0];
@@ -3975,6 +3986,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "DELETE FROM " . $this->str
         EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "query $query values '".implode(', ', $this->values)."'");
 
         $objRow = $objRowStmt->execute($this->values);
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "nach execute");
         $this->bid = ('' !== $return) ? $this->bid : 'tl_buttons';
         //$this->log("PBD DC_Formdata.php listView closed " . " global_operations " . $GLOBALS['TL_DCA'][$this->strTable]['list']['global_operations'], __METHOD__, TL_GENERAL);
 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'closed '.' global_operations '.$GLOBALS['TL_DCA'][$this->strTable]['list']['global_operations']);
@@ -4140,7 +4152,7 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "Display !closed '".!($GLOBAL
                             $args[$k] = $GLOBALS['TL_DCA'][$table]['fields'][$v]['options'][$row[$v]];
                         } else {
                             // check multiline value
-                            if (!\is_bool(strpos($row[$v], "\n"))) {
+                            if (isset($row[$v]) && !\is_bool(strpos($row[$v], "\n"))) {
                                 $row[$v] = $this->Formdata->formatMultilineValue($row[$v]);
                             }
                             $args[$k] = $row[$v];
@@ -4405,11 +4417,14 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "Display !closed '".!($GLOBAL
         }
 
         // Set search value from session
-        elseif ('' !== $session['search'][$strSessionKey]['value']) {
+        elseif (isset($session['search'][$strSessionKey]['value']) && ('' !== $session['search'][$strSessionKey]['value'])) {
             $sqlSearchField = $session['search'][$strSessionKey]['field'];
             if (\in_array($sqlSearchField, $this->arrDetailFields, true)) {
                 $sqlSearchField = '(SELECT value FROM tl_formdata_details WHERE ff_name=\''.$session['search'][$strSessionKey]['field'].'\' AND pid=f.id)';
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "sqlSearchField $sqlSearchField gesetzt ");
             }
+
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "sqlSearchField $sqlSearchField dbCollation " . $GLOBALS['TL_CONFIG']['dbCollation']);
 
             if ('_ci' === substr($GLOBALS['TL_CONFIG']['dbCollation'], -3)) {
                 $this->procedure[] = 'LOWER(CAST('.$sqlSearchField.' AS CHAR)) REGEXP LOWER(?)';
@@ -4832,14 +4847,16 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "sqlQuery $sqlQuery");
                     (8 === $GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['flag']) ? rsort($options) : sort($options);
 
                     foreach ($options as $k => $v) {
+EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "options[$k]$v");
                         if ('' === $v) {
                             $options[$v] = '-';
                         } else {
-                            $options[$v] = date('Y-m', $v);
-                            $intMonth = (date('m', $v) - 1);
+                            $x = intval($v);
+                            $options[$v] = date('Y-m',$x);
+                            $intMonth = (date('m', $x) - 1);
 
                             if (isset($GLOBALS['TL_LANG']['MONTHS'][$intMonth])) {
-                                $options[$v] = $GLOBALS['TL_LANG']['MONTHS'][$intMonth].' '.date('Y', $v);
+                                $options[$v] = $GLOBALS['TL_LANG']['MONTHS'][$intMonth].' '.date('Y', $x);
                             }
                         }
 
