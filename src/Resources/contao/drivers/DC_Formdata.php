@@ -382,7 +382,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
         // check names of detail fields
         // .. after call to onload_callback we have the form specific dca in $GLOBALS['TL_DCA'][$this->strTable]
-        if (\strlen($this->strFormKey)) {
+        if (isset($this->strFormKey)&&\strlen($this->strFormKey)) {
             $arrFFNames = array_keys($GLOBALS['TL_DCA'][$this->strTable]['fields']);
         }
 
@@ -549,7 +549,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
      */
     public function show()
     {
-        if (!\strlen($this->intId)) {
+        if (!isset($this->intId) || !\strlen($this->intId)) {
             return '';
         }
 
@@ -654,7 +654,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
             // Replace foreign keys with their values
             // .. but not if foreignKey table is formdata table
-            if (\strlen($GLOBALS['TL_DCA'][$this->strTable]['fields'][$i]['foreignKey'])) {
+            if (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$i]['foreignKey'])&&\strlen($GLOBALS['TL_DCA'][$this->strTable]['fields'][$i]['foreignKey'])) {
                 $chunks = explode('.', $GLOBALS['TL_DCA'][$this->strTable]['fields'][$i]['foreignKey']);
 
                 if ('fd_' === substr($chunks[0], 0, 3)) {
@@ -693,7 +693,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                 $label = \is_array($GLOBALS['TL_LANG']['MSC'][$i]) ? $GLOBALS['TL_LANG']['MSC'][$i][0] : $GLOBALS['TL_LANG']['MSC'][$i];
             }
 
-            if (!\strlen($label)) {
+            if (isset($label)&&!\strlen($label)) {
                 $label = $i;
             }
 
@@ -897,7 +897,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "los gehts mit löschen '".\Input::get('do')."'");
 
         // If there is a PID field but no parent table
-        if (\Database::getInstance()->fieldExists('pid', $this->strTable) && !\strlen($this->ptable)) {
+        if (\Database::getInstance()->fieldExists('pid', $this->strTable) && (!isset($this->ptable) || !\strlen($this->ptable))) {
             $delete[$this->strTable] = \Database::getInstance()->getChildRecords($this->intId, $this->strTable);
             array_unshift($delete[$this->strTable], $this->intId);
         } else {
@@ -1321,7 +1321,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
 
                                 // WHERE condition for foreignKey
                                 $strForeignKeyCond = '';
-                                if (\strlen($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['foreignKeyWhere'])) {
+                                if (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['foreignKeyWhere'])&&\strlen($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['foreignKeyWhere'])) {
                                     $strForeignKeyCond = $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['foreignKeyWhere'];
                                 }
 
@@ -1602,7 +1602,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
 
         if (\Input::get('s2e')) {
             $arrButtons['saveNedit'] = '<input type="submit" name="saveNedit" id="saveNedit" class="tl_submit" accesskey="e" value="'.specialchars($GLOBALS['TL_LANG']['MSC']['saveNedit']).'">';
-        } elseif (!\Input::get('popup') && (4 === $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] || \strlen($this->ptable) || $GLOBALS['TL_DCA'][$this->strTable]['config']['switchToEdit'])) {
+        } elseif (!\Input::get('popup') && (4 === $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] || (isset($this->ptable) && \strlen($this->ptable)) || $GLOBALS['TL_DCA'][$this->strTable]['config']['switchToEdit'])) {
             $arrButtons['saveNback'] = '<input type="submit" name="saveNback" id="saveNback" class="tl_submit" accesskey="g" value="'.specialchars($GLOBALS['TL_LANG']['MSC']['saveNback']).'">';
         }
 
@@ -1710,7 +1710,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
                     $strUrl .= '&amp;table='.\Input::get('table');
                 }
 
-                $strUrl .= \strlen($GLOBALS['TL_DCA'][$this->strTable]['config']['ptable']) ? '&amp;act=create&amp;mode=2&amp;pid='.CURRENT_ID : '&amp;act=create';
+                $strUrl .= (isset($GLOBALS['TL_DCA'][$this->strTable]['config']['ptable'])&&\strlen($GLOBALS['TL_DCA'][$this->strTable]['config']['ptable'])) ? '&amp;act=create&amp;mode=2&amp;pid='.CURRENT_ID : '&amp;act=create';
                 //$this->log("PBD DC_Formdata.php edit controler redirekt strUrl $strUrl ", __METHOD__, TL_GENERAL);
                 //$this->log("PBD DC_Formdata.php edit controler redirekt referrer " . $this->getReferer(), __METHOD__, TL_GENERAL);
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "controler redirekt strUrl $strUrl referrer ".$this->getReferer());
