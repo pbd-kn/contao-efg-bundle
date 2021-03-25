@@ -413,6 +413,7 @@ class Formdata extends \Contao\Frontend
     {
         if (!$this->arrStoringForms) {
             // Get all forms marked to store data
+            EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "Read from DB");
             $objForms = \Database::getInstance()->prepare('SELECT id,title,alias,formID,useFormValues,useFieldNames,efgDebugMode FROM tl_form WHERE storeFormdata=?')
                 ->execute('1')
             ;

@@ -1,6 +1,8 @@
 <?php echo '<?php'; ?>
 
 
+// begin config efg
+
 /**
  * Contao Open Source CMS
  *
@@ -10,7 +12,19 @@
  * @author    Thomas Kuhn <mail@th-kuhn.de>
  * @license   http://www.gnu.org/licenses/lgpl-3.0.html LGPL
  * @copyright Thomas Kuhn 2007-2014
+ *
+ * Porting EFG to Contao 4
+ * Based on EFG Contao 3 from Thomas Kuhn 
+ *
+ * @package   contao-efg-bundle
+ * @author    Peter Broghammer <mail@pb-contao@gmx.de>
+ * @license   http://www.gnu.org/licenses/lgpl-3.0.html LGPL
+ * @copyright Peter Broghammer 2021-
+ *
+ * Thomas Kuhn's Efg package has been completely converted to contao 4.9 
+ * extended by insert_tag  {{efg_insert::formalias::aliasvalue::column(::format)}}
  */
+
 
 <?php echo '// This file is created when saving a form in form generator' . PHP_EOL; ?>
 <?php echo '// last created on ' .date("Y-m-d H:i:s") . PHP_EOL; ?>
@@ -101,3 +115,6 @@ $GLOBALS['TL_HOOKS']['listComments'][] = array('PBDKN\Efgco4\Resources\classes\c
 $GLOBALS['TL_HOOKS']['getSearchablePages'][] = array('PBDKN\Efgco4\Resources\contao\classes\Formdata', 'getSearchablePages');
 $GLOBALS['TL_HOOKS']['executePostActions'][] = array('PBDKN\Efgco4\Resources\contao\classes\Formdata', 'executePostActions');
 $GLOBALS['TL_HOOKS']['replaceInsertTags'][] = array('PBDKN\Efgco4\Resources\contao\classes\EfgInsertTag', 'Efg_InsertTags');
+
+// end config efg
+

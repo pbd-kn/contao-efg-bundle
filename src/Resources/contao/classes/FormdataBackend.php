@@ -67,7 +67,7 @@ class FormdataBackend extends \Backend
     public function __construct()
     {
         EfgLog::setEfgDebugmode(\Input::get('do'));
-        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "construct erste Zeile'".\Input::get('do')."'");
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "construct do '".\Input::get('do')."'");
         //$this->log("PBD FormdataBackend construct do '" . \Input::get('do') . "'", __METHOD__, TL_GENERAL);
         parent::__construct();
 
@@ -120,6 +120,26 @@ class FormdataBackend extends \Backend
 EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "createFormdataDca strFormKey $strFormKey formid ".$this->intFormId." alias '".$arrForm['alias']."'");
         $this->updateConfig([$strFormKey => $arrForm]);
     }
+    /**
+     * Callback oncut_callback 
+     *
+     */
+    public function deleteFormdataDca(\DataContainer $dc): void
+    {
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "undoId $undoId");
+        if (!$dc->id) {
+            return;
+        }
+        $this->intFormId = $dc->id;
+EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "dc->id '" . $dc->id . "'");
+        //$arrForm = \Database::getInstance()->prepare('SELECT * FROM tl_form WHERE id=?')->execute($dc->id)->fetchAssoc();
+
+        //$strFormKey = (!empty($arrForm['alias'])) ? $arrForm['alias'] : str_replace('-', '_', standardize($arrForm['title']));
+        unset($this->Formdata->arrStoringForms);
+        $this->Formdata->getStoringForms();
+        
+    }     
+
 
     /**
      * Callback edit button.
@@ -140,20 +160,6 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "title $title dcakey find $s
 
         return $return;
     }
-    /**
-     * Callback delete button.
-     *
-     * @return string
-     */
-    public function callbackDeleteButton($row, $href, $label, $title, $icon, $attributes, $strTable, $arrRootIds, $arrChildRecordIds, $blnCircularReference, $strPrevious, $strNext)
-    {
-        //$this->log("callbackEditButton title $title", __METHOD__, TL_GENERAL);
-EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "title $title");
-        $return = '';
-
-
-        return $return;
-    }
 
     /**  PBD
      * Update efg/config/config.php, dca and language files
@@ -171,12 +177,10 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "title $title");
           $this->arrStoringForms[$strFormKey] = $objForms->row(); id,title,alias,formID,useFormValues,useFieldNames,efgDebugMode
           $this->arrFormsDcaKey[$strFormKey] = $objForms->title;
         */
-        //$this->log("updateConfig ", __METHOD__, TL_GENERAL);
         EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'updateConfig ');
         $arrStoringForms = $this->Formdata->arrStoringForms;
 
         if (null === $arrForms) {
-            //$this->log("updateConfig aktuelle storingForms bearbeiten", __METHOD__, TL_GENERAL);
             EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'updateConfig aktuell schon gespeicherte storingForms bearbeiten');
             $arrForms = $arrStoringForms;
         }
@@ -184,32 +188,38 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "title $title");
         $env = $_ENV['APP_ENV'];
         $cp = realpath(TL_ROOT."/var/cache/$env/contao/");
         //$this->log("updateConfig realpath cache $cp ", __METHOD__, TL_GENERAL);
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "updateConfig realpath cache $cp ");
-        if (true === $cp) {      // cache vorhanden
-            $cachepath = $cp.'dca/';
+        if (isset($cp) && (\strlen($cp) > 0)) {      // cache vorhanden
+            $dcacachepath = "/var/cache/$env/contao/dca";
             // Remove unused dca files
-            //$this->log("updateConfig cachepath DCA $cachepath ", __METHOD__, TL_GENERAL);
-            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "updateConfig cachepath DCA $cachepath ");
-            $arrFiles = scan(TL_ROOT.$cachepath, true);          // im Kernel scandir mit cache
+            //$this->log("updateConfig cachepath DCA $dcacachepath ", __METHOD__, TL_GENERAL);
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "updateConfig cachepath DCA $dcacachepath ");
+            $arrFiles = scan(TL_ROOT.$dcacachepath, true);          // im Kernel scan ist  scandir mit cache
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "anzahl files in cache " . count($arrFiles));
 
+            // Remove cached fd_ files an files in vendor
             foreach ($arrFiles as $strFile) {                 // ueber alle files im cache Pfad
-                if ('fd_' === substr($strFile, 0, 3)) {
+                if ('fd_' === substr($strFile, 0, 3) && $strFile != 'fd_feedback.php') {
                     if (empty($arrStoringForms) || !\in_array(str_replace('.php', '', substr($strFile, 3)), array_keys($arrStoringForms), true)) {
-                        $objFile = new \File($cachepath.'/'.$strFile);
+                        // strfile (-fd_) ist nicht mehr in den storing forms also wohl gelöscht
+                        $objFile = new \File($dcacachepath.'/'.$strFile);      // braucht wohl kein TL_Root
                         $objFile->delete();
+                        // auch im vendor loeschen sonst ist es nach dem nächsten Cache neu erstellen wieder da.
+                        $objFile = new \File('vendor/pbd-kn/contao-efg-bundle/src/Resources/contao/dca/'.$strFile);
+                        $objFile->delete();
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "file in vendor und cache geloescht ".$strFile);
                     }
                 }
             }
 
-            // Remove cached dca files
-            if (is_dir(TL_ROOT.$cachepath)) {
-                $arrFiles = scan(TL_ROOT.$cachepath, true);
+            // Remove cached dca files  muss das sein wird dies durch cachaufbau wieder hergestellt??
+            if (is_dir(TL_ROOT.$dcacachepath)) {
+                $arrFiles = scan(TL_ROOT.$dcacachepath, true);
 
                 foreach ($arrFiles as $strFile) {
                     if ('fd_' === substr($strFile, 0, 3) || 'tl_formdata.php' === $strFile || 'tl_formdata_details.php' === $strFile) {
-                        //$this->log("updateConfig remove cached File " . $cachepath . "/" . $strFile, __METHOD__, TL_GENERAL);
-                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'updateConfig remove cached File '.$cachepath.'/'.$strFile);
-                        $objFile = new \File($cachepath.'/'.$strFile);
+                        //$this->log("updateConfig remove cached File " . $dcacachepath . "/" . $strFile, __METHOD__, TL_GENERAL);
+                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'updateConfig remove cached File '.$dcacachepath.'/'.$strFile);
+                        $objFile = new \File($dcacachepath.'/'.$strFile);
                         $objFile->delete();
                     }
                 }
@@ -230,9 +240,29 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "title $title");
 
         $objConfig->write($tplConfig->parse());   // PBD config.php neu erzeugen muss cache neu erzeugt werden??
         $objConfig->close();
-
         $this->log('rewrite vendor/pbd-kn/contao-efg-bundle/src/Resources/contao/config/config.php', __METHOD__, TL_GENERAL);    // PBD
         EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'rewrite vendor/pbd-kn/contao-efg-bundle/src/Resources/contao/config/config.php');
+        
+        $confcachepath = "/var/cache/$env/contao/config/";
+        $strconfcache = file_get_contents(TL_ROOT.$confcachepath.'config.php');
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'len configfile in cache ' . strlen($strconfcache));
+        $startpos = stripos($strconfcache, "// begin config efg");
+        if ($startpos === false) {
+        } else {
+          $endpos = stripos($strconfcache, "// end config efg",$startpos);
+          //EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "start efgconfig startconf $startpos endconf $endpos");
+          //EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "TEIL1 " . substr($strconfcache,0,$startpos-1));
+          //$efgconfstr = substr ( $strconfcache , $startpos , $endpos-$startpos);
+          //EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "efgconfigstring $efgconfstr ");
+          //EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "TEIL2 " . substr($strconfcache,$startpos,$endpos+strlen('// end config efg')));
+          //EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "TEIL3 " . substr($strconfcache,$endpos+strlen('// end config efg')+2));
+          $pars= $tplConfig->parse();
+          $startpospars = stripos($pars, "// begin config efg");
+          $newcachestr =  substr($strconfcache,0,$startpos-1) . "\n" . substr($pars,$startpospars) . "\n" . substr($strconfcache,$endpos+strlen('// end config efg'));
+          file_put_contents(TL_ROOT.$confcachepath.'config.php', $newcachestr);
+          EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "rewrite " . TL_ROOT.$confcachepath.'config.php');
+        }
+
 
         if (empty($arrStoringForms)) {
             return; // keine Formulare vorhanden deren Daten gespeichert werden sollen

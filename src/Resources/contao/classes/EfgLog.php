@@ -55,6 +55,7 @@ class EfgLog
     */
     public static function setefgDebugmode($key): void
     {
+//\System::log("PBD EfgwriteLog setefgDebugmode key $key", __METHOD__, TL_GENERAL);
         if ('' === self::$debFormKey || $key !== self::$debFormKey) {
             // Get all forms marked to store data
             $objForms = \Database::getInstance()->prepare('SELECT alias,title,efgDebugMode FROM tl_form WHERE storeFormdata=?')
@@ -63,12 +64,14 @@ class EfgLog
             //$savekey = $key;
             while ($objForms->next()) {  // suche Form
                 if ('form' === $key) {    // bei neuer form ist der key form nimm den höchsten wert
+//\System::log("PBD EfgwriteLog for form myefgdebuglevel '" . self::$myefgdebuglevel . "' title '" . $objForms->title .  "' efgDebugMode '" . $objForms->efgDebugMode . "'", __METHOD__, TL_GENERAL);
                   if ($objForms->efgDebugMode > self::$myefgdebuglevel) {
                       self::$myefgdebuglevel = $objForms->efgDebugMode;
                       self::$debFormKey = $key;
                       $arrUniqid = StringUtil::trimsplit('.', uniqid('efgc0n7a0', true));
                       self::$uniqid = $arrUniqid[1];
-                      continue;
+//\System::log("PBD EfgwriteLog setefgDebugmode for form to " . self::$myefgdebuglevel, __METHOD__, TL_GENERAL);
+                      continue;                               
                   }
                 }
                 $strFormKey = (!empty($objForms->alias)) ? $objForms->alias : str_replace('-', '_', standardize($objForms->title));
@@ -102,6 +105,7 @@ class EfgLog
         if ('' === self::$debFormKey) {
             return;
         }
+\System::log("PBD EfgwriteLog $method, $line " . self::$debFormKey  , __METHOD__, TL_GENERAL);
         $method = trim($method);
         //$arrNamespace = StringUtil::trimsplit('::', $method);
         //$arrClass =  StringUtil::trimsplit('\\', $arrNamespace[0]);
@@ -128,98 +132,6 @@ class EfgLog
         */
     }
 
-    /**
-     * Write in log file, if debug is enabled.
-     *
-     * @param string $method
-     * @param int    $line
-     */
-    public static function EfgwriteLog1($level, $method, $line, $value): void
-    {
-        $method = trim($method);
-        \System::log('PBD EfgwriteLog cnt '.self::$cnt." level $level method $method  first '".$GLOBALS['efgdebug']['debug']['first']."'", __METHOD__, TL_GENERAL);
-        if (!(false === strpos($method, '## START ##', 0))) {        // Start des Debugs
-            $arr = explode('::', $method);
-            if (\count($arr) < 2) {
-                return;
-            }              // kein debuglevel angegeben
-            if (!isset($GLOBALS['efgdebug']['debug']['first'])) {
-                $arrUniqid = StringUtil::trimsplit('.', uniqid('efgc0n7a0', true));
-                $GLOBALS['efgdebug']['debug']['first'] = $arrUniqid[1];
-                $GLOBALS['efgdebug']['debug']['efgdebuglevel'] = $arr[1];
-                \System::log("PBD EfgwriteLog set new first '".$GLOBALS['efgdebug']['debug']['first']."' efgdebuglevel '".$GLOBALS['efgdebug']['debug']['efgdebuglevel']."'", __METHOD__, TL_GENERAL);
-                if ($level & $GLOBALS['efgdebug']['debug']['efgdebuglevel']) {
-                    \System::log("PBD EfgwriteLog to file level $level method $method line $line value $value efgdebuglevel '".$GLOBALS['efgdebug']['debug']['efgdebuglevel']."'", __METHOD__, TL_GENERAL);
-                    self::logMessage(sprintf('[%s] [%s] [%s] [%s] %s', $GLOBALS['efgdebug']['debug']['first'], $level, $method, $line, $value), 'efg_debug');
-                }
-
-                return;
-            }
-
-            \System::log("PBD EfgwriteLog first schon gesetzt first '".$GLOBALS['efgdebug']['debug']['first']."'", __METHOD__, TL_GENERAL);
-
-            return;
-        }
-
-        $arrNamespace = StringUtil::trimsplit('::', $method);
-        $arrClass = StringUtil::trimsplit('\\', $arrNamespace[0]);
-        $vclass = $arrClass[\count($arrClass) - 1]; // class that will write the log
-
-        if (\is_array($value)) {
-            $value = print_r($value, true);
-        }
-        \System::log("PBD EfgwriteLog no start level $level method $method line $line efgdebuglevel '".$GLOBALS['efgdebug']['debug']['efgdebuglevel']."'", __METHOD__, TL_GENERAL);
-
-        //if ($level & $GLOBALS['efgdebug']['debug']['efgdebuglevel']) {
-        \System::log("PBD EfgwriteLog to file start level $level efgdebuglevel '".$GLOBALS['efgdebug']['debug']['efgdebuglevel']."'", __METHOD__, TL_GENERAL);
-        self::logMessage(sprintf('[%s] [%s] [%s] [%s] %s', $GLOBALS['efgdebug']['debug']['first'], $level, $method, $line, '('.$vclass.')'.$value), 'efg_debug');
-        //}
-
-/*
-        switch ($vclass)
-        {
-            case "ModuleVisitorsTag":
-                if ($GLOBALS['visitors']['debug']['tag'])
-                {
-                    self::logMessage(sprintf('[%s] [%s] [%s] %s', $GLOBALS['visitors']['debug']['first'], $vclass.'::'.$arrNamespace[1], $line, $value), 'visitors_debug');
-                }
-                break;
-            case "ModuleVisitorChecks":
-                if ($GLOBALS['visitors']['debug']['checks'])
-                {
-                    self::logMessage(sprintf('[%s] [%s] [%s] %s', $GLOBALS['visitors']['debug']['first'], $vclass.'::'.$arrNamespace[1], $line, $value), 'visitors_debug');
-                }
-                break;
-            case "ModuleVisitorReferrer":
-                if ($GLOBALS['visitors']['debug']['referrer'])
-                {
-                    self::logMessage(sprintf('[%s] [%s] [%s] %s', $GLOBALS['visitors']['debug']['first'], $vclass.'::'.$arrNamespace[1], $line, $value), 'visitors_debug');
-                }
-                break;
-            case "ModuleVisitorSearchEngine":
-                if ($GLOBALS['visitors']['debug']['searchengine'])
-                {
-                    self::logMessage(sprintf('[%s] [%s] [%s] %s', $GLOBALS['visitors']['debug']['first'], $vclass.'::'.$arrNamespace[1], $line, $value), 'visitors_debug');
-                }
-                break;
-            case "FrontendVisitors":
-                if ($GLOBALS['visitors']['debug']['screenresolutioncount'])
-                {
-                    self::logMessage(sprintf('[%s] [%s] [%s] %s', $GLOBALS['visitors']['debug']['first'], $vclass.'::'.$arrNamespace[1], $line, $value), 'visitors_debug');
-                }
-                break;
-            case "VisitorsFrontendController":
-                if ($GLOBALS['visitors']['debug']['tag']) //@todo temporär, eigene Regel notwendig
-                {
-                    self::logMessage(sprintf('[%s] [%s] [%s] %s', $GLOBALS['visitors']['debug']['first'], $vclass.'::'.$arrNamespace[1], $line, $value), 'visitors_debug');
-                }
-                break;
-            default:
-                self::logMessage(sprintf('[%s] [%s] [%s] %s', $GLOBALS['visitors']['debug']['first'], $method, $line, '('.$vclass.')'.$value), 'visitors_debug');
-                break;
-        }
-*/
-    }
 
     /**
      * Wrapper for old log_message.

@@ -9,11 +9,22 @@
  * @author    Thomas Kuhn <mail@th-kuhn.de>
  * @license   http://www.gnu.org/licenses/lgpl-3.0.html LGPL
  * @copyright Thomas Kuhn 2007-2014
+ *
+ * Porting EFG to Contao 4
+ * Based on EFG Contao 3 from Thomas Kuhn 
+ *
+ * @package   contao-efg-bundle
+ * @author    Peter Broghammer <mail@pb-contao@gmx.de>
+ * @license   http://www.gnu.org/licenses/lgpl-3.0.html LGPL
+ * @copyright Peter Broghammer 2021-
+ *
+ * Thomas Kuhn's Efg package has been completely converted to contao 4.9 
+ * extended by insert_tag  {{efg_insert::formalias::aliasvalue::column(::format)}}
  */
 
 
 // This file is created when saving a form in form generator
-// last created on 2021-03-18 12:49:55
+// last created on 2021-03-25 15:36:05
 
 
 /**
@@ -24,6 +35,8 @@ $GLOBALS['TL_LANG']['MOD']['efg_co4'] = 'Formular-Daten';
 $GLOBALS['TL_LANG']['MOD']['feedback'] = array('Feedback', 'Gespeicherte Daten aus Formularen.');
 // Eintraege der Forms
 $GLOBALS['TL_LANG']['MOD']['fd_neuesformular'] = array('neuesFormular', 'Gespeicherte Daten aus Formular "neuesFormular".');
+$GLOBALS['TL_LANG']['MOD']['fd_drittes-hilfsformular'] = array('drittes Hilfsformular', 'Gespeicherte Daten aus Formular "drittes Hilfsformular".');
+$GLOBALS['TL_LANG']['MOD']['fd_sechstes-hilfsformular'] = array('sechstes Hilfsformular', 'Gespeicherte Daten aus Formular "sechstes Hilfsformular".');
 
 /**
  * Front end modules

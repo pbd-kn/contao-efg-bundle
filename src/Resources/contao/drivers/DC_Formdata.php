@@ -4017,6 +4017,7 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "Display !closed '".!($GLOBAL
 
         // List records
         else {
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'list records');
             $result = $objRow->fetchAllAssoc();
             $return .= (('select' === \Input::get('act')) ? '
 
@@ -4162,7 +4163,8 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "Display !closed '".!($GLOBAL
                 }
 
                 // Shorten the label it if it is too long
-                $label = vsprintf((\strlen($GLOBALS['TL_DCA'][$this->strTable]['list']['label']['format']) ? $GLOBALS['TL_DCA'][$this->strTable]['list']['label']['format'] : '%s'), $args);
+                $label = vsprintf(((isset($GLOBALS['TL_DCA'][$this->strTable]['list']['label']['format']) && \strlen($GLOBALS['TL_DCA'][$this->strTable]['list']['label']['format'])) ? $GLOBALS['TL_DCA'][$this->strTable]['list']['label']['format'] : '%s'), $args);
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'sortlabel $label');
 
                 if ($GLOBALS['TL_DCA'][$this->strTable]['list']['label']['maxCharacters'] > 0 && $GLOBALS['TL_DCA'][$this->strTable]['list']['label']['maxCharacters'] < \strlen(strip_tags($label))) {
                     $label = trim(\StringUtil::substrHtml($label, $GLOBALS['TL_DCA'][$this->strTable]['list']['label']['maxCharacters'])).' …';
@@ -4814,7 +4816,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "sqlQuery $sqlQuery");
                 $sqlField = "SELECT DISTINCT(value) FROM tl_formdata_details WHERE ff_name='".$field."' AND pid=f.id";
             }
 
-            $objFields = \Database::getInstance()->prepare('SELECT DISTINCT('.$sqlField.') AS `'.$field.'` FROM '.$this->strTable.' f '.((\is_array($arrProcedure) && \strlen($arrProcedure[0])) ? ' WHERE '.implode(' AND ', $arrProcedure) : ''))
+            $objFields = \Database::getInstance()->prepare('SELECT DISTINCT('.$sqlField.') AS `'.$field.'` FROM '.$this->strTable.' f '.((\is_array($arrProcedure) && (isset($arrProcedure[0]) && \strlen($arrProcedure[0]))) ? ' WHERE '.implode(' AND ', $arrProcedure) : ''))
                 ->execute($arrValues)
             ;
 
