@@ -88,6 +88,7 @@ class Formdata extends \Contao\Frontend
     {
         parent::__construct();
         //$this->log("PBD Formdata construct do " . \Input::get('do') . "'", __METHOD__, 'TL_GENERAL');
+        EfgLog::setefgDebugmodeAll(255);
         EfgLog::setEfgDebugmode(\Input::get('do'));
 
         EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "do '".\Input::get('do')."' act '" .\Input::get('do') . "'");

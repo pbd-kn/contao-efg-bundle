@@ -66,6 +66,7 @@ class FormdataBackend extends \Backend
 
     public function __construct()
     {
+        EfgLog::setefgDebugmodeAll(255);
         EfgLog::setEfgDebugmode(\Input::get('do'));
         EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "construct do '".\Input::get('do')."'");
         //$this->log("PBD FormdataBackend construct do '" . \Input::get('do') . "'", __METHOD__, TL_GENERAL);
@@ -110,15 +111,19 @@ class FormdataBackend extends \Backend
     public function createFormdataDca(\DataContainer $dc): void
     {
         $this->intFormId = $dc->id;
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "createFormdataDca start formid ".$this->intFormId);
         $arrForm = \Database::getInstance()->prepare('SELECT * FROM tl_form WHERE id=?')
             ->execute($this->intFormId)
             ->fetchAssoc()
         ;
 
         $strFormKey = (!empty($arrForm['alias'])) ? $arrForm['alias'] : str_replace('-', '_', standardize($arrForm['title']));
-        //$this->log("createFormdataDca strFormKey $strFormKey formid " . $this->intFormId . " alias " . $arrForm['alias'], __METHOD__, TL_GENERAL);
-EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "createFormdataDca strFormKey $strFormKey formid ".$this->intFormId." alias '".$arrForm['alias']."'");
+        if (isset($this->Formdata->arrStoringForms)) {
+          unset($this->Formdata->arrStoringForms);
+        }
+        $this->Formdata->getStoringForms();
         $this->updateConfig([$strFormKey => $arrForm]);
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "createFormdataDca end strFormKey $strFormKey formid ".$this->intFormId." alias '".$arrForm['alias']."'");
     }
     /**
      * Callback oncut_callback 
@@ -137,7 +142,8 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "dc->id '" . $dc->id . "'");
         //$strFormKey = (!empty($arrForm['alias'])) ? $arrForm['alias'] : str_replace('-', '_', standardize($arrForm['title']));
         unset($this->Formdata->arrStoringForms);
         $this->Formdata->getStoringForms();
-        
+        $this->updateConfig();
+       
     }     
 
 
@@ -217,7 +223,6 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "title $title dcakey find $s
 
                 foreach ($arrFiles as $strFile) {
                     if ('fd_' === substr($strFile, 0, 3) || 'tl_formdata.php' === $strFile || 'tl_formdata_details.php' === $strFile) {
-                        //$this->log("updateConfig remove cached File " . $dcacachepath . "/" . $strFile, __METHOD__, TL_GENERAL);
                         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'updateConfig remove cached File '.$dcacachepath.'/'.$strFile);
                         $objFile = new \File($dcacachepath.'/'.$strFile);
                         $objFile->delete();
@@ -245,22 +250,15 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "title $title dcakey find $s
         
         $confcachepath = "/var/cache/$env/contao/config/";
         $strconfcache = file_get_contents(TL_ROOT.$confcachepath.'config.php');
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'len configfile in cache ' . strlen($strconfcache));
         $startpos = stripos($strconfcache, "// begin config efg");
         if ($startpos === false) {
         } else {
           $endpos = stripos($strconfcache, "// end config efg",$startpos);
-          //EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "start efgconfig startconf $startpos endconf $endpos");
-          //EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "TEIL1 " . substr($strconfcache,0,$startpos-1));
-          //$efgconfstr = substr ( $strconfcache , $startpos , $endpos-$startpos);
-          //EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "efgconfigstring $efgconfstr ");
-          //EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "TEIL2 " . substr($strconfcache,$startpos,$endpos+strlen('// end config efg')));
-          //EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "TEIL3 " . substr($strconfcache,$endpos+strlen('// end config efg')+2));
           $pars= $tplConfig->parse();
           $startpospars = stripos($pars, "// begin config efg");
           $newcachestr =  substr($strconfcache,0,$startpos-1) . "\n" . substr($pars,$startpospars) . "\n" . substr($strconfcache,$endpos+strlen('// end config efg'));
           file_put_contents(TL_ROOT.$confcachepath.'config.php', $newcachestr);
-          EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "rewrite " . TL_ROOT.$confcachepath.'config.php');
+          EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "rewrite " . TL_ROOT.$confcachepath.'config.php');
         }
 
 
@@ -279,13 +277,11 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "title $title dcakey find $s
         if (is_file(TL_ROOT.$cachepathlang.$strModLang.'/modules.php')) {
             $objFile = new \File($cachepathlang.$strModLang.'/modules.php');
             $objFile->delete();
-            //$this->log("updateConfig remove cached Language File " . $cachepathlang . $strModLang . '/modules.php' , __METHOD__, TL_GENERAL);
             EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'updateConfig remove cached Language File '.$cachepathlang.$strModLang.'/modules.php');
         }
         if (is_file(TL_ROOT.$cachepathlang.$strModLang.'/tl_formdata.php')) {
             $objFile = new \File($cachepathlang.$strModLang.'/tl_formdata.php');
             $objFile->delete();
-            //$this->log("updateConfig remove cached Language File " . $cachepathlang . $strModLang . '/tl_formdata.php', __METHOD__, TL_GENERAL);
             EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'updateConfig remove cached Language File '.$cachepathlang.$strModLang.'/tl_formdata.php');
         }
 

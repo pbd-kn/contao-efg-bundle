@@ -24,7 +24,7 @@
 
 
 // This file is created when saving a form in form generator
-// last created on 2021-03-25 15:36:05 by saving form ""
+// last created on 2021-03-27 15:15:17 by saving form ""
 
 
 
@@ -57,13 +57,11 @@ $GLOBALS['TL_DCA']['tl_formdata'] = array
 		),
 		'label' => array
 		(
-			'fields'                  => array('date', 'form', 'alias', 'be_notes' , 'ANTONFELD', 'xx'),
+			'fields'                  => array('date', 'form', 'alias', 'be_notes' ),
 			/*
 			'format'                  => '<div class="fd_wrap">
 	<div class="fd_head">%s<span>[%s]</span></div>
 		<div class="fd_notes">%s</div>
-	<div class="fd_row field_ANTONFELD"><div class="fd_label">Antonfeld: </div><div class="fd_value">%s </div></div>
-	<div class="fd_row field_xx"><div class="fd_label">xxx: </div><div class="fd_value">%s </div></div>
 		</div>',
 			*/
 			'label_callback'          => array('tl_fd_feedback','getRowLabel')
@@ -105,7 +103,7 @@ $GLOBALS['TL_DCA']['tl_formdata'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'default'                     => 'form,alias,date,ip,published,sorting;{confirmation_legend},confirmationSent,confirmationDate;{fdNotes_legend:hide},be_notes;{fdOwner_legend:hide},fd_member,fd_user,fd_member_group,fd_user_group;{fdDetails_legend},ANTONFELD,xx'
+		'default'                     => 'form,alias,date,ip,published,sorting;{confirmation_legend},confirmationSent,confirmationDate;{fdNotes_legend:hide},be_notes;{fdOwner_legend:hide},fd_member,fd_user,fd_member_group,fd_user_group;{fdDetails_legend},'
 	),
 
 	// Base fields in table tl_formdata
@@ -240,31 +238,11 @@ $GLOBALS['TL_DCA']['tl_formdata'] = array
 	'tl_formdata' => array
 	(
 		'baseFields'                 => array('id','sorting','tstamp','form','ip','date','fd_member','fd_user','fd_member_group','fd_user_group','published','alias','be_notes','confirmationSent','confirmationDate'),
-		'detailFields'               => array('ANTONFELD','xx'),
+		'detailFields'               => array(),
 	)
 );
 
 // Detail fields in table tl_formdata_details
-// 'ANTONFELD'
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['ANTONFELD']['label'] = array('Antonfeld', '[ANTONFELD] Antonfeld');
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['ANTONFELD']['inputType'] = 'text';
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['ANTONFELD']['formfieldType'] = 'text';
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['ANTONFELD']['exclude'] = false;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['ANTONFELD']['search'] = true;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['ANTONFELD']['sorting'] = true;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['ANTONFELD']['filter'] = false;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['ANTONFELD']['ff_id'] = 13;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['ANTONFELD']['f_id'] = 19;
-// 'xx'
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['xx']['label'] = array('xxx', '[xx] xxx');
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['xx']['inputType'] = 'text';
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['xx']['formfieldType'] = 'text';
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['xx']['exclude'] = false;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['xx']['search'] = true;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['xx']['sorting'] = true;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['xx']['filter'] = false;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['xx']['ff_id'] = 14;
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['xx']['f_id'] = 19;
 
 /**
  * Class tl_fd_
@@ -309,20 +287,6 @@ class tl_fd_feedback extends \Backend
 		$strRowLabel .= '<div class="fd_head">' . date($GLOBALS['TL_CONFIG']['datimFormat'], $arrRow['date']) . '<span>[' . $arrRow['form'] . ']</span><span>' . $arrRow['alias'] . '</span></div>';
 		$strRowLabel .= '<div class="fd_notes">' . $arrRow['be_notes'] . '</div>';
 		$strRowLabel .= '<div class="mark_links">';
-		if (strlen($arrRow['ANTONFELD']))
-		{
-			$strRowLabel .= '<div class="fd_row field_ANTONFELD">';
-			$strRowLabel .= '<div class="fd_label">' . $GLOBALS['TL_DCA']['tl_formdata']['fields']['ANTONFELD']['label'][0] . ': </div>';
-			$strRowLabel .= '<div class="fd_value">' . $arrRow['ANTONFELD'] . ' </div>';
-			$strRowLabel .= '</div>';
-		}
-		if (strlen($arrRow['xx']))
-		{
-			$strRowLabel .= '<div class="fd_row field_xx">';
-			$strRowLabel .= '<div class="fd_label">' . $GLOBALS['TL_DCA']['tl_formdata']['fields']['xx']['label'][0] . ': </div>';
-			$strRowLabel .= '<div class="fd_value">' . $arrRow['xx'] . ' </div>';
-			$strRowLabel .= '</div>';
-		}
 		$strRowLabel .= '</div></div>';
 
 		return $strRowLabel;

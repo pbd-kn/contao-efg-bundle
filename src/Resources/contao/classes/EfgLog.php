@@ -43,7 +43,17 @@ class EfgLog
     protected static $debFormKey = '';                    // Formularkey fuer den Aktuellen Debug
     protected static $uniqid = 0;
     protected static $myefgdebuglevel = 0;
+    protected static $myefgdebuglevelAll = 0;
 
+    /* setzt den debugmode global unabhängig vom Formular
+     */
+    public static function setefgDebugmodeAll($val): void
+    {
+      self::$myefgdebuglevelAll=$val;
+      self::$myefgdebuglevel = $val;
+      self::$uniqid = 'full ' . $val;
+      self::$debFormKey = 'all';
+    }
     /* debugkeys binary key
                => array('0' => kein debug,
                         '1' => 'small',
@@ -56,6 +66,7 @@ class EfgLog
     public static function setefgDebugmode($key): void
     {
 //\System::log("PBD EfgwriteLog setefgDebugmode key $key", __METHOD__, TL_GENERAL);
+       if (self::$myefgdebuglevelAll != 0) return;
         if ('' === self::$debFormKey || $key !== self::$debFormKey) {
             // Get all forms marked to store data
             $objForms = \Database::getInstance()->prepare('SELECT alias,title,efgDebugMode FROM tl_form WHERE storeFormdata=?')
