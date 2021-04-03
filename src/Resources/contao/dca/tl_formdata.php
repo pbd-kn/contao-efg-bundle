@@ -77,6 +77,7 @@ $GLOBALS['TL_DCA']['tl_formdata'] = [
                 'label' => &$GLOBALS['TL_LANG']['tl_formdata']['edit'],
                 'href' => 'act=edit',
                 'icon' => 'PBDKN/Efgco4/Resources/contao/assets/edit.gif',
+
             ],
             'delete' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_formdata']['delete'],
@@ -260,10 +261,9 @@ class tl_formdata extends \Backend
      */
     public function loadDCA(DataContainer $dca, $varFormKey = ''): void
     {
-        //$this->log("PBD !!!!!tl_formdata loadDCA -> varFormKey $varFormKey", __METHOD__, 'ERROR');
         EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "-> varFormKey $varFormKey do ".\Input::get('do'));
 
-        $strModule = 'efg_co4';
+        //$strModule = 'efg_co4';
         $strName = 'feedback';
         $strFileName = 'tl_formdata';
 
@@ -282,14 +282,11 @@ class tl_formdata extends \Backend
         } else {
             $strFileName = ('feedback' === \Input::get('do') ? 'fd_feedback' : \Input::get('do'));
         }
-        //$this->log("PBD tl_formdata loadDCA varFormKey '$varFormKey' strFileName '$strFileName'", __METHOD__, 'ERROR');
-        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "varFormKey $varFormKey do ".\Input::get('do'));
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "varFormKey $varFormKey do ".\Input::get('do'));
         if ('' !== $varFormKey && \is_string($varFormKey)) {
             if ('tl_formdata' !== $varFormKey) {
                 if (\array_key_exists($varFormKey, $GLOBALS['BE_MOD']['formdata'])) {
-                    //$strFile = sprintf('%s/system/modules/%s/dca/%s.php', TL_ROOT, $strModule, $strFileName);
                     $strFile = sprintf('%s/vendor/pbd-kn/contao-efg-bundle/src/Resources/contao/dca/%s.php', TL_ROOT, \Input::get('do'));
-                    //$this->log("PBD tl_formdata loadDCA varformkey in FE strFile $strFile", __METHOD__, 'ERROR');
                     EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "varformkey in FE strFile $strFile");
 
                     if (file_exists($strFile)) {
@@ -313,21 +310,15 @@ class tl_formdata extends \Backend
                 }
             }
         } else {
-            //$this->log("PBD tl_formdata ohne varformkey input do " . \Input::get('do'), __METHOD__, 'ERROR');
             EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ohne varformkey input do '.\Input::get('do'));
 
             if (\array_key_exists(\Input::get('do'), $GLOBALS['BE_MOD']['formdata'])) {
-                //$this->log("PBD tl_formdata do exist in BE_MOD strFileName $strFileName input do=" . \Input::get('do'), __METHOD__, 'ERROR');
                 EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "do exist in BE_MOD strFileName $strFileName input do=".\Input::get('do'));
                 $strFile = sprintf('%s/vendor/pbd-kn/contao-efg-bundle/src/Resources/contao/dca/%s.php', TL_ROOT, $strFileName);
-                //$strFile = sprintf('%s/vendor/pbd-kn/contao-efg-bundle/src/Resources/contao/dca/%s.php', TL_ROOT,  \Input::get('do'));
-
-                //$strFile = sprintf('%s/system/modules/%s/dca/%s.php', TL_ROOT, $strModule, $strFileName);
-                //$this->log("PBD tl_formdata strFile $strFile ", __METHOD__, 'ERROR');
-                EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "include_once ?? strFile '$strFile' ");
 
                 if (file_exists($strFile)) {
                     $strName = \Input::get('do');
+                EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "include_once ?? strFile '$strFile' ");
                     include_once $strFile;
 
                     // Replace standard dca tl_formdata by form-dependent dca

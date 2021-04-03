@@ -32,7 +32,7 @@ declare(strict_types=1);
  */
 
 $GLOBALS['TL_DCA']['tl_form']['config']['onsubmit_callback'][] = ['FormdataBackend', 'createFormdataDca'];   /* neues Form erzeugen */
-$GLOBALS['TL_DCA']['tl_form']['config']['oncut_callback'][] = ['FormdataBackend', 'deleteFormdataDca'];   /* neues Form erzeugen */
+$GLOBALS['TL_DCA']['tl_form']['config']['onsubmit_callback'][] = ['FormdataBackend', 'deleteFormdataDca'];   /* neues Form erzeugen */
 
 // fields
 $GLOBALS['TL_DCA']['tl_form']['fields']['storeFormdata'] = [
@@ -331,4 +331,3 @@ class tl_form_efg extends \Backend
         return $fields;
     }
 }
-

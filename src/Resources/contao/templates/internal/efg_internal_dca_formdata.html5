@@ -301,6 +301,7 @@ $GLOBALS['TL_DCA']['tl_formdata'] = array
 				'href'                => 'act=show',
 				'icon'                => 'show.gif'
 			)
+
 <?php if ($this->blnBackendMail): ?>
 			,
 			'mail' => array

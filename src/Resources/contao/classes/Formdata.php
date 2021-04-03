@@ -87,8 +87,7 @@ class Formdata extends \Contao\Frontend
     public function __construct()
     {
         parent::__construct();
-        //$this->log("PBD Formdata construct do " . \Input::get('do') . "'", __METHOD__, 'TL_GENERAL');
-        EfgLog::setefgDebugmodeAll(255);
+        $this->log("PBD Formdata construct do " . \Input::get('do') . "'", __METHOD__, 'TL_GENERAL');
         EfgLog::setEfgDebugmode(\Input::get('do'));
 
         EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "do '".\Input::get('do')."' act '" .\Input::get('do') . "'");
@@ -428,7 +427,16 @@ class Formdata extends \Contao\Frontend
             }
         }
     }
-
+    /**
+     * Get all forms marked to store data in tl_formdata.
+     */
+    public function removeFromStoringForm($strFormKey): void
+    {     if (isset($this->arrStoringForms[$strFormKey])) {
+            unset($this->arrStoringForms[$strFormKey]);
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "delete $strFormKey");
+          }
+      
+    }
     /**
      * Return record from tl_formdata as Array('fd_base' => base fields from tl_formdata, 'fd_details' => detail fields from tl_formdata_details).
      *

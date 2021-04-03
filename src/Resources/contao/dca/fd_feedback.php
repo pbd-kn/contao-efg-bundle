@@ -24,7 +24,7 @@
 
 
 // This file is created when saving a form in form generator
-// last created on 2021-03-27 15:15:17 by saving form ""
+// last created on 2021-04-02 12:53:50 by saving form ""
 
 
 
@@ -98,6 +98,7 @@ $GLOBALS['TL_DCA']['tl_formdata'] = array
 				'href'                => 'act=show',
 				'icon'                => 'show.gif'
 			)
+
 		)
 	),
 	// Palettes

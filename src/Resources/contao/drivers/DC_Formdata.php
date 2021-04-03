@@ -231,7 +231,6 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
     public function __construct($strTable, $arrModule = [])
     {
         parent::__construct();
-        //$this->log("PBD DC_Formdata constructor  do '" . \Input::get('do') . "' strTable '$strTable' id '" . \Input::get('id') . "'", __METHOD__, TL_GENERAL);
         EfgLog::setEfgDebugmode(\Input::get('do'));
         EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "do '".\Input::get('do')."' strTable '$strTable' id '".\Input::get('id')."'");
         // Check the request token (see #4007)
@@ -324,6 +323,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
             } elseif (isset($_POST['override'])) {
                 \Controller::redirect(str_replace('act=select', 'act=overrideAll', \Environment::get('request')));
             } elseif (isset($_POST['cut']) || isset($_POST['copy'])) {
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "strTable $strTable Post cut '".$_POST['cut']."'");
                 $arrClipboard = $this->Session->get('CLIPBOARD');
 
                 $arrClipboard[$strTable] = [
@@ -854,6 +854,25 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
      */
     public function cut(): void
     {
+    		// Call the oncut_callback
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'cut ' . $this->strTable);
+
+		if (\is_array($GLOBALS['TL_DCA'][$this->strTable]['config']['oncut_callback']))
+		{
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'cut callback exist');
+			foreach ($GLOBALS['TL_DCA'][$this->strTable]['config']['oncut_callback'] as $callback)
+			{
+				if (\is_array($callback))
+				{
+					$this->import($callback[0]);
+					$this->{$callback[0]}->{$callback[1]}($this);
+				}
+				elseif (\is_callable($callback))
+				{
+					$callback($this);
+				}
+			}
+		}
     }
 
     /**
