@@ -181,7 +181,6 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "title $title dcakey find $s
           $this->arrStoringForms[$strFormKey] = $objForms->row(); id,title,alias,formID,useFormValues,useFieldNames,efgDebugMode
           $this->arrFormsDcaKey[$strFormKey] = $objForms->title;
         */
-        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'updateConfig ');
         $arrStoringForms = $this->Formdata->arrStoringForms;
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'len arrStoringForms '. count($arrStoringForms));
         $createNewForm=true;
@@ -190,60 +189,57 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "title $title dcakey find $s
             $arrForms = $arrStoringForms;
             $createNewForm=false;          // nur aktuelle storingForms aktualisieren. Auch evtl. löschen
         }
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "updateConfig createNewForm $createNewForm len arrStoringForms ". count($arrStoringForms));
+
+		// Remove unused dca files
+		$arrFiles = scan(TL_ROOT . "/" . $this->vendorPath .'src/Resources/contao/dca', true);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'dca Files in vendor len  '. count($arrFiles) . ' Path' . TL_ROOT . "/" . $this->vendorPath .'src/Resources/contao/dca' );
+		foreach ($arrFiles as $strFile)
+		{
+			if (substr($strFile, 0, 3) == 'fd_')
+			{
+				if (empty($arrStoringForms) || !in_array(str_replace('.php', '', substr($strFile, 3)) , array_keys($arrStoringForms)))
+				{
+					$objFile = new \File($this->vendorPath .'src/Resources/contao/dca/' . $strFile);
+					$objFile->delete();
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'dca File '. $strFile . ' in vendor geloescht');
+				}
+			}
+		}
         //APP_ENV environment variable can contain either prod or dev
         $cachepath = realpath(TL_ROOT.'/var/cache/'.$_ENV['APP_ENV'].'/contao/');   // cachpath
-        $this->log('PBD FormdataBackend update cacpath real from '. $cachepath, __METHOD__, TL_GENERAL);
         if (isset($cachepath) && (\strlen($cachepath) > 0)) {      // cache vorhanden
-            $cachepath .=  '/';                      // realpath ohne letztes slash
-            $dcacachepath = $cachepath . 'dca';
-            // Remove unused dca files
-            $arrFiles = scan(TL_ROOT.$dcacachepath, true);          // im Kernel scan ist  scandir mit cache
+          // Remove cached dca files                                                     
+		  if (is_dir(TL_ROOT.'/var/cache/'.$_ENV['APP_ENV'].'/contao/dca'))
+		  {
+			$arrFiles = scan(TL_ROOT.'/var/cache/'.$_ENV['APP_ENV'].'/contao/dca', true);
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'dca Files in cache len  '. count($arrFiles));
 
-            // Remove cached fd_ files an files in vendor
-            foreach ($arrFiles as $strFile) {                 // ueber alle files im cache Pfad
-                if ('fd_' === substr($strFile, 0, 3) && $strFile != 'fd_feedback.php') {
-                    if (empty($arrStoringForms) || !\in_array(str_replace('.php', '', substr($strFile, 3)), array_keys($arrStoringForms), true)) {
-                        // strfile (-fd_) ist nicht mehr in den storing forms also wohl gelöscht
-                        $objFile = new \File($dcacachepath.'/'.$strFile);      // braucht wohl kein TL_Root
-                        $objFile->delete();
-                        // auch im vendor loeschen sonst ist es nach dem nächsten Cache neu erstellen wieder da.
-                        $objFile = new \File($this->vendorPath . 'src/Resources/contao/dca/'.$strFile);
-                        $objFile->delete();
-                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "file in vendor und cache geloescht ".$strFile);
-                    }
-                }
-            }
-
-            // Remove cached dca files in cache muss das sein wird dies durch cachaufbau wieder hergestellt??
-            if (is_dir(TL_ROOT.$dcacachepath)) {
-                $arrFiles = scan(TL_ROOT.$dcacachepath, true);
-
-                foreach ($arrFiles as $strFile) {
-                    //if ('fd_' === substr($strFile, 0, 3)) {  // tl_formdata.php u. tl_formdata_details.php nicht da sie ja nicht geaendert werden         
-                    if ('fd_' === substr($strFile, 0, 3) || 'tl_formdata.php' === $strFile || 'tl_formdata_details.php' === $strFile) {
-                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'updateConfig remove cached File '.$dcacachepath.'/'.$strFile);
-                        $objFile = new \File($dcacachepath.'/'.$strFile);
-                        $objFile->delete();
-                    }
-                }
-            }
+			foreach ($arrFiles as $strFile)
+			{
+				if (substr($strFile, 0, 3) == 'fd_' || $strFile == 'tl_formdata.php' || $strFile == 'tl_formdata_details.php')
+				{
+					$objFile = new \File('var/cache/'.$_ENV['APP_ENV'].'/contao/dca/' . $strFile);
+					$objFile->delete();
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'dca File '. $strFile . ' in cache geloescht');
+				}
+			}
+	      }
         }
         // config/config.php neu erstellen
+        // write new config to vendor
         $tplConfig = $this->newTemplate('efg_internal_config');
         $tplConfig->arrStoringForms = $arrStoringForms;    
         $objConfig = new \File($this->vendorPath . 'src/Resources/contao/config/config.php');
 
         $objConfig->write($tplConfig->parse());   
         $objConfig->close();
-        // write new config to vendor
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'cache in vendor config neu  '. $this->vendorPath . 'src/Resources/contao/config/config.php');
+/* vorerst noch nicht im cache erneuern
         // config.php im cache erneuern
-        $confcachepath = $cachepath . 'config/';
-        $this->log('PBD FormdataBackend update cacpath from '. $cachepath, __METHOD__, TL_GENERAL);
-        $this->log('PBD FormdataBackend update confcachepath from '. $confcachepath.'config.php', __METHOD__, TL_GENERAL);
-
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'configcache from '. $confcachepath.'config.php');
 
-        $strconfcache = file_get_contents($confcachepath.'config.php');
+        $strconfcache = file_get_contents(TL_ROOT . '/var/cache/'.$_ENV['APP_ENV']/contao/config/.'config.php');
         $startpos = stripos($strconfcache, "// begin config efg");
         if ($startpos === false) {
         } else {
@@ -251,44 +247,44 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "title $title dcakey find $s
           $pars= $tplConfig->parse();
           $startpospars = stripos($pars, "// begin config efg");
           $newcachestr =  substr($strconfcache,0,$startpos-1) . "\n" . substr($pars,$startpospars) . "\n" . substr($strconfcache,$endpos+strlen('// end config efg'));
-          file_put_contents(TL_ROOT.$confcachepath.'config.php', $newcachestr);
-          EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "rewrite cache config " . TL_ROOT.$confcachepath.'config.php');
+          file_put_contents(TL_ROOT . '/var/cache/'.$_ENV['APP_ENV']/contao/config/.'config.php', $newcachestr);
+          EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "rewrite cache config " . TL_ROOT . '/var/cache/'.$_ENV['APP_ENV']/contao/config/'.'config.php');
         }
         $this->log('rewrite config.php in cache and vendor', __METHOD__, TL_GENERAL);    // PBD
         EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'rewrite config.php in cache and vendor ' . $this->vendorPath . 'src/Resources/contao/config/config.php');
-
+*/
 
         if (empty($arrStoringForms)) {
             \Message::addInfo('Cache bitte neu erzeugen');
             return; // keine Formulare vorhanden deren Daten gespeichert werden sollen
         }
-/* den Teil der Lanuages habe ich rausgeworfen das wird   */
         // languages/modules.php
-        $arrModLangs = scan(TL_ROOT.$this->vendorPath . 'src/Resources/contao/languages');
+        $arrModLangs = scan(TL_ROOT."/".$this->vendorPath . 'src/Resources/contao/languages');
         $arrLanguages = $this->getLanguages();
-        $cachepathlang = $cachepath . 'languages/';      //beim neu erzeugen des caches sowieo gemacht
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'anzahl Sprachen Files in vendor len  '. count($arrModLangs) . ' anzahl Sprachen insgeamt ' . count($arrLanguages));
          
-        foreach ($arrModLangs as $strModLang) // über alle Sprachen
-    {
-        // Remove cached language files
-        if (is_file(TL_ROOT.$cachepathlang.$strModLang.'/modules.php')) {
-            $objFile = new \File($cachepathlang.$strModLang.'/modules.php');
-            $objFile->delete();
-            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'updateConfig delete cached Language File '.$cachepathlang.$strModLang.'/modules.php');
-        }
-        if (is_file(TL_ROOT.$cachepathlang.$strModLang.'/tl_formdata.php')) {
-            $objFile = new \File($cachepathlang.$strModLang.'/tl_formdata.php');
-            $objFile->delete();
-            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'updateConfig delete cached Language File '.$cachepathlang.$strModLang.'/tl_formdata.php');
-        }
+        foreach ($arrModLangs as $strModLang) // über alle Sprachen in Vendor
+    {   
+			// Remove cached language files
+			if (is_file(TL_ROOT.'/var/cache/'.$_ENV['APP_ENV'].'/contao/language/' . $strModLang .'/modules.php'))
+			{
+				$objFile = new \File('var/cache/'.$_ENV['APP_ENV'].'/contao/language/' . $strModLang . '/modules.php');
+				$objFile->delete();
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'updateConfig delete cached Language File '.$strModLang.'/modules.php');
+			}
+			if (is_file(TL_ROOT.'/var/cache/'.$_ENV['APP_ENV'].'/contao/language/' . $strModLang .'/tl_formdata.php'))
+			{
+				$objFile = new \File('var/cache/'.$_ENV['APP_ENV'].'/contao/language/' . $strModLang . '/tl_formdata.php');
+				$objFile->delete();
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'updateConfig delete cached Language File '.$strModLang.'/tl_formdata.php');
+			}
 
         // Create language files
-        if (\array_key_exists($strModLang, $arrLanguages)) {
-            //$strFile = sprintf('%s%ssrc/Resources/contao/languages/%s/%s.php', TL_ROOT, $this->vendorPath,$strModLang, 'tl_efg_modules');
-            $strFile = TL_ROOT . $this->vendorPath . 'src/Resources/contao/languages/' . $strModLang .'/' . tl_efg_modules . 'php';
-            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'languageFile '.$strFile);
+        if (\array_key_exists($strModLang, $arrLanguages)) {    // vendor Sprache in Sprachen vorhanden
+            $strFile = TL_ROOT . "/" . $this->vendorPath . 'src/Resources/contao/languages/' . $strModLang .'/' . tl_efg_modules . '.php';
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "languageFile Sprache $strModLang File ".$strFile);
             if (file_exists($strFile)) {
-                include $strFile;
+                include $strFile;        // ist das zugehoerige Sprachfile wird dann im Template efg_internal_modules ausgewertet
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'include '.$strFile);
             }
 
@@ -301,7 +297,7 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "title $title dcakey find $s
         }
     }
     //*/
-        // dca/fd_FORMKEY.php
+    // dca/fd_FORMKEY.php
     if (\is_array($arrForms) && !empty($arrForms)) {
         foreach ($arrForms as $arrForm) /* bearbeite neu angelegte Forms ($arrForms), bzw storing forms wenn kein neues*/
         {

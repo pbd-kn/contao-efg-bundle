@@ -82,7 +82,7 @@ class EfgLog
                     self::$debFormKey = $key;
                     $arrUniqid = StringUtil::trimsplit('.', uniqid('efgc0n7a0', true));
                     self::$uniqid = $arrUniqid[1];
-                    \System::log("PBD EfgwriteLog set debuglevel '".self::$myefgdebuglevel."' for $key FormKey $strFormKey", __METHOD__, TL_GENERAL);
+                    //\System::log("PBD EfgwriteLog set debuglevel '".self::$myefgdebuglevel."' for $key FormKey $strFormKey", __METHOD__, TL_GENERAL);
                     return;
                 }
             }
@@ -107,7 +107,7 @@ class EfgLog
         if ('' === self::$debFormKey) {
             return;
         }
-\System::log("PBD EfgwriteLog $method, $line " . self::$debFormKey  , __METHOD__, TL_GENERAL);
+//\System::log("PBD EfgwriteLog $method, $line " . self::$debFormKey  , __METHOD__, TL_GENERAL);
         $method = trim($method);
         //$arrNamespace = StringUtil::trimsplit('::', $method);
         //$arrClass =  StringUtil::trimsplit('\\', $arrNamespace[0]);

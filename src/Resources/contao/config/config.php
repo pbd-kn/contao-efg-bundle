@@ -26,7 +26,7 @@
 
 
 // This file is created when saving a form in form generator
-// last created on 2021-04-02 12:53:50
+// last created on 2021-04-05 13:56:16
 /*
  * you can set the swiftmail transport set in efg_internal_config.html
  * example define('SENDMAILCOMMAND', ini_get ('sendmail_path') . ' -t')
@@ -73,6 +73,14 @@ $GLOBALS['BE_MOD']['formdata']['feedback'] = array
 	'stylesheet' => 'PBDKN/Efgco4/Resources/contao/assets/style.css'
 );
 
+// following are used for the form dependent modules
+$GLOBALS['BE_MOD']['formdata']['fd_peer'] = array
+(
+	'tables'     => array('tl_formdata', 'tl_formdata_details'),
+	'import'     => array('FormdataBackend', 'importCsv'),
+	'icon'       => 'PBDKN/Efgco4/Resources/contao/assets/formdata_all.gif',
+	'stylesheet' => 'PBDKN/Efgco4/Resources/contao/assets/style.css'
+);
 
 
 /**
