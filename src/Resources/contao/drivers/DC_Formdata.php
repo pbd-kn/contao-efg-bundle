@@ -1176,7 +1176,6 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
             ->limit(1)
             ->execute($this->intId)
         ;
-        //$this->log("PBD DC_Formdata edit nach sql", __METHOD__, TL_GENERAL);
 
         // Redirect if there is no record with the given ID
         if ($objRow->numRows < 1) {
@@ -2364,6 +2363,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
     {
         $palette = 'default';
         $strPalette = $GLOBALS['TL_DCA'][$this->strTable]['palettes'][$palette];
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strTable ' . $this->strTable.' default strPalettes  ' . $strPalette);
 
         // Check whether there are selector fields
         if (!empty($GLOBALS['TL_DCA'][$this->strTable]['palettes']['__selector__'])) {
@@ -2448,6 +2448,8 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
             foreach ($subpalettes as $k => $v) {
                 $strPalette = preg_replace('/\b'.preg_quote($k, '/').'\b/i', $k.',['.$k.'],'.$v.',[EOF]', $strPalette);
             }
+        } else {
+          EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'no __selector__ ');
         }
 
         return $strPalette;

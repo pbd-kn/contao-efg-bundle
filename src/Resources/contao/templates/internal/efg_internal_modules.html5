@@ -1,6 +1,6 @@
 <?php echo '<?php'; ?>
 
-
+// begin modules efg
 /**
  * Contao Open Source CMS
  *
@@ -43,3 +43,5 @@ $GLOBALS['TL_LANG']['MOD']['feedback'] = array('<?php echo str_replace("'", "\'"
  */
 $GLOBALS['TL_LANG']['FMD']['formdatalisting'] = array('<?php echo str_replace("'", "\'", \StringUtil::decodeEntities($GLOBALS['TL_LANG']['FMD']['formdatalisting'][0])); ?>', '<?php echo str_replace("'", "\'", \StringUtil::decodeEntities($GLOBALS['TL_LANG']['FMD']['formdatalisting'][1])); ?>');
 
+ // end modules efg
+ 

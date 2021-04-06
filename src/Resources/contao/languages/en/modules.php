@@ -1,5 +1,5 @@
 <?php
-
+// begin modules efg
 /**
  * Contao Open Source CMS
  *
@@ -24,7 +24,7 @@
 
 
 // This file is created when saving a form in form generator
-// last created on 2021-04-05 13:56:16
+// last created on 2021-04-06 15:03:45
 
 
 /**
@@ -34,10 +34,12 @@ $GLOBALS['TL_LANG']['MOD']['formdata'] = 'Form data';
 $GLOBALS['TL_LANG']['MOD']['efg_co4'] = 'Form data';
 $GLOBALS['TL_LANG']['MOD']['feedback'] = array('All results', 'Stored data from forms.');
 // Eintraege der Forms
-$GLOBALS['TL_LANG']['MOD']['fd_peer'] = array('peer', 'Stored data from form "peer".');
+$GLOBALS['TL_LANG']['MOD']['fd_peer'] = array('Peer', 'Stored data from form "Peer".');
 
 /**
  * Front end modules
  */
 $GLOBALS['TL_LANG']['FMD']['formdatalisting'] = array('Listing form data', 'Use this module to list the records of a certain form data table in the front end.');
 
+ // end modules efg
+ 

@@ -477,7 +477,6 @@ class Formdata extends \Contao\Frontend
      */
     public function getFormfieldsAsArray($intId = 0)
     {
-        //$this->log("PBD Formdata getFormfieldsAsArray formId $intId"  , __METHOD__, TL_GENERAL);
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "formId $intId");
 
         $varReturn = [];
