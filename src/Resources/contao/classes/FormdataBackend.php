@@ -312,11 +312,13 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "title $title dcakey find $s
     }
     //*/
     // dca/fd_FORMKEY.php
+    EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'vor dca/fd_Formkey len arrForms '.count($arrForms));
     if (\is_array($arrForms) && !empty($arrForms)) {  
         foreach ($arrForms as $arrForm) /* erzeuge die eingabefelder zur form */
         {
             if (!empty($arrForm)) {
                 // alle felder der form
+    EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'Schleife Arrforms id '.$arrForm['id']);
                 $arrForm = \Database::getInstance()->prepare('SELECT * FROM tl_form WHERE id=?')->execute($arrForm['id'])->fetchAssoc();
 
                 $arrFields = [];
@@ -437,12 +439,13 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "title $title dcakey find $s
         }
         // overall dca/fd_feedback.php
         // Get all form fields of all storing forms
+    EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'vor dca/fd_Formkey len arrStoringForms '.count($arrStoringForms));
         if (!empty($arrStoringForms)) {
             $arrAllFields = [];
             $arrFieldNamesById = [];
             foreach ($arrStoringForms as $strFormKey => $arrForm) {
                 // Get all form fields of this form
-                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'b) bearbeite FORM id:  '.$arrForm['id'].' title: '.$arrForm['title']);
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'b) bearbeite arrStoringForms FORM id:  '.$arrForm['id'].' title: '.$arrForm['title']);
 
                 $arrFormFields = $this->Formdata->getFormFieldsAsArray($arrForm['id']);
                 if (!empty($arrFormFields)) {

@@ -723,9 +723,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
      */
     public function create($set = []): void
     {
-        //$this->log("PBD DC_Formdata.php create strTable " . $this->strTable . " setarray '" . implode(",",$set) . "'", __METHOD__, TL_GENERAL);
-        //$this->log("PBD DC_Formdata.php create strFormKey '" . $this->strFormKey . "'", __METHOD__, TL_GENERAL);
-        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "strFormKey '".$this->strFormKey."'");
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__,'strTable '.$this->strTable.'strFormKey '.$this->strFormKey);
 
         if (!empty($this->strFormKey)) {
             $set['form'] = $this->Formdata->arrStoringForms[str_replace('fd_', '', $this->strFormKey)]['title'];
@@ -739,7 +737,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
         // Get all default values for the new entry
         foreach ($GLOBALS['TL_DCA'][$this->strTable]['fields'] as $k => $v) {
-            //$this->log("PBD DC_Formdata.php create field[$k]$v " . $this->strFormKey , __METHOD__, TL_GENERAL);
+            EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__,"create field[$k] " . $this->strFormKey);
             if (\array_key_exists('default', $v)) {
                 if (!\in_array($k, $this->arrBaseFields, true)) {
                     continue;
@@ -761,22 +759,22 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         // Insert the record if the table is not closed and switch to edit mode
         if (!$GLOBALS['TL_DCA'][$this->strTable]['config']['closed']) {
             $this->set['tstamp'] = 0;
-            //$this->log("PBD DC_Formdata.php create insert into  " . $this->strTable , __METHOD__, TL_GENERAL);
-            //foreach ($this->set as $k=>$v) {
-            //$this->log("PBD DC_Formdata.php create insert into tl_formdata this->set[$k]$v " , __METHOD__, TL_GENERAL);
-            //}
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,'create insert into  ' . $this->strTable );
+            foreach ($this->set as $k=>$v) {
+              EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"create insert into tl_formdata this->set[$k]$v ");
+            }
 
+            EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'create query INSERT INTO '.$this->strTable.' %s');
             $objInsertStmt = \Database::getInstance()->prepare('INSERT INTO '.$this->strTable.' %s')
                 ->set($this->set)
                 ->execute()
             ;
-            //$this->log("PBD DC_Formdata.php create changed rows in " . $this->strTable . " " . $objInsertStmt->affectedRows , __METHOD__, TL_GENERAL);
+            EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'create changed rows in ' . $this->strTable . ' affectedRows ' . $objInsertStmt->affectedRows);
 
             if ($objInsertStmt->affectedRows) {
                 $s2e = $GLOBALS['TL_DCA'][$this->strTable]['config']['switchToEdit'] ? '&s2e=1' : '';  // switch to edit
                 $insertID = $objInsertStmt->insertId;
-                //$this->log("PBD DC_Formdata.php create in " . $this->strTable . " insertID $insertID " . $objInsertStmt->insertId , __METHOD__, TL_GENERAL);
-                EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'in '.$this->strTable." insertID $insertID ".$objInsertStmt->insertId);
+                EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'create in '.$this->strTable." insertID $insertID ".$objInsertStmt->insertId);
 
                 foreach ($this->arrDetailFields as $strDetailField) {
                     $strVal = '';
@@ -811,14 +809,13 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                     ;
                     //$this->log("PBD DC_Formdata.php create changed rows tl_formdata_details" . $objInsertStmt->affectedRows , __METHOD__, TL_GENERAL);
                     $insertIDdetail = $objInsertStmt->insertId;
-                    //$this->log("PBD DC_Formdata.php create tl_formdata_details insertIDdetail " . $objInsertStmt->insertId , __METHOD__, TL_GENERAL);
+                    //$this->log("PBD DC_Formdata.php create tl_formdata_details insertIDdetail " . $objInsertStmt->insertId );
                     EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'tl_formdata_details insertIDdetail '.$objInsertStmt->insertId);
                 }
 
                 // Save new record in the session
                 $new_records = $this->Session->get('new_records');
                 $new_records[$this->strTable][] = $insertID;
-                //$this->log("PBD DC_Formdata.php create in session insertID $insertID " . $this->strTable . " len " . count($new_records[$this->strTable]), __METHOD__, TL_GENERAL);
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "in session insertID $insertID ".$this->strTable.' len '.\count($new_records[$this->strTable]));
                 $this->Session->set('new_records', $new_records);
 
