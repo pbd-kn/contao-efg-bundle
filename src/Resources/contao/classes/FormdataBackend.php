@@ -311,7 +311,7 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "title $title dcakey find $s
         }
     }
     //*/
-    // dca/fd_FORMKEY.php
+    // dca/fd_FORMKEY.php  fd_... erzeugen und übernehmen der Formdata in fd_...
     EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'vor dca/fd_Formkey len arrForms '.count($arrForms));
     if (\is_array($arrForms) && !empty($arrForms)) {  
         foreach ($arrForms as $arrForm) /* erzeuge die eingabefelder zur form */
@@ -422,12 +422,15 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "title $title dcakey find $s
                     $blnBackendMail = true;
                 }
                 $tplDca->blnBackendMail = $blnBackendMail;
+                // eigentlich sollt hier mal eindiff gemacht werden ob zwischen neuem und alten File ein Unterschied besteht
+                // https://www.php.net/manual/de/function.xdiff-string-diff.php
                 $objDca = new \File($this->vendorPath . 'src/Resources/contao/dca/fd_'.$strFormKey.'.php');
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'vor tplpars file '.$this->vendorPath . 'src/Resources/contao/dca/fd_'.$strFormKey.'.php');
                 $objDca->write($tplDca->parse());
                 $objDca->close();
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'vendor geschrieben file ' . $this->vendorPath . 'src/Resources/contao/dca/fd_'.$strFormKey.'.php');
                 if (isset($cachepath) && (\strlen($cachepath) > 0)) {      // cache vorhanden dann auch in cache schreiben
+                  // ich weiss nicht ob das Screiben der Datei in den Cache genügt vielleicht ist danach noch ein include notwendig ???
                   $objDcaCache = new \File('var/cache/'.$_ENV['APP_ENV'].'/contao/dca/fd_'.$strFormKey.'.php');
                   $objDcaCache->write($tplDca->parse());
                   $objDcaCache->close();
@@ -437,9 +440,11 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "title $title dcakey find $s
             }
           }
         }
-        // overall dca/fd_feedback.php
+
+        // overall storingForms dca/fd_feedback.php  fd_... erzeugen und übernehmen der Formdata in fd_...
         // Get all form fields of all storing forms
     EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'vor dca/fd_Formkey len arrStoringForms '.count($arrStoringForms));
+    // siehe auch Kommentare bei arrforms
         if (!empty($arrStoringForms)) {
             $arrAllFields = [];
             $arrFieldNamesById = [];
