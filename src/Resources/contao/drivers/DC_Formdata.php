@@ -4018,7 +4018,7 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "Display !closed '".!($GLOBAL
             //$this->log("PBD DC_Formdata.php listView Display buttons sort mode '" . $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] . "'"  , __METHOD__, TL_GENERAL);
             $return .= '
 
-<div id="'.$this->bid.'">action: "'.\Input::get('act').'"'.(('select' === \Input::get('act') || $this->ptable) ? '
+<div id="'.$this->bid.'">'.(('select' === \Input::get('act') || $this->ptable) ? '
 <a href="'.$this->getReferer(true, $this->ptable).'" class="header_back" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['backBTTitle']).'" accesskey="b" onclick="Backend.getScrollOffset()">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a> ' : (isset($GLOBALS['TL_DCA'][$this->strTable]['config']['backlink']) ? '
 <a href="contao/main.php?'.$GLOBALS['TL_DCA'][$this->strTable]['config']['backlink'].'" class="header_back" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['backBTTitle']).'" accesskey="b" onclick="Backend.getScrollOffset()">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a> ' : '')).(('select' !== \Input::get('act')) ? '
 '.(!$GLOBALS['TL_DCA'][$this->strTable]['config']['closed'] ? '<a href="'.(('' !== $this->ptable) ? \Backend::addToUrl('act=create'.(($GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] < 4) ? '&amp;mode=2' : '').'&amp;pid='.$this->intId) : \Backend::addToUrl('act=create')).'" class="header_new" title="'.specialchars($GLOBALS['TL_LANG'][$this->strTable]['new'][1]).'" accesskey="n" onclick="Backend.getScrollOffset()">'.$GLOBALS['TL_LANG'][$this->strTable]['new'][0].'</a> ' : 'PBDleer1').$this->generateGlobalButtons() : '').'
