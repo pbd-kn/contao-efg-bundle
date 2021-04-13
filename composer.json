@@ -51,8 +51,8 @@
         }
     },
     "support": {
-        "issues": "https://github.com/pbd-kn/contao-inputvar-bundle/issues",
-        "source": "https://github.com/pbd-kn/contao-inputvar-bundle"
+        "issues": "https://github.com/pbd-kn/contao-efg-bundle/issues",
+        "source": "https://github.com/pbd-kn/contao-efg-bundle"
     },
     "scripts": {
         "cs-fixer": [

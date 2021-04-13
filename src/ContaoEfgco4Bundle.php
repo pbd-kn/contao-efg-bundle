@@ -33,10 +33,5 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class ContaoEfgco4Bundle extends Bundle
 {
-    /*
-        public function __construct()
-        {
-            echo "constructor PBDKN\ContaoInputVarBundle\ContaoInputVarBundle";      // PBD ob das geht ???
-        }
-    */
+
 }
