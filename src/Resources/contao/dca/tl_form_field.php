@@ -210,15 +210,15 @@ if (\is_array($GLOBALS['TL_DCA']['tl_form_field']['fields']['type']['options']))
 }
 
 // Add backend form fields
-$GLOBALS['BE_FFL']['efgLookupOptionWizard'] = 'EfgLookupOptionWizard';
-$GLOBALS['BE_FFL']['efgLookupSelect'] = 'EfgFormLookupSelectMenu';
-$GLOBALS['BE_FFL']['efgLookupCheckbox'] = 'EfgFormLookupCheckbox';
-$GLOBALS['BE_FFL']['efgLookupRadio'] = 'EfgFormLookupRadio';
-$GLOBALS['BE_FFL']['efgFormPaginator'] = 'EfgFormPaginator';
+$GLOBALS['BE_FFL']['efgLookupOptionWizard'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgLookupOptionWizard';
+$GLOBALS['BE_FFL']['efgLookupSelect'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormLookupSelectMenu';
+$GLOBALS['BE_FFL']['efgLookupCheckbox'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormLookupCheckbox';
+$GLOBALS['BE_FFL']['efgLookupRadio'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormLookupRadio';
+$GLOBALS['BE_FFL']['efgFormPaginator'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormPaginator';
 
 // Add front end form fields
-$GLOBALS['TL_FFL']['efgLookupSelect'] = 'EfgFormLookupSelectMenu';
-$GLOBALS['TL_FFL']['efgLookupCheckbox'] = 'EfgFormLookupCheckbox';
-$GLOBALS['TL_FFL']['efgLookupRadio'] = 'EfgFormLookupRadio';
-$GLOBALS['TL_FFL']['efgImageSelect'] = 'EfgFormImageSelect';
-$GLOBALS['TL_FFL']['efgFormPaginator'] = 'EfgFormPaginator';
+$GLOBALS['TL_FFL']['efgLookupSelect'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormLookupSelectMenu';
+$GLOBALS['TL_FFL']['efgLookupCheckbox'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormLookupCheckbox';
+$GLOBALS['TL_FFL']['efgLookupRadio'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormLookupRadio';
+$GLOBALS['TL_FFL']['efgImageSelect'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormImageSelect';
+$GLOBALS['TL_FFL']['efgFormPaginator'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormPaginator';
