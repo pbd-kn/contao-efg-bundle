@@ -57,7 +57,7 @@ class EfgLog
     */
     public static function setefgDebugmode($key): void
     {
-//\System::log("PBD EfgwriteLog setefgDebugmode key $key", __METHOD__, TL_GENERAL);
+        if(!isset($key)) $key='form';
         if ('' === self::$debFormKey || $key !== self::$debFormKey) {
             // Get all forms marked to store data
             $objForms = \Database::getInstance()->prepare('SELECT alias,title,efgDebugMode FROM tl_form WHERE storeFormdata=?')
@@ -72,7 +72,6 @@ class EfgLog
                       self::$debFormKey = $key;
                       $arrUniqid = StringUtil::trimsplit('.', uniqid('efgc0n7a0', true));
                       self::$uniqid = $arrUniqid[1];
-//\System::log("PBD EfgwriteLog setefgDebugmode for form to " . self::$myefgdebuglevel, __METHOD__, TL_GENERAL);
                       continue;                               
                   }
                 }
@@ -82,12 +81,10 @@ class EfgLog
                     self::$debFormKey = $key;
                     $arrUniqid = StringUtil::trimsplit('.', uniqid('efgc0n7a0', true));
                     self::$uniqid = $arrUniqid[1];
-                    //\System::log("PBD EfgwriteLog set debuglevel '".self::$myefgdebuglevel."' for $key FormKey $strFormKey", __METHOD__, TL_GENERAL);
                     return;
                 }
             }
             if (0 === self::$myefgdebuglevel) {
-                //\System::log("PBD EfgwriteLog reset $myefgdebuglevel key $key", __METHOD__, TL_GENERAL);
                 self::$debFormKey = '';
                 self::$uniqid = 0;
             } 
@@ -107,7 +104,6 @@ class EfgLog
         if ('' === self::$debFormKey) {
             return;
         }
-//\System::log("PBD EfgwriteLog $method, $line " . self::$debFormKey  , __METHOD__, TL_GENERAL);
         $method = trim($method);
         //$arrNamespace = StringUtil::trimsplit('::', $method);
         //$arrClass =  StringUtil::trimsplit('\\', $arrNamespace[0]);
@@ -119,7 +115,6 @@ class EfgLog
             $value = print_r($value, true);
         }
         if (($level & self::$myefgdebuglevel) === $level) {
-            //self::logMessage(sprintf('[level: %s] [$myefgdebuglevel %s] [and %s] ', $level, self::$myefgdebuglevel, self::$myefgdebuglevel&$level), 'efg_debug');
             self::logMessage(sprintf('[%s] [%s] [%s:%s] %s', self::$uniqid, $level, $vclass, $line, 'PBD '.$value), 'efg_debug');
         }
         /*
