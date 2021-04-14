@@ -62,7 +62,7 @@ $GLOBALS['TL_DCA']['tl_formdata'] = [
         ],
         'label' => [
             'fields' => ['form', 'date', 'ip', 'alias'],
-            'label_callback' => ['tl_formdataPBD', 'getRowLabel'],
+            'label_callback' => ['tl_formdata', 'getRowLabel'],
         ],
         'global_operations' => [
             'all' => [
