@@ -57,7 +57,7 @@ class EfgLog
     */
     public static function setefgDebugmode($key): void
     {
-        if(!isset($key)) $key='form' ;
+        if(!isset($key)) $key='form'; 
         if ('' === self::$debFormKey || $key !== self::$debFormKey) {
             // Get all forms marked to store data
             $objForms = \Database::getInstance()->prepare('SELECT alias,title,efgDebugMode FROM tl_form WHERE storeFormdata=?')
