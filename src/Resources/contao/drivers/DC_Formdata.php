@@ -1716,7 +1716,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
                 \Controller::redirect(\Environment::get('script').'?do='.\Input::get('do'));
             } elseif (isset($_POST['saveNcreate'])) {
                 \Message::reset();
-                setcookie('BE_PAGE_OFFSET', 0, 0, '/');
+                \System::setcookie('BE_PAGE_OFFSET', 0, 0, '/');
                 //$strUrl = \Environment::get('script') . '?do=' . \Input::get('do');
                 $strUrl = 'contao'.'?do='.\Input::get('do');    // PBD redirekt auf contao geht jetzt so !!
 //$this->log("PBD DC_Formdata.php edit saveNcreate $strUrl $strUrl script " . \Environment::get('script'), __METHOD__, TL_GENERAL);
@@ -2903,7 +2903,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
 
             if ('csv' !== $objFile->extension) {
                 \Message::addError(sprintf($GLOBALS['TL_LANG']['ERR']['filetype'], $objFile->extension));
-                setcookie('BE_PAGE_OFFSET', 0, 0, '/');
+                \System::setcookie('BE_PAGE_OFFSET', 0, 0, '/');
                 \Controller::reload();
             }
 
@@ -3108,7 +3108,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
                 // Add a log entry
                 $this->log('Imported file "'.$objFile->filename.'" into form data "'.$strFormTitle.'", created '.$intValid.' new records', __METHOD__, TL_GENERAL);
 
-                setcookie('BE_PAGE_OFFSET', 0, 0, '/');
+                \System::setcookie('BE_PAGE_OFFSET', 0, 0, '/');
                 \Controller::reload();
             }
 
