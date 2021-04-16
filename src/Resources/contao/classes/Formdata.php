@@ -199,7 +199,6 @@ class Formdata extends \Contao\Frontend
      */
     public function generateAlias($varValue = null, $strFormTitle = null, $intRecId = null)
     {
-        //$this->log("PBD Formdata generateAlias input varValue=$varValue, strFormTitle=$strFormTitle, intRecId=$intRecId ", __METHOD__, TL_GENERAL);
         EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "input varValue=$varValue, strFormTitle=$strFormTitle, intRecId=$intRecId ");
 
         $autoAlias = false;
@@ -223,7 +222,7 @@ class Formdata extends \Contao\Frontend
                 $strAliasField = $objForm->efgAliasField;
             }
         }
-        //$this->log("PBD Formdata generateAlias strAliasField $strAliasField ", __METHOD__, TL_GENERAL);
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "strAliasField '$strAliasField' ");
 
         if ('' === $strAliasField) {
             $objFormField = \Database::getInstance()->prepare("SELECT ff.name FROM tl_form f, tl_form_field ff WHERE (f.id=ff.pid) AND f.title=? AND ff.type=? AND ff.rgxp NOT IN ('email','date','datim','time') ORDER BY sorting")
@@ -237,8 +236,11 @@ class Formdata extends \Contao\Frontend
         }
 
         // Generate alias if there is none
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "varValue '$varValue' strAliasField '$strAliasField'");
         if (empty($varValue)) {
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "varValue empty");
             if (!empty($strAliasField)) {
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "strAliasField not empty");
                 $autoAlias = true;
                 $strAliasFieldSuffix = '';
 
@@ -251,23 +253,28 @@ class Formdata extends \Contao\Frontend
                 if (isset($_POST[$strAliasField.$strAliasFieldSuffix])) {
                     $varValue = standardize(\Input::post($strAliasField.$strAliasFieldSuffix));
                 } else {
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'query: SELECT `value` FROM tl_formdata_details WHERE pid='.$intRecId.' AND ff_name='.$strAliasField);
                     $objValue = \Database::getInstance()->prepare('SELECT `value` FROM tl_formdata_details WHERE pid=? AND ff_name=?')
                         ->limit(1)
                         ->execute($intRecId, $strAliasField)
                     ;
 
                     $varValue = standardize($objValue->value);
+                    if (empty($varValue)) { $autoAlias = true; }
                 }
+            } else {
+              $autoAlias = true;
             }
         }
 
         $objAlias = \Database::getInstance()->prepare('SELECT id FROM tl_formdata WHERE alias=? AND id != ?')
             ->execute($varValue, $intRecId)
         ;
-        //$this->log("PBD Formdata generateAlias check varValue $varValue intRecId $intRecId autoAlias $autoAlias " . $objAlias->numRows , __METHOD__, TL_GENERAL);
-
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'query: SELECT id FROM tl_formdata WHERE alias='.$varValue.' AND id != '.$intRecId);
+ 
         // Check whether the alias exists
         if ($objAlias->numRows > 1 && !$autoAlias) {
+          EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'alias "'.$varValue.'" Formid "'.$intRecId.'" existiert');
             throw new \Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $varValue));
         }
 
@@ -413,7 +420,7 @@ class Formdata extends \Contao\Frontend
         if (!$this->arrStoringForms) {
             // Get all forms marked to store data
             EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "Read from DB");
-            $objForms = \Database::getInstance()->prepare('SELECT id,title,alias,formID,useFormValues,useFieldNames,efgDebugMode FROM tl_form WHERE storeFormdata=?')
+            $objForms = \Database::getInstance()->prepare('SELECT id,title,alias,formID,useFormValues,useFieldNames,efgAliasField,efgDebugMode FROM tl_form WHERE storeFormdata=?')
                 ->execute('1')
             ;
 

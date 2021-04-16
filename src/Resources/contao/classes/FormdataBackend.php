@@ -350,6 +350,7 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "title $title dcakey find $s
                             || ('checkbox' === $arrField['type'] && 'cc' === $strFieldKey)) {
                             continue;
                         }
+                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'formfieldType '. $arrField['formfieldType'] . ' conditionType ' . $arrField['conditionType']);
 
                         // Set current palette name (for 'conditionalforms' and 'cm_alternativeforms')
                         if (('condition' === $arrField['formfieldType'] && 'start' === $arrField['conditionType'])
@@ -399,6 +400,7 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "title $title dcakey find $s
                             }
                             continue;
                         }
+                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strFieldKey '. $strFieldKey);
                         if (!\in_array($strFieldKey, array_keys($arrFields), true)
                             && !('cm_alternative' === $arrField['formfieldType'] && 'cm_else' === $arrField['cm_alternativeType'])) {
                             $arrFields[$strFieldKey] = $arrField;
