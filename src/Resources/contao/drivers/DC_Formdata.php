@@ -813,9 +813,14 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                     EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'tl_formdata_details insertIDdetail '.$objInsertStmt->insertId);
                 }
 
-                // Save new record in the session
-                $new_records = $this->Session->get('new_records');
-                $new_records[$this->strTable][] = $insertID;
+
+				// Save new record in the session
+                /** @var AttributeBagInterface $objSessionBag */
+		        $objSessionBag = \System::getContainer()->get('session')->getBag('contao_backend');
+
+				$new_records = $objSessionBag->get('new_records');
+				$new_records[$this->strTable][] = $insertID;
+				$objSessionBag->set('new_records', $new_records);
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "in session insertID $insertID ".$this->strTable.' len '.\count($new_records[$this->strTable]));
                 $this->Session->set('new_records', $new_records);
 
@@ -3839,12 +3844,14 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
      */
     protected function reviseTable(): void
     {
+EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'revisetabel ' . $this->strTable );
         $reload = false;
         $ptable = $GLOBALS['TL_DCA'][$this->strTable]['config']['ptable'];
         $ctable = $GLOBALS['TL_DCA'][$this->strTable]['config']['ctable'];
+		/** @var AttributeBagInterface $objSessionBag */
+		$objSessionBag = \System::getContainer()->get('session')->getBag('contao_backend');
 
-        $new_records = $this->Session->get('new_records');
-        //$this->log("PBD DC_Formdata.php reviseTable in session new_records ", __METHOD__, TL_GENERAL);
+		$new_records = $objSessionBag->get('new_records');
 EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'in session new_records this->strTable ' . $this->strTable . ' len new_records ' . \count($new_records[$this->strTable]));
 
         // HOOK: add custom logic
@@ -3865,63 +3872,121 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'hook da ');
                 }
             }
         }
-EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'in session new_records this->strTable ' . $this->strTable . ' len '.\count($new_records[$this->strTable]));
 
-        //foreach ($new_records[$this->strTable] as $k=>$v) {
-        //$this->log("PBD DC_Formdata.php reviseTable in session new_records this->strTable[$k]$v ", __METHOD__, TL_GENERAL);
-        //}
         // Delete all new but incomplete records (tstamp=0)
         if (!empty($new_records[$this->strTable]) && \is_array($new_records[$this->strTable])) {
-EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'DELETE FROM '.$this->strTable.' WHERE id IN('.implode(',', array_map('intval', $new_records[$this->strTable])).') AND tstamp=0');
-            $objStmt = \Database::getInstance()->execute('DELETE FROM '.$this->strTable.' WHERE id IN('.implode(',', array_map('intval', $new_records[$this->strTable])).') AND tstamp=0');
+			$intPreserved = null;
 
-            if ($objStmt->affectedRows > 0) {
-                $reload = true;
-            }
-        }
-
-        // Delete all records of the current table that are not related to the parent table
-		if ($ptable != '')
-		{
-EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "ptable $ptable");
-			if ($GLOBALS['TL_DCA'][$this->strTable]['config']['dynamicPtable'])
+			// Unset the preserved record (see #1129)
+			if ($this->intPreserveRecord && ($index = array_search($this->intPreserveRecord, $new_records[$this->strTable])) !== false)
 			{
-EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "dynamic ptable  (DELETE FROM " . $this->strTable . " WHERE ptable='" . $ptable . "' AND NOT EXISTS (SELECT * FROM " . $ptable . " WHERE " . $this->strTable . ".pid = " . $ptable . ".id)");
-				$objStmt = \Database::getInstance()->execute("DELETE FROM " . $this->strTable . " WHERE ptable='" . $ptable . "' AND NOT EXISTS (SELECT * FROM " . $ptable . " WHERE " . $this->strTable . ".pid = " . $ptable . ".id)");
+				$intPreserved = $new_records[$this->strTable][$index];
+				unset($new_records[$this->strTable][$index]);
+			}
+
+			// Remove the entries from the database
+			if (!empty($new_records[$this->strTable]))
+			{
+				$origId = $this->id;
+				$origActiveRecord = $this->activeRecord;
+				$ids = array_map('\intval', $new_records[$this->strTable]);
+
+				foreach ($ids as $id)
+				{
+					// Get the current record
+					$objRow = $this->Database->prepare("SELECT * FROM " . $this->strTable . " WHERE id=?")
+											 ->limit(1)
+											 ->execute($id);
+
+					$this->id = $id;
+					$this->activeRecord = $objRow;
+
+					// Invalidate cache tags (no need to invalidate the parent)
+					$this->invalidateCacheTags();
+				}
+
+				$this->id = $origId;
+				$this->activeRecord = $origActiveRecord;
+EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "DELETE FROM " . $this->strTable . " WHERE id IN(" . implode(',', $ids) . ") AND tstamp=0");
+
+				$objStmt = $this->Database->execute("DELETE FROM " . $this->strTable . " WHERE id IN(" . implode(',', $ids) . ") AND tstamp=0");
+
+				if ($objStmt->affectedRows > 0)
+				{
+					$reload = true;
+				}
+			}
+
+			// Remove the entries from the session
+			if ($intPreserved !== null)
+			{
+				$new_records[$this->strTable] = array($intPreserved);
 			}
 			else
 			{
-EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "DELETE FROM " . $this->strTable . " WHERE NOT EXISTS (SELECT * FROM " . $ptable . " WHERE " . $this->strTable . ".pid = " . $ptable . ".id)");
-				$objStmt = \Database::getInstance()->execute("DELETE FROM " . $this->strTable . " WHERE NOT EXISTS (SELECT * FROM " . $ptable . " WHERE " . $this->strTable . ".pid = " . $ptable . ".id)");
+				unset($new_records[$this->strTable]);
 			}
 
-			if ($objStmt->affectedRows > 0)
+			$objSessionBag->set('new_records', $new_records);
+        }
+
+		// Delete all records of the current table that are not related to the parent table
+		if ($ptable)
+		{
+			if ($GLOBALS['TL_DCA'][$this->strTable]['config']['dynamicPtable'])
 			{
-				$reload = true;
+				$objIds = $this->Database->execute("SELECT c.id FROM " . $this->strTable . " c LEFT JOIN " . $ptable . " p ON c.pid=p.id WHERE c.ptable='" . $ptable . "' AND p.id IS NULL");
+			}
+			else
+			{
+				$objIds = $this->Database->execute("SELECT c.id FROM " . $this->strTable . " c LEFT JOIN " . $ptable . " p ON c.pid=p.id WHERE p.id IS NULL");
+			}
+
+			if ($objIds->numRows)
+			{
+				$objStmt = $this->Database->execute("DELETE FROM " . $this->strTable . " WHERE id IN(" . implode(',', array_map('\intval', $objIds->fetchEach('id'))) . ")");
+
+				if ($objStmt->affectedRows > 0)
+				{
+					$reload = true;
+				}
 			}
 		}
 
-        // Delete all records of the child table that are not related to the current table
-        if (!empty($ctable) && \is_array($ctable)) {
-            foreach ($ctable as $v) {
-                if ('' !== $v) {
-                    // Load the DCA configuration so we can check for "dynamicPtable"
-                    if (!isset($GLOBALS['loadDataContainer'][$v])) {
-                        $this->loadDataContainer($v);
-                    }
+		// Delete all records of the child table that are not related to the current table
+		if (!empty($ctable) && \is_array($ctable))
+		{
+			foreach ($ctable as $v)
+			{
+				if ($v)
+				{
+					// Load the DCA configuration so we can check for "dynamicPtable"
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "loadDataContainer  $v");
 
-                    if ($GLOBALS['TL_DCA'][$v]['config']['dynamicPtable']) {
-                        $objStmt = \Database::getInstance()->execute("DELETE FROM $v WHERE ptable='".$this->strTable."' AND NOT EXISTS (SELECT * FROM ".$this->strTable." WHERE $v.pid = ".$this->strTable.'.id)');
-                    } else {
-                        $objStmt = \Database::getInstance()->execute("DELETE FROM $v WHERE NOT EXISTS (SELECT * FROM ".$this->strTable." WHERE $v.pid = ".$this->strTable.'.id)');
-                    }
+					$this->loadDataContainer($v);
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "geladen loadDataContainer  $v");
 
-                    if ($objStmt->affectedRows > 0) {
-                        $reload = true;
-                    }
-                }
-            }
-        }
+					if ($GLOBALS['TL_DCA'][$v]['config']['dynamicPtable'])
+					{
+						$objIds = $this->Database->execute("SELECT c.id FROM " . $v . " c LEFT JOIN " . $this->strTable . " p ON c.pid=p.id WHERE c.ptable='" . $this->strTable . "' AND p.id IS NULL");
+					}
+					else
+					{
+						$objIds = $this->Database->execute("SELECT c.id FROM " . $v . " c LEFT JOIN " . $this->strTable . " p ON c.pid=p.id WHERE p.id IS NULL");
+					}
+
+					if ($objIds->numRows)
+					{
+						$objStmt = $this->Database->execute("DELETE FROM " . $v . " WHERE id IN(" . implode(',', array_map('\intval', $objIds->fetchEach('id'))) . ")");
+
+						if ($objStmt->affectedRows > 0)
+						{
+							$reload = true;
+						}
+					}
+				}
+			}
+		}
 
         // Reload the page
         if ($reload) {
@@ -4021,7 +4086,7 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "Display !closed '".!($GLOBAL
 <div id="'.$this->bid.'">'.(('select' === \Input::get('act') || $this->ptable) ? '
 <a href="'.$this->getReferer(true, $this->ptable).'" class="header_back" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['backBTTitle']).'" accesskey="b" onclick="Backend.getScrollOffset()">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a> ' : (isset($GLOBALS['TL_DCA'][$this->strTable]['config']['backlink']) ? '
 <a href="contao/main.php?'.$GLOBALS['TL_DCA'][$this->strTable]['config']['backlink'].'" class="header_back" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['backBTTitle']).'" accesskey="b" onclick="Backend.getScrollOffset()">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a> ' : '')).(('select' !== \Input::get('act')) ? '
-'.(!$GLOBALS['TL_DCA'][$this->strTable]['config']['closed'] ? '<a href="'.(('' !== $this->ptable) ? \Backend::addToUrl('act=create'.(($GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] < 4) ? '&amp;mode=2' : '').'&amp;pid='.$this->intId) : \Backend::addToUrl('act=create')).'" class="header_new" title="'.specialchars($GLOBALS['TL_LANG'][$this->strTable]['new'][1]).'" accesskey="n" onclick="Backend.getScrollOffset()">'.$GLOBALS['TL_LANG'][$this->strTable]['new'][0].'</a> ' : 'PBDleer1').$this->generateGlobalButtons() : '').'
+'.(!$GLOBALS['TL_DCA'][$this->strTable]['config']['closed'] ? '<a href="'.(('' !== $this->ptable) ? \Backend::addToUrl('act=create'.(($GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] < 4) ? '&amp;mode=2' : '').'&amp;pid='.$this->intId) : \Backend::addToUrl('act=create')).'" class="header_new" title="'.specialchars($GLOBALS['TL_LANG'][$this->strTable]['new'][1]).'" accesskey="n" onclick="Backend.getScrollOffset()">'.$GLOBALS['TL_LANG'][$this->strTable]['new'][0].'</a> ' : '').$this->generateGlobalButtons() : '').'
 </div>'.\Message::generate(true);
         }
         //$this->log("PBD DC_Formdata.php listView Display buttons numRows" . $objRow->numRows, __METHOD__, TL_GENERAL);

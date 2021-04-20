@@ -83,7 +83,7 @@ $GLOBALS['TL_DCA']['tl_formdata'] = [
                 'label' => &$GLOBALS['TL_LANG']['tl_formdata']['delete'],
                 'href' => 'act=delete',
                 'icon' => 'PBDKN/Efgco4/Resources/contao/assets/delete.gif',
-                'attributes' => 'onclick="if (!confirm(\''.$GLOBALS['TL_LANG']['MSC']['deleteConfirm'].'\')) return false; Backend.getScrollOffset();"',
+                'attributes' => 'onclick="if (!confirm(\''.$GLOBALS['TL_LANG']['MSC']['deleteConfirm'].'hallo'. '\')) return false; Backend.getScrollOffset();"',
             ],
             'show' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_formdata']['show'],

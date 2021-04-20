@@ -65,7 +65,7 @@ class EfgLog
             ;
             //$savekey = $key;
             while ($objForms->next()) {  // suche Form
-                if ('form' === $key) {    // bei neuer form ist der key form nimm den höchsten wert
+                if ('form' === $key || 'feedback' === $key) {    // bei neuer form ist der key form nimm den höchsten wert
 //\System::log("PBD EfgwriteLog for form myefgdebuglevel '" . self::$myefgdebuglevel . "' title '" . $objForms->title .  "' efgDebugMode '" . $objForms->efgDebugMode . "'", __METHOD__, TL_GENERAL);
                   if ($objForms->efgDebugMode > self::$myefgdebuglevel) {
                       self::$myefgdebuglevel = $objForms->efgDebugMode;

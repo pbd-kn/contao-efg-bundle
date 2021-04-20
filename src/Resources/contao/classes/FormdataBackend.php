@@ -136,14 +136,20 @@ class FormdataBackend extends \Backend
      */
     public function deleteFormdataDca(\DataContainer $dc,$undoId): void
     {
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "");
         if (!$dc->id) {
             return;
         }
         $this->intFormId = $dc->id;
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "do ".\Input::get('do').' FormId '.$this->intFormId. ' this->intId '.$this->intId);
         $arrForm = \Database::getInstance()->prepare('SELECT * FROM tl_form WHERE id=?')->execute($dc->id)->fetchAssoc();
+        $arrFormData = \Database::getInstance()->prepare('SELECT * FROM tl_formdata WHERE form=?')->execute($arrForm['title'])->fetchAssoc();
 
         $strFormKey = (!empty($arrForm['alias'])) ? $arrForm['alias'] : str_replace('-', '_', standardize($arrForm['title']));
+        // remove formdata an formdatadetails
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,'delete1 DELETE  FROM tl_formdata_details WHERE pid='.$arrFormData['id']);
+        \Database::getInstance()->prepare('DELETE  FROM tl_formdata_details WHERE pid=?')->execute($arrFormData['id']);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,'delete2 DELETE  FROM tl_formdata WHERE form='.$arrForm['title']);
+        \Database::getInstance()->prepare('DELETE  FROM tl_formdata WHERE form=?')->execute($arrForm['title']);
         $this->Formdata->removeFromStoringForm($strFormKey);
         $this->updateConfig();      
     }     
@@ -487,7 +493,7 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "title $title dcakey find $s
             $tplDca = $this->newTemplate('efg_internal_dca_formdata');
             $tplDca->arrForm = ['key' => 'feedback', 'title' => $this->arrForm['title']];
             $tplDca->arrStoringForms = $arrStoringForms;
-            $tplDca->arrFields = $arrAllFields;
+            $tplDca->arrFields = $arrAllFields;   // alle Felder von allen Formularen
             $tplDca->arrFieldNamesById = $arrFieldNamesById;
 
             $objDca = new \File($this->vendorPath . 'src/Resources/contao/dca/fd_'.$strFormKey.'.php');

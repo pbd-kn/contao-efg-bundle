@@ -75,7 +75,7 @@ $GLOBALS['BE_MOD']['formdata']['feedback'] = array
 (
 	'tables'     => array('tl_formdata', 'tl_formdata_details'),
 	'icon'       => 'PBDKN/Efgco4/Resources/contao/assets/formdata_all.gif',
-	'stylesheet' => 'PBDKN/Efgco4/Resources/contao/assets/style.css'
+    'stylesheet' => 'bundles/contaoefgco4/css/style.css'
 );
 
 // following are used for the form dependent modules
@@ -84,9 +84,8 @@ $GLOBALS['BE_MOD']['formdata']['fd_<?php echo $strKey; ?>'] = array
 (
 	'tables'     => array('tl_formdata', 'tl_formdata_details'),
 	'import'     => array('FormdataBackend', 'importCsv'),
-	'icon'       => 'PBDKN/Efgco4/Resources/contao/assets/formdata_all.gif',
-	'stylesheet' => 'PBDKN/Efgco4/Resources/contao/assets/style.css'
-);
+	'icon'       => 'bundles/contaoefgco4/icons/formdata_all.gif',
+    'stylesheet' => 'bundles/contaoefgco4/css/style.css');
 <?php endforeach; ?>
 <?php endif; ?>
 
