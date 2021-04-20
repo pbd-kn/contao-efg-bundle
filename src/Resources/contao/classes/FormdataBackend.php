@@ -59,6 +59,7 @@ class FormdataBackend extends \Backend
     protected $arrData = [];
     protected $vendorPath = 'vendor/pbd-kn/contao-efg-bundle/';
     protected $cachePath  = '';
+    protected $rootDir ='';
     // Types of form fields with storable data
     protected $arrFFstorable = [];
 
@@ -70,7 +71,9 @@ class FormdataBackend extends \Backend
         $this->log("Formdata __construct input do " . \Input::get('do') , __METHOD__, TL_GENERAL);
         EfgLog::setEfgDebugmode(\Input::get('do'));
         EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "construct do '".\Input::get('do')."'");
-        $cp = realpath(TL_ROOT.'/var/cache/'.$_ENV['APP_ENV'].'/contao/');   // cachpath
+        $this->rootDir = \System::getContainer()->getParameter('kernel.project_dir');
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "rootDir '".$this->rootDir."'");
+        $cp = realpath($this->rootDir.'/var/cache/'.$_ENV['APP_ENV'].'/contao/');   // cachpath
         if (isset($cp) && (\strlen($cp) > 0)) {      // cache vorhanden
           $this->cachePath= 'var/cache/'.$_ENV['APP_ENV'].'/contao/';
         EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "set cachepath '".$this->cachePath."'");
@@ -201,7 +204,8 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "title $title dcakey find $s
         EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "updateConfig createNewForm $createNewForm len arrStoringForms ". count($arrStoringForms));
 
 		// Remove unused dca files
-		$arrFiles = scan(TL_ROOT . "/" . $this->vendorPath .'src/Resources/contao/dca', true);
+		$arrFiles = scan($this->rootDir . "/" . $this->vendorPath .'src/Resources/contao/dca', true);
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "scan dca ". $this->rootDir . "/" . $this->vendorPath .'src/Resources/contao/dca');
         EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "len dca arrfiles ". count($arrFiles));
         //$files = \System::getContainer()->get('contao.resource_locator')->locate('src/Resources/contao/dca/*', null, false);
         //EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "len dca files ". count($files));
@@ -220,9 +224,9 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "title $title dcakey find $s
 		}
         if (\strlen($this->cachePath) > 0) {      // cache vorhanden
           // Remove cached dca files                                                     
-		  if (is_dir(TL_ROOT.'/'.$this->cachePath.'dca'))
+		  if (is_dir($this->rootDir.'/'.$this->cachePath.'dca'))
 		  {
-			$arrFiles = scan(TL_ROOT.'/'.$this->cachePath.'dca', true);
+			$arrFiles = scan($this->rootDir.'/'.$this->cachePath.'dca', true);
 			foreach ($arrFiles as $strFile)
 			{
 				if (substr($strFile, 0, 3) == 'fd_' || $strFile == 'tl_formdata.php' || $strFile == 'tl_formdata_details.php')
@@ -266,7 +270,7 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "title $title dcakey find $s
         }
         // languages/modules.php
         
-        $arrModLangs = scan(TL_ROOT."/".$this->vendorPath . 'src/Resources/contao/languages');
+        $arrModLangs = scan($this->rootDir."/".$this->vendorPath . 'src/Resources/contao/languages');
         $arrLanguages = $this->getLanguages();
          
         foreach ($arrModLangs as $strModLang) // über alle Sprachen in Vendor
@@ -277,13 +281,13 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "title $title dcakey find $s
             $objCache = new \File($this->cachePath.'language/'.$strModLang.'/tl_formdata.php');
             $objCache->delete();
             /*
-			if (is_file(TL_ROOT.'/var/cache/'.$_ENV['APP_ENV'].'/contao/language/' . $strModLang .'/modules.php'))
+			if (is_file($this->rootDir.'/var/cache/'.$_ENV['APP_ENV'].'/contao/language/' . $strModLang .'/modules.php'))
 			{
 				$objFile = new \File('var/cache/'.$_ENV['APP_ENV'].'/contao/language/' . $strModLang . '/modules.php');
 				$objFile->delete();
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'updateConfig delete cached Language File '.$strModLang.'/modules.php');
 			}
-			if (is_file(TL_ROOT.'/var/cache/'.$_ENV['APP_ENV'].'/contao/language/' . $strModLang .'/tl_formdata.php'))
+			if (is_file($this->rootDir.'/var/cache/'.$_ENV['APP_ENV'].'/contao/language/' . $strModLang .'/tl_formdata.php'))
 			{
 				$objFile = new \File('var/cache/'.$_ENV['APP_ENV'].'/contao/language/' . $strModLang . '/tl_formdata.php');
 				$objFile->delete();
@@ -292,7 +296,7 @@ EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "title $title dcakey find $s
             */
         // Create language files
         if (\array_key_exists($strModLang, $arrLanguages)) {    // vendor Sprache in Sprachen vorhanden
-            $strFile = TL_ROOT . "/" . $this->vendorPath . 'src/Resources/contao/languages/' . $strModLang .'/' . tl_efg_modules . '.php';
+            $strFile = $this->rootDir . "/" . $this->vendorPath . 'src/Resources/contao/languages/' . $strModLang .'/' . tl_efg_modules . '.php';
             EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "languageFile Sprache $strModLang File ".$strFile);
             if (file_exists($strFile)) {
                 include $strFile;        // ist das zugehoerige default Sprachefile wird dann im Template efg_internal_modules ausgewertet
