@@ -529,7 +529,7 @@ class ModuleFormdataListing extends \Module
         }
 
         // E-mail addresses
-        if ($value && ('email' === $rgxp || false !== strpos($this->arrFF[$k]['name'], 'mail') || false !== strpos($k, 'mail'))) {
+        if ($value && ('email' === $rgxp || false !== (isset($this->arrFF[$k]['name'])&&strpos($this->arrFF[$k]['name'], 'mail')) || false !== strpos($k, 'mail'))) {
             $value = \StringUtil::encodeEmail($value);
             $value = '<a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;'.$value.'">'.$value.'</a>';
 
