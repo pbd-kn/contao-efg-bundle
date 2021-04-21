@@ -403,7 +403,8 @@ class ModuleFormdataListing extends \Module
         }
 
         // file download
-        if (\strlen(\Input::get('download'))) {
+        $download=\Input::get('download' );
+        if (isset($download) && \strlen(\Input::get('download'))) {
             $allowedDownload = trimsplit(',', strtolower($GLOBALS['TL_CONFIG']['allowedDownload']));
 
             $arrParams = explode('.', \Input::get('download'));
@@ -714,22 +715,23 @@ class ModuleFormdataListing extends \Module
         $this->arrBaseFields = $GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['baseFields'];
         $this->arrDetailFields = $GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['detailFields'];
 
-        if (\strlen($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterKey'])) {
+        if (isset($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterKey'])&&\strlen($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterKey'])) {
             $this->strFormFilterKey = $GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterKey'];
         }
-        if (\strlen($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterValue'])) {
+        if (isset($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterValue'])&&\strlen($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterValue'])) {
             $this->strFormFilterValue = $GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterValue'];
         }
 
         // List, edit or delete a single record
-        if (\strlen(\Input::get($this->strDetailKey))) {
+        $strDetailKey= \Input::get($this->strDetailKey);
+        if (isset($strDetailKey)&&\strlen($strDetailKey)) {
             // check details record
             $strQuery = 'SELECT id FROM tl_formdata f';
             $strWhere = ' WHERE (id=? OR alias=?)';
             $strListWhere = $this->prepareListWhere();
             $strWhere .= (\strlen($strListWhere) ? ' AND '.$strListWhere : '');
 
-            if (\strlen($this->strFormKey)) {
+            if (isset($this->strFormKey)&&\strlen($this->strFormKey)) {
                 $strWhere .= (\strlen($strWhere) ? ' AND ' : ' WHERE ').$this->strFormFilterKey."='".$this->strFormFilterValue."'";
             }
 
@@ -858,8 +860,8 @@ class ModuleFormdataListing extends \Module
 
                 case 'multiplefields':
                     $arrOptions = [];
-
-                    if (\strlen(\Input::get('search')) && \is_array(\Input::get('for'))) {
+                    $search=\Input::get('search');
+                    if (isset($search)&&\strlen($search) && \is_array(\Input::get('for'))) {
                         $arrConds = [];
                         $arrKeywords = [];
                         foreach (\Input::get('for') as $field => $for) {
@@ -896,7 +898,7 @@ class ModuleFormdataListing extends \Module
                     }
 
                     foreach (trimsplit(',', $this->list_search) as $field) {
-                        if (\in_array($field, $this->arrBaseFields, true)) {
+                        if (isset($this->arrBaseFields)&&\in_array($field, $this->arrBaseFields, true)) {
                             if (\strlen($this->strFormKey) && 'form' === $field) {
                                 continue;
                             }
@@ -1007,7 +1009,7 @@ class ModuleFormdataListing extends \Module
 
                 ++$intLastCol;
 
-                if (\in_array($field, $this->arrBaseFields, true)) {
+                if (isset($this->arrBaseFields)&&\in_array($field, $this->arrBaseFields, true)) {
                     $strListFields .= ','.$field;
                 }
 
@@ -1029,7 +1031,8 @@ class ModuleFormdataListing extends \Module
         $strQuery .= $strWhere;
 
         // Order by
-        if (\strlen(\Input::get('order_by'))) {
+        $ord=\Input::get('order_by');
+        if (isset($ord)&&\strlen($ord)) {
             if (\in_array(\Input::get('order_by'), $arrListFields, true) && (\in_array(\Input::get('order_by'), $this->arrBaseFields, true) || \in_array(\Input::get('order_by'), $this->arrDetailFields, true))) {
                 if (isset($GLOBALS['TL_DCA']['tl_formdata']['fields'][\Input::get('order_by')]['eval']['rgxp']) && 'digit' === $GLOBALS['TL_DCA']['tl_formdata']['fields'][\Input::get('order_by')]['eval']['rgxp']) {
                     $strQuery .= ' ORDER BY CAST(`'.\Input::get('order_by').'` AS DECIMAL(20,5)) '.\Input::get('sort');
@@ -1150,7 +1153,9 @@ class ModuleFormdataListing extends \Module
 
                 $class = '';
                 $sort = 'asc';
-                $strField = \strlen($label = $GLOBALS['TL_DCA'][$this->list_table]['fields'][$arrFields[$i]]['label'][0]) ? $label : $arrFields[$i];
+                $label = $GLOBALS['TL_DCA'][$this->list_table]['fields'][$arrFields[$i]]['label'][0];
+                if(!isset($label)) $label='';
+                $strField = \strlen($label) ? $label : $arrFields[$i];
 
                 if (\Input::get('order_by') === $arrFields[$i]) {
                     $sort = ('asc' === \Input::get('sort')) ? 'desc' : 'asc';
