@@ -33,5 +33,4 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class ContaoEfgco4Bundle extends Bundle
 {
-
 }

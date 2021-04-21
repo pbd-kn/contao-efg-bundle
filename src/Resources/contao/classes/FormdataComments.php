@@ -30,7 +30,9 @@ declare(strict_types=1);
 /**
  * Namespace.
  */
+
 namespace PBDKN\Efgco4\Resources\contao\classes;
+
 /**
  * Class FormdataComments.
  *

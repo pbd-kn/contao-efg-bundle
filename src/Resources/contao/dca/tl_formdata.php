@@ -77,13 +77,12 @@ $GLOBALS['TL_DCA']['tl_formdata'] = [
                 'label' => &$GLOBALS['TL_LANG']['tl_formdata']['edit'],
                 'href' => 'act=edit',
                 'icon' => 'PBDKN/Efgco4/Resources/contao/assets/edit.gif',
-
             ],
             'delete' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_formdata']['delete'],
                 'href' => 'act=delete',
                 'icon' => 'PBDKN/Efgco4/Resources/contao/assets/delete.gif',
-                'attributes' => 'onclick="if (!confirm(\''.$GLOBALS['TL_LANG']['MSC']['deleteConfirm'].'hallo'. '\')) return false; Backend.getScrollOffset();"',
+                'attributes' => 'onclick="if (!confirm(\''.$GLOBALS['TL_LANG']['MSC']['deleteConfirm'].'hallo'.'\')) return false; Backend.getScrollOffset();"',
             ],
             'show' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_formdata']['show'],
@@ -318,7 +317,7 @@ class tl_formdata extends \Backend
 
                 if (file_exists($strFile)) {
                     $strName = \Input::get('do');
-                EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "include_once ?? strFile '$strFile' ");
+                    EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "include_once ?? strFile '$strFile' ");
                     include_once $strFile;
 
                     // Replace standard dca tl_formdata by form-dependent dca

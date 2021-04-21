@@ -323,7 +323,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
             } elseif (isset($_POST['override'])) {
                 \Controller::redirect(str_replace('act=select', 'act=overrideAll', \Environment::get('request')));
             } elseif (isset($_POST['cut']) || isset($_POST['copy'])) {
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "strTable $strTable Post cut '".$_POST['cut']."'");
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "strTable $strTable Post cut '".$_POST['cut']."'");
                 $arrClipboard = $this->Session->get('CLIPBOARD');
 
                 $arrClipboard[$strTable] = [
@@ -382,7 +382,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
         // check names of detail fields
         // .. after call to onload_callback we have the form specific dca in $GLOBALS['TL_DCA'][$this->strTable]
-        if (isset($this->strFormKey)&&\strlen($this->strFormKey)) {
+        if (isset($this->strFormKey) && \strlen($this->strFormKey)) {
             $arrFFNames = array_keys($GLOBALS['TL_DCA'][$this->strTable]['fields']);
         }
 
@@ -654,7 +654,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
             // Replace foreign keys with their values
             // .. but not if foreignKey table is formdata table
-            if (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$i]['foreignKey'])&&\strlen($GLOBALS['TL_DCA'][$this->strTable]['fields'][$i]['foreignKey'])) {
+            if (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$i]['foreignKey']) && \strlen($GLOBALS['TL_DCA'][$this->strTable]['fields'][$i]['foreignKey'])) {
                 $chunks = explode('.', $GLOBALS['TL_DCA'][$this->strTable]['fields'][$i]['foreignKey']);
 
                 if ('fd_' === substr($chunks[0], 0, 3)) {
@@ -693,7 +693,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                 $label = \is_array($GLOBALS['TL_LANG']['MSC'][$i]) ? $GLOBALS['TL_LANG']['MSC'][$i][0] : $GLOBALS['TL_LANG']['MSC'][$i];
             }
 
-            if (isset($label)&&!\strlen($label)) {
+            if (isset($label) && !\strlen($label)) {
                 $label = $i;
             }
 
@@ -723,7 +723,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
      */
     public function create($set = []): void
     {
-        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__,'strTable '.$this->strTable.'strFormKey '.$this->strFormKey);
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'strTable '.$this->strTable.'strFormKey '.$this->strFormKey);
 
         if (!empty($this->strFormKey)) {
             $set['form'] = $this->Formdata->arrStoringForms[str_replace('fd_', '', $this->strFormKey)]['title'];
@@ -737,7 +737,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
         // Get all default values for the new entry
         foreach ($GLOBALS['TL_DCA'][$this->strTable]['fields'] as $k => $v) {
-            EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__,"create field[$k] " . $this->strFormKey);
+            EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "create field[$k] ".$this->strFormKey);
             if (\array_key_exists('default', $v)) {
                 if (!\in_array($k, $this->arrBaseFields, true)) {
                     continue;
@@ -759,9 +759,9 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         // Insert the record if the table is not closed and switch to edit mode
         if (!$GLOBALS['TL_DCA'][$this->strTable]['config']['closed']) {
             $this->set['tstamp'] = 0;
-            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,'create insert into  ' . $this->strTable );
-            foreach ($this->set as $k=>$v) {
-              EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"create insert into tl_formdata this->set[$k]$v ");
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'create insert into  '.$this->strTable);
+            foreach ($this->set as $k => $v) {
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "create insert into tl_formdata this->set[$k]$v ");
             }
 
             EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'create query INSERT INTO '.$this->strTable.' %s');
@@ -769,7 +769,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                 ->set($this->set)
                 ->execute()
             ;
-            EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'create changed rows in ' . $this->strTable . ' affectedRows ' . $objInsertStmt->affectedRows);
+            EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'create changed rows in '.$this->strTable.' affectedRows '.$objInsertStmt->affectedRows);
 
             if ($objInsertStmt->affectedRows) {
                 $s2e = $GLOBALS['TL_DCA'][$this->strTable]['config']['switchToEdit'] ? '&s2e=1' : '';  // switch to edit
@@ -813,14 +813,13 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                     EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'tl_formdata_details insertIDdetail '.$objInsertStmt->insertId);
                 }
 
-
-				// Save new record in the session
+                // Save new record in the session
                 /** @var AttributeBagInterface $objSessionBag */
-		        $objSessionBag = \System::getContainer()->get('session')->getBag('contao_backend');
+                $objSessionBag = \System::getContainer()->get('session')->getBag('contao_backend');
 
-				$new_records = $objSessionBag->get('new_records');
-				$new_records[$this->strTable][] = $insertID;
-				$objSessionBag->set('new_records', $new_records);
+                $new_records = $objSessionBag->get('new_records');
+                $new_records[$this->strTable][] = $insertID;
+                $objSessionBag->set('new_records', $new_records);
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "in session insertID $insertID ".$this->strTable.' len '.\count($new_records[$this->strTable]));
                 $this->Session->set('new_records', $new_records);
 
@@ -856,25 +855,20 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
      */
     public function cut(): void
     {
-    		// Call the oncut_callback
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'cut ' . $this->strTable);
+        // Call the oncut_callback
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'cut '.$this->strTable);
 
-		if (\is_array($GLOBALS['TL_DCA'][$this->strTable]['config']['oncut_callback']))
-		{
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'cut callback exist');
-			foreach ($GLOBALS['TL_DCA'][$this->strTable]['config']['oncut_callback'] as $callback)
-			{
-				if (\is_array($callback))
-				{
-					$this->import($callback[0]);
-					$this->{$callback[0]}->{$callback[1]}($this);
-				}
-				elseif (\is_callable($callback))
-				{
-					$callback($this);
-				}
-			}
-		}
+        if (\is_array($GLOBALS['TL_DCA'][$this->strTable]['config']['oncut_callback'])) {
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'cut callback exist');
+            foreach ($GLOBALS['TL_DCA'][$this->strTable]['config']['oncut_callback'] as $callback) {
+                if (\is_array($callback)) {
+                    $this->import($callback[0]);
+                    $this->{$callback[0]}->{$callback[1]}($this);
+                } elseif (\is_callable($callback)) {
+                    $callback($this);
+                }
+            }
+        }
     }
 
     /**
@@ -1147,7 +1141,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
     public function edit($intID = null, $ajaxId = null)
     {
         //$this->log("PBD DC_Formdata edit intID $intID this->intId " . $this->intId, __METHOD__, TL_GENERAL);
-        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "intID '$intID' this->intId '".$this->intId . "'");
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "intID '$intID' this->intId '".$this->intId."'");
 
         $table_alias = ('tl_formdata' === $this->strTable ? ' f' : '');
 
@@ -1172,7 +1166,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
             $sqlQuery .= $sqlWhere;
         }
         //$this->log("PBD DC_Formdata edit sqlQuery $sqlQuery", __METHOD__, TL_GENERAL);
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "sqlQuery $sqlQuery this->intId " . $this->intId);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "sqlQuery $sqlQuery this->intId ".$this->intId);
 
         $objRow = \Database::getInstance()->prepare($sqlQuery)
             ->limit(1)
@@ -1190,12 +1184,12 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
 
         // Build an array from boxes and rows
         $this->strPalette = $this->getPalette();
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "this->strPalette " . $this->strPalette);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'this->strPalette '.$this->strPalette);
         $boxes = trimsplit(';', $this->strPalette);
         $legends = [];
 
         if (!empty($boxes)) {
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "boxes exists");
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'boxes exists');
             foreach ($boxes as $k => $v) {
                 $eCount = 1;
                 $boxes[$k] = trimsplit(',', $v);
@@ -1226,7 +1220,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
 
             // Render boxes
             //$this->log("PBD DC_Formdata getFilepickerJavascript Render boxes ", __METHOD__, TL_GENERAL);
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "Render boxes");
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Render boxes');
             foreach ($boxes as $k => $v) {
                 $strAjax = '';
                 $blnAjax = false;
@@ -1271,7 +1265,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
                     $this->strField = $vv;
                     $this->strInputName = $vv;
                     $this->varValue = $objRow->$vv;
-          EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "this->strField '" . $this->strField. "' this->strInputName '" . $this->strInputName . "' this->varValue '" . $this->varValue . "'");
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "this->strField '".$this->strField."' this->strInputName '".$this->strInputName."' this->varValue '".$this->varValue."'");
 
                     // Autofocus the first text field
                     if ($blnIsFirst && 'text' === $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['inputType']) {
@@ -1341,7 +1335,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
 
                                 // WHERE condition for foreignKey
                                 $strForeignKeyCond = '';
-                                if (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['foreignKeyWhere'])&&\strlen($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['foreignKeyWhere'])) {
+                                if (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['foreignKeyWhere']) && \strlen($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['foreignKeyWhere'])) {
                                     $strForeignKeyCond = $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['foreignKeyWhere'];
                                 }
 
@@ -1730,7 +1724,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
                     $strUrl .= '&amp;table='.\Input::get('table');
                 }
 
-                $strUrl .= (isset($GLOBALS['TL_DCA'][$this->strTable]['config']['ptable'])&&\strlen($GLOBALS['TL_DCA'][$this->strTable]['config']['ptable'])) ? '&amp;act=create&amp;mode=2&amp;pid='.CURRENT_ID : '&amp;act=create';
+                $strUrl .= (isset($GLOBALS['TL_DCA'][$this->strTable]['config']['ptable']) && \strlen($GLOBALS['TL_DCA'][$this->strTable]['config']['ptable'])) ? '&amp;act=create&amp;mode=2&amp;pid='.CURRENT_ID : '&amp;act=create';
                 //$this->log("PBD DC_Formdata.php edit controler redirekt strUrl $strUrl ", __METHOD__, TL_GENERAL);
                 //$this->log("PBD DC_Formdata.php edit controler redirekt referrer " . $this->getReferer(), __METHOD__, TL_GENERAL);
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "controler redirekt strUrl $strUrl referrer ".$this->getReferer());
@@ -2365,7 +2359,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
     {
         $palette = 'default';
         $strPalette = $GLOBALS['TL_DCA'][$this->strTable]['palettes'][$palette];
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strTable ' . $this->strTable.' default strPalettes  ' . $strPalette);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strTable '.$this->strTable.' default strPalettes  '.$strPalette);
 
         // Check whether there are selector fields
         if (!empty($GLOBALS['TL_DCA'][$this->strTable]['palettes']['__selector__'])) {
@@ -2374,7 +2368,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
 
             $table_alias = ('tl_formdata' === $this->strTable ? ' f' : '');
             $sqlQuery = 'SELECT * '.(!empty($this->arrSqlDetails) ? ', '.implode(',', array_values($this->arrSqlDetails)) : '').' FROM '.$this->strTable.$table_alias.' WHERE id=?';
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "sqlquery $sqlquery this->intId " . $this->intId);
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "sqlquery $sqlquery this->intId ".$this->intId);
 
             $objFields = \Database::getInstance()->prepare($sqlQuery)
                 ->limit(1)
@@ -2385,7 +2379,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
             if ($objFields->numRows > 0) {
                 foreach ($GLOBALS['TL_DCA'][$this->strTable]['palettes']['__selector__'] as $name) {
                     $trigger = $objFields->$name;
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "trigger $trigger FORM_SUBMIT '" . \Input::post('FORM_SUBMIT') . "'");
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "trigger $trigger FORM_SUBMIT '".\Input::post('FORM_SUBMIT')."'");
 
                     // Overwrite the trigger
                     if (\Input::post('FORM_SUBMIT') === $this->strTable) {
@@ -2451,7 +2445,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
                 $strPalette = preg_replace('/\b'.preg_quote($k, '/').'\b/i', $k.',['.$k.'],'.$v.',[EOF]', $strPalette);
             }
         } else {
-          EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'no __selector__ ');
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'no __selector__ ');
         }
 
         return $strPalette;
@@ -2884,7 +2878,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
         // Import CSV
         //$this->log('PBD DC_Formdata importFile FORM_SUBMIT  ' . \Input::post('FORM_SUBMIT') , __METHOD__, TL_GENERAL);
         if ('tl_formdata_import' === $_POST['FORM_SUBMIT']) {
-        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'tl_formdata_import ');
+            EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'tl_formdata_import ');
 
             $this->loadDataContainer('tl_files');
 
@@ -3645,7 +3639,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
         if ('' !== $varValue && \in_array($arrField['eval']['rgxp'], ['date', 'time', 'datim'], true)) {
             $objDate = new \Date($varValue, $GLOBALS['TL_CONFIG'][$arrField['eval']['rgxp'].'Format']);
             $varValue = $objDate->tstamp;
-        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "timestamp varValue $varValue");
+            EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "timestamp varValue $varValue");
         }
 
         if (!\in_array($this->strField, $this->arrOwnerFields, true) && !\in_array($this->strField, $this->arrBaseFields, true)) {
@@ -3739,7 +3733,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
         EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "unique varValue $varValue");
 
         if (!\is_array($varValue) && (isset($varValue) && \strlen((string) $varValue)) && $arrField['eval']['unique']) {
-        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "query " . 'SELECT * FROM '.$this->strTable.' WHERE '.$this->strField.'='.$varValue .' AND id!='.$this->intId);
+            EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'query '.'SELECT * FROM '.$this->strTable.' WHERE '.$this->strField.'='.$varValue.' AND id!='.$this->intId);
             $objUnique = \Database::getInstance()->prepare('SELECT * FROM '.$this->strTable.' WHERE '.$this->strField.'=? AND id!=?')
                 ->execute($varValue, $this->intId)
             ;
@@ -3844,19 +3838,19 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
      */
     protected function reviseTable(): void
     {
-EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'revisetabel ' . $this->strTable );
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'revisetabel '.$this->strTable);
         $reload = false;
         $ptable = $GLOBALS['TL_DCA'][$this->strTable]['config']['ptable'];
         $ctable = $GLOBALS['TL_DCA'][$this->strTable]['config']['ctable'];
-		/** @var AttributeBagInterface $objSessionBag */
-		$objSessionBag = \System::getContainer()->get('session')->getBag('contao_backend');
+        /** @var AttributeBagInterface $objSessionBag */
+        $objSessionBag = \System::getContainer()->get('session')->getBag('contao_backend');
 
-		$new_records = $objSessionBag->get('new_records');
-EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'in session new_records this->strTable ' . $this->strTable . ' len new_records ' . \count($new_records[$this->strTable]));
+        $new_records = $objSessionBag->get('new_records');
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'in session new_records this->strTable '.$this->strTable.' len new_records '.\count($new_records[$this->strTable]));
 
         // HOOK: add custom logic
         if (isset($GLOBALS['TL_HOOKS']['reviseTable']) && \is_array($GLOBALS['TL_HOOKS']['reviseTable'])) {
-EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'hook da ');
+            EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'hook da ');
             foreach ($GLOBALS['TL_HOOKS']['reviseTable'] as $callback) {
                 $status = null;
 
@@ -3875,118 +3869,98 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'hook da ');
 
         // Delete all new but incomplete records (tstamp=0)
         if (!empty($new_records[$this->strTable]) && \is_array($new_records[$this->strTable])) {
-			$intPreserved = null;
+            $intPreserved = null;
 
-			// Unset the preserved record (see #1129)
-			if ($this->intPreserveRecord && ($index = array_search($this->intPreserveRecord, $new_records[$this->strTable])) !== false)
-			{
-				$intPreserved = $new_records[$this->strTable][$index];
-				unset($new_records[$this->strTable][$index]);
-			}
+            // Unset the preserved record (see #1129)
+            if ($this->intPreserveRecord && ($index = array_search($this->intPreserveRecord, $new_records[$this->strTable], true)) !== false) {
+                $intPreserved = $new_records[$this->strTable][$index];
+                unset($new_records[$this->strTable][$index]);
+            }
 
-			// Remove the entries from the database
-			if (!empty($new_records[$this->strTable]))
-			{
-				$origId = $this->id;
-				$origActiveRecord = $this->activeRecord;
-				$ids = array_map('\intval', $new_records[$this->strTable]);
+            // Remove the entries from the database
+            if (!empty($new_records[$this->strTable])) {
+                $origId = $this->id;
+                $origActiveRecord = $this->activeRecord;
+                $ids = array_map('\intval', $new_records[$this->strTable]);
 
-				foreach ($ids as $id)
-				{
-					// Get the current record
-					$objRow = $this->Database->prepare("SELECT * FROM " . $this->strTable . " WHERE id=?")
-											 ->limit(1)
-											 ->execute($id);
+                foreach ($ids as $id) {
+                    // Get the current record
+                    $objRow = $this->Database->prepare('SELECT * FROM '.$this->strTable.' WHERE id=?')
+                                             ->limit(1)
+                                             ->execute($id)
+                    ;
 
-					$this->id = $id;
-					$this->activeRecord = $objRow;
+                    $this->id = $id;
+                    $this->activeRecord = $objRow;
 
-					// Invalidate cache tags (no need to invalidate the parent)
-					$this->invalidateCacheTags();
-				}
+                    // Invalidate cache tags (no need to invalidate the parent)
+                    $this->invalidateCacheTags();
+                }
 
-				$this->id = $origId;
-				$this->activeRecord = $origActiveRecord;
-EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "DELETE FROM " . $this->strTable . " WHERE id IN(" . implode(',', $ids) . ") AND tstamp=0");
+                $this->id = $origId;
+                $this->activeRecord = $origActiveRecord;
+                EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'DELETE FROM '.$this->strTable.' WHERE id IN('.implode(',', $ids).') AND tstamp=0');
 
-				$objStmt = $this->Database->execute("DELETE FROM " . $this->strTable . " WHERE id IN(" . implode(',', $ids) . ") AND tstamp=0");
+                $objStmt = $this->Database->execute('DELETE FROM '.$this->strTable.' WHERE id IN('.implode(',', $ids).') AND tstamp=0');
 
-				if ($objStmt->affectedRows > 0)
-				{
-					$reload = true;
-				}
-			}
+                if ($objStmt->affectedRows > 0) {
+                    $reload = true;
+                }
+            }
 
-			// Remove the entries from the session
-			if ($intPreserved !== null)
-			{
-				$new_records[$this->strTable] = array($intPreserved);
-			}
-			else
-			{
-				unset($new_records[$this->strTable]);
-			}
+            // Remove the entries from the session
+            if (null !== $intPreserved) {
+                $new_records[$this->strTable] = [$intPreserved];
+            } else {
+                unset($new_records[$this->strTable]);
+            }
 
-			$objSessionBag->set('new_records', $new_records);
+            $objSessionBag->set('new_records', $new_records);
         }
 
-		// Delete all records of the current table that are not related to the parent table
-		if ($ptable)
-		{
-			if ($GLOBALS['TL_DCA'][$this->strTable]['config']['dynamicPtable'])
-			{
-				$objIds = $this->Database->execute("SELECT c.id FROM " . $this->strTable . " c LEFT JOIN " . $ptable . " p ON c.pid=p.id WHERE c.ptable='" . $ptable . "' AND p.id IS NULL");
-			}
-			else
-			{
-				$objIds = $this->Database->execute("SELECT c.id FROM " . $this->strTable . " c LEFT JOIN " . $ptable . " p ON c.pid=p.id WHERE p.id IS NULL");
-			}
+        // Delete all records of the current table that are not related to the parent table
+        if ($ptable) {
+            if ($GLOBALS['TL_DCA'][$this->strTable]['config']['dynamicPtable']) {
+                $objIds = $this->Database->execute('SELECT c.id FROM '.$this->strTable.' c LEFT JOIN '.$ptable." p ON c.pid=p.id WHERE c.ptable='".$ptable."' AND p.id IS NULL");
+            } else {
+                $objIds = $this->Database->execute('SELECT c.id FROM '.$this->strTable.' c LEFT JOIN '.$ptable.' p ON c.pid=p.id WHERE p.id IS NULL');
+            }
 
-			if ($objIds->numRows)
-			{
-				$objStmt = $this->Database->execute("DELETE FROM " . $this->strTable . " WHERE id IN(" . implode(',', array_map('\intval', $objIds->fetchEach('id'))) . ")");
+            if ($objIds->numRows) {
+                $objStmt = $this->Database->execute('DELETE FROM '.$this->strTable.' WHERE id IN('.implode(',', array_map('\intval', $objIds->fetchEach('id'))).')');
 
-				if ($objStmt->affectedRows > 0)
-				{
-					$reload = true;
-				}
-			}
-		}
+                if ($objStmt->affectedRows > 0) {
+                    $reload = true;
+                }
+            }
+        }
 
-		// Delete all records of the child table that are not related to the current table
-		if (!empty($ctable) && \is_array($ctable))
-		{
-			foreach ($ctable as $v)
-			{
-				if ($v)
-				{
-					// Load the DCA configuration so we can check for "dynamicPtable"
+        // Delete all records of the child table that are not related to the current table
+        if (!empty($ctable) && \is_array($ctable)) {
+            foreach ($ctable as $v) {
+                if ($v) {
+                    // Load the DCA configuration so we can check for "dynamicPtable"
                     EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "loadDataContainer  $v");
 
-					$this->loadDataContainer($v);
+                    $this->loadDataContainer($v);
                     EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "geladen loadDataContainer  $v");
 
-					if ($GLOBALS['TL_DCA'][$v]['config']['dynamicPtable'])
-					{
-						$objIds = $this->Database->execute("SELECT c.id FROM " . $v . " c LEFT JOIN " . $this->strTable . " p ON c.pid=p.id WHERE c.ptable='" . $this->strTable . "' AND p.id IS NULL");
-					}
-					else
-					{
-						$objIds = $this->Database->execute("SELECT c.id FROM " . $v . " c LEFT JOIN " . $this->strTable . " p ON c.pid=p.id WHERE p.id IS NULL");
-					}
+                    if ($GLOBALS['TL_DCA'][$v]['config']['dynamicPtable']) {
+                        $objIds = $this->Database->execute('SELECT c.id FROM '.$v.' c LEFT JOIN '.$this->strTable." p ON c.pid=p.id WHERE c.ptable='".$this->strTable."' AND p.id IS NULL");
+                    } else {
+                        $objIds = $this->Database->execute('SELECT c.id FROM '.$v.' c LEFT JOIN '.$this->strTable.' p ON c.pid=p.id WHERE p.id IS NULL');
+                    }
 
-					if ($objIds->numRows)
-					{
-						$objStmt = $this->Database->execute("DELETE FROM " . $v . " WHERE id IN(" . implode(',', array_map('\intval', $objIds->fetchEach('id'))) . ")");
+                    if ($objIds->numRows) {
+                        $objStmt = $this->Database->execute('DELETE FROM '.$v.' WHERE id IN('.implode(',', array_map('\intval', $objIds->fetchEach('id'))).')');
 
-						if ($objStmt->affectedRows > 0)
-						{
-							$reload = true;
-						}
-					}
-				}
-			}
-		}
+                        if ($objStmt->affectedRows > 0) {
+                            $reload = true;
+                        }
+                    }
+                }
+            }
+        }
 
         // Reload the page
         if ($reload) {
@@ -4069,12 +4043,12 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "DELETE FROM " . $this->str
         EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "query $query values '".implode(', ', $this->values)."'");
 
         $objRow = $objRowStmt->execute($this->values);
-        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "nach execute");
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'nach execute');
         $this->bid = ('' !== $return) ? $this->bid : 'tl_buttons';
         //$this->log("PBD DC_Formdata.php listView closed " . " global_operations " . $GLOBALS['TL_DCA'][$this->strTable]['list']['global_operations'], __METHOD__, TL_GENERAL);
-EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'closed '.' global_operations '.$GLOBALS['TL_DCA'][$this->strTable]['list']['global_operations']);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'closed '.' global_operations '.$GLOBALS['TL_DCA'][$this->strTable]['list']['global_operations']);
         //$this->log("PBD DC_Formdata.php listView Display !closed '" . !($GLOBALS['TL_DCA'][$this->strTable]['config']['closed']) . "'"  , __METHOD__, TL_GENERAL);
-EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "Display !closed '".!($GLOBALS['TL_DCA'][$this->strTable]['config']['closed'])."'");
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "Display !closed '".!($GLOBALS['TL_DCA'][$this->strTable]['config']['closed'])."'");
 
         // Display buttons
         if (!$GLOBALS['TL_DCA'][$this->strTable]['config']['closed'] || !empty($GLOBALS['TL_DCA'][$this->strTable]['list']['global_operations'])) {
@@ -4100,7 +4074,7 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "Display !closed '".!($GLOBAL
 
         // List records
         else {
-        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'list records');
+            EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'list records');
             $result = $objRow->fetchAllAssoc();
             $return .= (('select' === \Input::get('act')) ? '
 
@@ -4247,7 +4221,7 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "Display !closed '".!($GLOBAL
 
                 // Shorten the label it if it is too long
                 $label = vsprintf(((isset($GLOBALS['TL_DCA'][$this->strTable]['list']['label']['format']) && \strlen($GLOBALS['TL_DCA'][$this->strTable]['list']['label']['format'])) ? $GLOBALS['TL_DCA'][$this->strTable]['list']['label']['format'] : '%s'), $args);
-        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'sortlabel $label');
+                EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'sortlabel $label');
 
                 if ($GLOBALS['TL_DCA'][$this->strTable]['list']['label']['maxCharacters'] > 0 && $GLOBALS['TL_DCA'][$this->strTable]['list']['label']['maxCharacters'] < \strlen(strip_tags($label))) {
                     $label = trim(\StringUtil::substrHtml($label, $GLOBALS['TL_DCA'][$this->strTable]['list']['label']['maxCharacters'])).' …';
@@ -4506,10 +4480,10 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "Display !closed '".!($GLOBAL
             $sqlSearchField = $session['search'][$strSessionKey]['field'];
             if (\in_array($sqlSearchField, $this->arrDetailFields, true)) {
                 $sqlSearchField = '(SELECT value FROM tl_formdata_details WHERE ff_name=\''.$session['search'][$strSessionKey]['field'].'\' AND pid=f.id)';
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "sqlSearchField $sqlSearchField gesetzt ");
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "sqlSearchField $sqlSearchField gesetzt ");
             }
 
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "sqlSearchField $sqlSearchField dbCollation " . $GLOBALS['TL_CONFIG']['dbCollation']);
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "sqlSearchField $sqlSearchField dbCollation ".$GLOBALS['TL_CONFIG']['dbCollation']);
 
             if ('_ci' === substr($GLOBALS['TL_CONFIG']['dbCollation'], -3)) {
                 $this->procedure[] = 'LOWER(CAST('.$sqlSearchField.' AS CHAR)) REGEXP LOWER(?)';
@@ -4607,7 +4581,7 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "Display !closed '".!($GLOBAL
                 $options_label = $options_label[0];
             }
 
-            $options_sorter[$options_label] = '  <option value="'.specialchars($field).'"'.((isset($session['sorting'][$strSessionKey])&&!\strlen($session['sorting'][$strSessionKey]) && $field === $firstOrderBy || $field === str_replace(' DESC', '', $session['sorting'][$strSessionKey])) ? ' selected="selected"' : '').'>'.$options_label.'</option>';
+            $options_sorter[$options_label] = '  <option value="'.specialchars($field).'"'.((isset($session['sorting'][$strSessionKey]) && !\strlen($session['sorting'][$strSessionKey]) && $field === $firstOrderBy || $field === str_replace(' DESC', '', $session['sorting'][$strSessionKey])) ? ' selected="selected"' : '').'>'.$options_label.'</option>';
         }
 
         // Sort by option values
@@ -4632,8 +4606,10 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "Display !closed '".!($GLOBAL
      */
     protected function limitMenu($blnOptional = false)
     {
-EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'this->procedure len ' . count($this->procedure) . ' this->value len ' . count($this->value));
-        if (count($this->value) < 2) return false; 
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'this->procedure len '.\count($this->procedure).' this->value len '.\count($this->value));
+        if (\count($this->value) < 2) {
+            return false;
+        }
         $session = $this->Session->getData();
         $filter = (4 === $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode']) ? $this->strTable.'_'.CURRENT_ID : (\strlen($this->strFormKey)) ? $this->strFormKey : $this->strTable;
         $fields = '';
@@ -4662,34 +4638,31 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'this->procedure len ' . co
 
         // Set limit from table configuration
         else {
-            $this->limit = (isset($session['filter'][$filter]['limit'])&&\strlen($session['filter'][$filter]['limit'])) ? (('all' === $session['filter'][$filter]['limit']) ? null : $session['filter'][$filter]['limit']) : '0,'.$GLOBALS['TL_CONFIG']['resultsPerPage'];
+            $this->limit = (isset($session['filter'][$filter]['limit']) && \strlen($session['filter'][$filter]['limit'])) ? (('all' === $session['filter'][$filter]['limit']) ? null : $session['filter'][$filter]['limit']) : '0,'.$GLOBALS['TL_CONFIG']['resultsPerPage'];
 
-			$sqlQuery = '';
-			$sqlSelect = '';
-			$sqlDetailFields = '';
-			$sqlWhere = '';
+            $sqlQuery = '';
+            $sqlSelect = '';
+            $sqlDetailFields = '';
+            $sqlWhere = '';
 
-			if (!empty($this->procedure))
-			{
-				$arrProcedure = $this->procedure;
-				foreach ($arrProcedure as $kProc => $vProc)
-				{
-					$arrParts = preg_split('/[\s=><\!]/si', $vProc);
-					$strProcField = $arrParts[0];
-					if (in_array($strProcField, $this->arrDetailFields))
-					{
-						$arrProcedure[$kProc] = "(SELECT value FROM tl_formdata_details WHERE ff_name='" . $strProcField . "' AND pid=f.id)=?";
-					}
+            if (!empty($this->procedure)) {
+                $arrProcedure = $this->procedure;
+                foreach ($arrProcedure as $kProc => $vProc) {
+                    $arrParts = preg_split('/[\s=><\!]/si', $vProc);
+                    $strProcField = $arrParts[0];
+                    if (\in_array($strProcField, $this->arrDetailFields, true)) {
+                        $arrProcedure[$kProc] = "(SELECT value FROM tl_formdata_details WHERE ff_name='".$strProcField."' AND pid=f.id)=?";
+                    }
+                }
+                $sqlWhere = ' WHERE '.implode(' AND ', $arrProcedure);
+            }
+            $sqlSelect = 'SELECT COUNT(*) AS count FROM '.$this->strTable.' f';
+            $sqlQuery = $sqlSelect.$sqlWhere;
+            EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "sqlQuery $sqlQuery");
 
-				}
-				$sqlWhere = " WHERE " . implode(' AND ', $arrProcedure);
-			}
-			$sqlSelect = "SELECT COUNT(*) AS count FROM " . $this->strTable . " f";
-			$sqlQuery = $sqlSelect . $sqlWhere;
-EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "sqlQuery $sqlQuery");
-
-			$objTotal = \Database::getInstance()->prepare($sqlQuery)
-				->execute($this->values);
+            $objTotal = \Database::getInstance()->prepare($sqlQuery)
+                ->execute($this->values)
+            ;
             $total = $objTotal->count;
             $options_total = 0;
             $blnIsMaxResultsPerPage = false;
@@ -4932,12 +4905,12 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "sqlQuery $sqlQuery");
                     (8 === $GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['flag']) ? rsort($options) : sort($options);
 
                     foreach ($options as $k => $v) {
-EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "options[$k]$v");
+                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "options[$k]$v");
                         if ('' === $v) {
                             $options[$v] = '-';
                         } else {
-                            $x = intval($v);
-                            $options[$v] = date('Y-m',$x);
+                            $x = (int) $v;
+                            $options[$v] = date('Y-m', $x);
                             $intMonth = (date('m', $x) - 1);
 
                             if (isset($GLOBALS['TL_LANG']['MONTHS'][$intMonth])) {

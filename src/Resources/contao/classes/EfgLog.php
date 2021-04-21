@@ -57,7 +57,9 @@ class EfgLog
     */
     public static function setefgDebugmode($key): void
     {
-        if(!isset($key)) $key='form'; 
+        if (!isset($key)) {
+            $key = 'form';
+        }
         if ('' === self::$debFormKey || $key !== self::$debFormKey) {
             // Get all forms marked to store data
             $objForms = \Database::getInstance()->prepare('SELECT alias,title,efgDebugMode FROM tl_form WHERE storeFormdata=?')
@@ -72,7 +74,7 @@ class EfgLog
                       self::$debFormKey = $key;
                       $arrUniqid = StringUtil::trimsplit('.', uniqid('efgc0n7a0', true));
                       self::$uniqid = $arrUniqid[1];
-                      continue;                               
+                      continue;
                   }
                 }
                 $strFormKey = (!empty($objForms->alias)) ? $objForms->alias : str_replace('-', '_', standardize($objForms->title));
@@ -81,13 +83,14 @@ class EfgLog
                     self::$debFormKey = $key;
                     $arrUniqid = StringUtil::trimsplit('.', uniqid('efgc0n7a0', true));
                     self::$uniqid = $arrUniqid[1];
+
                     return;
                 }
             }
             if (0 === self::$myefgdebuglevel) {
                 self::$debFormKey = '';
                 self::$uniqid = 0;
-            } 
+            }
         }
     }
 
@@ -128,7 +131,6 @@ class EfgLog
                 self::$cnt++;
         */
     }
-
 
     /**
      * Wrapper for old log_message.

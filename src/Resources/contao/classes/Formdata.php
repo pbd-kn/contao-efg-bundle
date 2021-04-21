@@ -89,14 +89,14 @@ class Formdata extends \Contao\Frontend
         parent::__construct();
         EfgLog::setEfgDebugmode(\Input::get('do'));
 
-        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "do '".\Input::get('do')."' act '" .\Input::get('do') . "'");
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "do '".\Input::get('do')."' act '".\Input::get('do')."'");
 
-        // Types of form fields with storable data                                                                    
+        // Types of form fields with storable data
         $this->arrFFstorable = [
             'sessionText', 'sessionOption', 'sessionCalculator',
             'hidden', 'text', 'calendar', 'xdependentcalendarfields', 'password', 'textarea',
             'select', 'efgImageSelect', 'condition', 'conditionalselect', 'countryselect', 'fp_preSelectMenu', 'efgLookupSelect',
-            'radio', 'efgLookupRadio', 'cm_alternative',                                     
+            'radio', 'efgLookupRadio', 'cm_alternative',
             'checkbox', 'efgLookupCheckbox',
             'upload', 'fileTree',
         ];
@@ -238,9 +238,9 @@ class Formdata extends \Contao\Frontend
         // Generate alias if there is none
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "varValue '$varValue' strAliasField '$strAliasField'");
         if (empty($varValue)) {
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "varValue empty");
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'varValue empty');
             if (!empty($strAliasField)) {
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "strAliasField not empty");
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strAliasField not empty');
                 $autoAlias = true;
                 $strAliasFieldSuffix = '';
 
@@ -253,17 +253,19 @@ class Formdata extends \Contao\Frontend
                 if (isset($_POST[$strAliasField.$strAliasFieldSuffix])) {
                     $varValue = standardize(\Input::post($strAliasField.$strAliasFieldSuffix));
                 } else {
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'query: SELECT `value` FROM tl_formdata_details WHERE pid='.$intRecId.' AND ff_name='.$strAliasField);
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'query: SELECT `value` FROM tl_formdata_details WHERE pid='.$intRecId.' AND ff_name='.$strAliasField);
                     $objValue = \Database::getInstance()->prepare('SELECT `value` FROM tl_formdata_details WHERE pid=? AND ff_name=?')
                         ->limit(1)
                         ->execute($intRecId, $strAliasField)
                     ;
 
                     $varValue = standardize($objValue->value);
-                    if (empty($varValue)) { $autoAlias = true; }
+                    if (empty($varValue)) {
+                        $autoAlias = true;
+                    }
                 }
             } else {
-              $autoAlias = true;
+                $autoAlias = true;
             }
         }
 
@@ -271,10 +273,10 @@ class Formdata extends \Contao\Frontend
             ->execute($varValue, $intRecId)
         ;
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'query: SELECT id FROM tl_formdata WHERE alias='.$varValue.' AND id != '.$intRecId);
- 
+
         // Check whether the alias exists
         if ($objAlias->numRows > 1 && !$autoAlias) {
-          EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'alias "'.$varValue.'" Formid "'.$intRecId.'" existiert');
+            EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'alias "'.$varValue.'" Formid "'.$intRecId.'" existiert');
             throw new \Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $varValue));
         }
 
@@ -419,7 +421,7 @@ class Formdata extends \Contao\Frontend
     {
         if (!$this->arrStoringForms) {
             // Get all forms marked to store data
-            EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "Read from DB");
+            EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'Read from DB');
             $objForms = \Database::getInstance()->prepare('SELECT id,title,alias,formID,useFormValues,useFieldNames,efgAliasField,efgDebugMode FROM tl_form WHERE storeFormdata=?')
                 ->execute('1')
             ;
@@ -433,16 +435,18 @@ class Formdata extends \Contao\Frontend
             }
         }
     }
+
     /**
      * Get all forms marked to store data in tl_formdata.
      */
     public function removeFromStoringForm($strFormKey): void
-    {     if (isset($this->arrStoringForms[$strFormKey])) {
+    {
+        if (isset($this->arrStoringForms[$strFormKey])) {
             unset($this->arrStoringForms[$strFormKey]);
             EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "delete $strFormKey");
-          }
-      
+        }
     }
+
     /**
      * Return record from tl_formdata as Array('fd_base' => base fields from tl_formdata, 'fd_details' => detail fields from tl_formdata_details).
      *
