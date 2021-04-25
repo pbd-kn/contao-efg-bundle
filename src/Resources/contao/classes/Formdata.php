@@ -89,7 +89,7 @@ class Formdata extends \Contao\Frontend
         parent::__construct();
         EfgLog::setEfgDebugmode(\Input::get('do'));
 
-        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "do '".\Input::get('do')."' act '".\Input::get('do')."'");
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "do '".\Input::get('do')."' act '".\Input::get('act')."'");
 
         // Types of form fields with storable data
         $this->arrFFstorable = [
@@ -1853,7 +1853,7 @@ class Formdata extends \Contao\Frontend
         $attachments = $objMailProperties->attachments;
 
         $blnSkipEmptyFields = $objMailProperties->skipEmptyFields;
-        //$this->log("PBD Formdata prepareMailData sender $sender subject $subject", __METHOD__, 'TL_GENERAL');
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "prepareMailData sender $sender subject $subject messageHtmlTmpl $messageHtmlTmpl");
 
         if (\Validator::isUuid($messageHtmlTmpl) || (is_numeric($messageHtmlTmpl) && $messageHtmlTmpl > 0)) {
             $objFileModel = \FilesModel::findById($messageHtmlTmpl);
@@ -1861,12 +1861,14 @@ class Formdata extends \Contao\Frontend
                 $messageHtmlTmpl = $objFileModel->path;
             }
         }
-        if ('' !== $messageHtmlTmpl) {
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "messageHtmlTmpl '$messageHtmlTmpl'");
+        if (isset($messageHtmlTmpl)&&strlen($messageHtmlTmpl)>0) {
             $fileTemplate = new \File($messageHtmlTmpl);
             if ('text/html' === $fileTemplate->mime) {
                 $messageHtml = $fileTemplate->getContent();
             }
         }
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Prepare insert tags to handle separate from condition tags');
 
         // Prepare insert tags to handle separate from 'condition tags'
         if (!empty($messageText)) {
@@ -1891,6 +1893,7 @@ class Formdata extends \Contao\Frontend
         $blnEvalMessageText = $this->replaceConditionTags($messageText);
         $blnEvalMessageHtml = $this->replaceConditionTags($messageHtml);
 
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Replace tags in messageText, messageHtml ...');
         // Replace tags in messageText, messageHtml ...
         $tags = [];
         preg_match_all('/__BRCL__.*?__BRCR__/si', $messageText.$messageHtml.$subject.$sender.$senderName, $tags);
@@ -2053,6 +2056,7 @@ class Formdata extends \Contao\Frontend
                     break;
             }
         }
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Replace standard insert tags and eval condition tags');
 
         // Replace standard insert tags and eval condition tags
         if (!empty($messageText)) {
@@ -2114,6 +2118,7 @@ class Formdata extends \Contao\Frontend
         $objMailProperties->messageHtml = $messageHtml;
         $objMailProperties->attachments = $attachments;
 
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'return');
         return $objMailProperties;
     }
 

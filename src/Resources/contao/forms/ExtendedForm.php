@@ -116,7 +116,6 @@ class ExtendedForm extends \Form
      */
     protected function compile()
     {
-        $this->log('PBD ExtendedForm compile ', __METHOD__, TL_GENERAL);
 
         $hasUpload = false;
         $doNotSubmit = false;
@@ -125,6 +124,7 @@ class ExtendedForm extends \Form
 
         $this->loadDataContainer('tl_form_field');
         $formId = ('' !== $this->formID) ? 'auto_'.$this->formID : 'auto_form_'.$this->id;
+        $this->log('PBD ExtendedForm compile formId '.$formId, __METHOD__, TL_GENERAL);
 
         $arrUnset = ['FORM_NEXT', 'FORM_BACK'];
         foreach ($arrUnset as $strKey) {
@@ -143,6 +143,7 @@ class ExtendedForm extends \Form
             ->prepare('SELECT id,pid,invisible,`sorting`,`type`,`name`,`label`,`value`,`imageSubmit`,`singleSRC`,`sLabel`,`efgAddBackButton`,`efgBackStoreSessionValues`,`efgBackSlabel`,`efgBackImageSubmit`,`efgBackSingleSRC` FROM tl_form_field WHERE pid=? AND `type`=?'.((!BE_USER_LOGGED_IN) ? " AND invisible=''" : '').' ORDER BY `sorting`')
             ->execute($this->id, 'efgFormPaginator')
         ;
+        $this->log('PBD ExtendedForm compile nach paginators '.$formId, __METHOD__, TL_GENERAL);
 
         if ($objPaginators->numRows) {
             $this->blnMultipage = true;
@@ -160,6 +161,7 @@ class ExtendedForm extends \Form
             $_SESSION['FILES'] = [];
 
             $this->strTemplate = 'form';
+        $this->log('PBD ExtendedForm compile parent compile Use the core class Form '.$formId, __METHOD__, TL_GENERAL);
 
             return parent::compile();
         }
@@ -179,14 +181,15 @@ class ExtendedForm extends \Form
 
         $this->Template = new \FrontendTemplate($this->strTemplate);
         \System::loadLanguageFile('tl_form');
+        $this->log('PBD ExtendedForm compile frentendtemplate geladen '.$this->strTemplate, __METHOD__, TL_GENERAL);
 
         // render a previous completed page
-        if (\strlen($_SESSION['EFP'][$formId]['render_page'])) {
+        if (isset($_SESSION['EFP'][$formId]['render_page'])&&\strlen($_SESSION['EFP'][$formId]['render_page'])) {
             $intActivePage = (int) $_SESSION['EFP'][$formId]['render_page'];
             $this->intActivePage = (int) $_SESSION['EFP'][$formId]['render_page'];
             $strMode = 'reload';
             unset($_SESSION['EFP'][$formId]['render_page']);
-        } elseif (!\strlen($_POST['FORM_SUBMIT'])) {
+        } elseif (isset($_POST['FORM_SUBMIT'])&&!\strlen($_POST['FORM_SUBMIT'])) {
             unset($_SESSION['EFP'][$formId]['render_page'], $_SESSION['EFP'][$formId]['completed']);
         }
 
@@ -319,7 +322,7 @@ class ExtendedForm extends \Form
                 // (to avoid wrong validation against session values and to avoid usage of values of other forms):
                 // This behaviour can be deactivated by setting: $GLOBALS['EFP'][$formId]['doNotCleanStoredSessionData'] = true;
                 if ('reload' !== $strMode && \strlen($objField->name)) {
-                    if (!\strlen($_POST['FORM_SUBMIT']) || !$_SESSION['EFP'][$formId]['completed']['page_'.$this->intActivePage]) {
+                    if (isset($_POST['FORM_SUBMIT'])&&!\strlen($_POST['FORM_SUBMIT']) || isset($_POST['FORM_SUBMIT'])&&!$_SESSION['EFP'][$formId]['completed']['page_'.$this->intActivePage]) {
                         if (!$GLOBALS['EFP'][$formId]['doNotCleanStoredSessionData']) {
                             unset($_SESSION['FORM_DATA'][$objField->name]);
                         }
@@ -335,7 +338,7 @@ class ExtendedForm extends \Form
                     $objWidget->value = $_SESSION['FORM_DATA'][$objField->name];
                 }
 
-                if ('reload' === $strMode || ($this->blnEditform && !\strlen($_POST['FORM_BACK']) && !\strlen($_POST['FORM_BACK_x']))) {
+                if ('reload' === $strMode || ($this->blnEditform && (isset($_POST['FORM_BACK'])&&!\strlen($_POST['FORM_BACK']))) && (isset($_POST['FORM_BACK'])&&!\strlen($_POST['FORM_BACK_x']))) {
                     // Frontend editing
                     if ($this->blnEditform && !$_SESSION['EFP'][$formId]['completed']['page_'.$this->intActivePage]) {
                         if (\is_array($objWidget->options)) {
@@ -378,7 +381,7 @@ class ExtendedForm extends \Form
                 }
 
                 // HOOK: Load form field callback
-                if (!\strlen($_POST['FORM_BACK']) && !\strlen($_POST['FORM_BACK_x'])) {
+                if ((isset($_POST['FORM_BACK'])&&!\strlen($_POST['FORM_BACK'])) && (isset($_POST['FORM_BACK_x'])&&!\strlen($_POST['FORM_BACK_x']))) {
                     if (isset($GLOBALS['TL_HOOKS']['loadFormField']) && \is_array($GLOBALS['TL_HOOKS']['loadFormField'])) {
                         foreach ($GLOBALS['TL_HOOKS']['loadFormField'] as $callback) {
                             $this->import($callback[0]);

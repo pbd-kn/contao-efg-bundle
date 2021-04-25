@@ -446,7 +446,7 @@ class ModuleFormdataListing extends \Module
      */
     public function generateEditForm($objFormElement, $objRecord)
     {
-        $this->log('PBD ModuleFormdataListing generateEditForm '.$objFormElement, __METHOD__, TL_GENERAL);
+        $this->log('PBD ModuleFormdataListing generateEditForm '.\Input::get('do'), __METHOD__, TL_GENERAL);
 
         if (TL_MODE === 'BE') {
             return '';
@@ -454,7 +454,6 @@ class ModuleFormdataListing extends \Module
 
         $objFormElement->typePrefix = 'ce_';
 
-        $this->log('PBD ModuleFormdataListing generateEditForm vor create '.$objFormElement, __METHOD__, TL_GENERAL);
         $this->EditForm = new ExtendedForm($objFormElement);
         $this->EditForm->objEditRecord = $objRecord;
 
@@ -2506,7 +2505,7 @@ class ModuleFormdataListing extends \Module
         $intFormId = 0;
 
         // Fallback template
-        if (!\strlen($this->list_edit_layout)) {
+        if (isset($this->list_edit_layout)&&!\strlen($this->list_edit_layout)) {
             $this->list_edit_layout = 'edit_fd_default';
         }
         $this->log('PBD ModuleFormdataListing  list_edit_layout '.$this->list_edit_layout, __METHOD__, 'ERROR');

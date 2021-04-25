@@ -52,8 +52,10 @@ class FormdataProcessor extends \Contao\Frontend
 
     public function __construct()
     {
+        EfgLog::setEfgDebugmode('form');
+
         $this->myMailer = \Contao\System::getContainer()->get('swiftmailer.mailer');
-        $this->log('PBD FormdataProcessor co4 construct nach Parent', __METHOD__, TL_GENERAL);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "nach Parent do '".\Input::get('do')."'");
     }
 
     /**
@@ -67,7 +69,7 @@ class FormdataProcessor extends \Contao\Frontend
      */
     public function processSubmittedData($arrSubmitted, $arrForm = false, $arrFiles = false, $arrLabels = false): void
     {
-        $this->log('PBD FormdataProcessor co4 processSubmittedData', __METHOD__, TL_GENERAL);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "processSubmittedData do '".\Input::get('do')."'");
 
         // Form config
         if (!$arrForm) {
@@ -81,11 +83,11 @@ class FormdataProcessor extends \Contao\Frontend
 
         $this->strFdDcaKey = 'fd_'.(!empty($arrForm['alias']) ? $arrForm['alias'] : str_replace('-', '_', standardize($arrForm['title'])));
         $this->Formdata->FdDcaKey = $this->strFdDcaKey;
-        $this->log('PBD FormdataProcessor co4 this->Formdata->FdDcaKey '.$this->Formdata->FdDcaKey, __METHOD__, TL_GENERAL);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'this->Formdata->FdDcaKey '.$this->Formdata->FdDcaKey);
 
         // Get params of related listing formdata
         $intListingId = (int) ($_SESSION['EFP']['LISTING_MOD']['id']);
-        $this->log("PBD FormdataProcessor co4 intListingId $intListingId ", __METHOD__, TL_GENERAL);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'intListingId '.$intListingId );
         if ($intListingId > 0) {
             $objListing = \Database::getInstance()->prepare('SELECT * FROM tl_module WHERE id=?')
                 ->execute($intListingId)
@@ -118,6 +120,7 @@ class FormdataProcessor extends \Contao\Frontend
                 }
             }
         }
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'act '.\Input::get('act').' arrListing[efg_fe_edit_access] '.$arrListing['efg_fe_edit_access'] );
 
         if (\in_array($arrListing['efg_fe_edit_access'], ['public', 'groupmembers', 'member'], true)) {
             if ('edit' === \Input::get('act')) {
@@ -140,11 +143,12 @@ class FormdataProcessor extends \Contao\Frontend
 
         if (($arrForm['storeFormdata'] || $arrForm['sendConfirmationMail'] || $arrForm['sendFormattedMail']) && !empty($arrSubmitted)) {
             $timeNow = time();
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strFdDcaKey '.$this->strFdDcaKey);
 
             $this->loadDataContainer($this->strFdDcaKey);
             $this->loadDataContainer('tl_formdata_details');
             $this->loadDataContainer('tl_files');
-            $this->log('PBD FormdataProcessor c) bearbeite FORM id:  '.$arrForm['id'].' title: '.$arrForm['title'], __METHOD__, TL_GENERAL);
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'c) bearbeite FORM id:  '.$arrForm['id'].' title: '.$arrForm['title']);
 
             $arrFormFields = $this->Formdata->getFormfieldsAsArray($arrForm['id']);
 
@@ -191,6 +195,7 @@ class FormdataProcessor extends \Contao\Frontend
                 $arrOldFormdata = $arrOldData['fd_base'];
                 $arrOldFormdataDetails = $arrOldData['fd_details'];
             }
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Formdata storage');
 
             // Prepare record tl_formdata
             $arrSet = [
@@ -227,15 +232,19 @@ class FormdataProcessor extends \Contao\Frontend
                     $arrSet['published'] = $arrOldFormdata['published'];
                 }
             }
+            $implodearrSet=implode(", ",$arrSet);
 
             // Store formdata: Update or insert and delete
             if ($blnFEedit && \strlen($arrListing['efg_fe_keep_id'])) {
                 $intNewId = $intOldId;
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'UPDATE tl_formdata '.$implodearrSet.' WHERE id='.$intOldId);
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'DELETE FROM tl_formdata_details WHERE pid='.$intOldId);
                 \Database::getInstance()->prepare('UPDATE tl_formdata %s WHERE id=?')->set($arrSet)->execute($intOldId);
                 \Database::getInstance()->prepare('DELETE FROM tl_formdata_details WHERE pid=?')->execute($intOldId);
             } else {
                 $objNewFormdata = \Database::getInstance()->prepare('INSERT INTO tl_formdata %s')->set($arrSet)->execute();
                 $intNewId = $objNewFormdata->insertId;
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'INSERT INTO tl_formdata '.$implodearrSet.' WHERE id='.$intOldId.' intNewId '.$intNewId);
 
                 // Update related comments
                 if (\in_array('comments', \ModuleLoader::getActive(), true)) {
@@ -304,7 +313,8 @@ class FormdataProcessor extends \Contao\Frontend
                 }
             }
 
-            // Delete old record after frontend editing
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'blnFEedit '.$blnFEedit);
+        // Delete old record after frontend editing
             if ($blnFEedit) {
                 if (!isset($arrListing['efg_fe_keep_id']) || '1' !== $arrListing['efg_fe_keep_id']) {
                     if ($intNewId > 0 && (int) $intOldId > 0 && (int) $intNewId !== (int) $intOldId) {
@@ -321,7 +331,7 @@ class FormdataProcessor extends \Contao\Frontend
 
             // Auto-generate alias
             $strAlias = $this->Formdata->generateAlias($arrOldFormdata['alias'], $arrForm['title'], $intNewId);
-            if (\strlen($strAlias)) {
+            if (isset($strAlias)&&\strlen($strAlias)) {
                 $arrUpd = ['alias' => $strAlias];
                 \Database::getInstance()->prepare('UPDATE tl_formdata %s WHERE id=?')
                     ->set($arrUpd)
@@ -344,12 +354,14 @@ class FormdataProcessor extends \Contao\Frontend
             $_SESSION['EFP']['FORMDATA'][$k] = $strVal;
         }
         $_SESSION['EFP']['FORMDATA']['_formId_'] = $arrForm['id'];
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'formFields stroed in Session ');
 
         // Confirmation Mail
         if ($blnFEedit && !$arrForm['sendConfirmationMailOnFrontendEditing']) {
             $arrForm['sendConfirmationMail'] = false;
         }
 
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'sendConfirmationMail '.$arrForm['sendConfirmationMail']);
         if ($arrForm['sendConfirmationMail']) {
             $objMailProperties = new \stdClass();
             $objMailProperties->subject = '';
@@ -401,6 +413,7 @@ class FormdataProcessor extends \Contao\Frontend
             $objMailProperties->recipients = $arrRecipient;
 
             // Check if we want custom attachments... (Thanks to Torben Schwellnus)
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Check if we want custom addConfirmationMailAttachments '.$arrForm['addConfirmationMailAttachments']);
             if ($arrForm['addConfirmationMailAttachments']) {
                 if ($arrForm['confirmationMailAttachments']) {
                     $arrCustomAttachments = deserialize($arrForm['confirmationMailAttachments'], true);
@@ -408,6 +421,7 @@ class FormdataProcessor extends \Contao\Frontend
                     if (!empty($arrCustomAttachments)) {
                         foreach ($arrCustomAttachments as $varFile) {
                             $objFileModel = \FilesModel::findById($varFile);
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Check if we want custom addConfirmationMailAttachments file '.$varFile);
 
                             if (null !== $objFileModel) {
                                 $objFile = new \File($objFileModel->path);
@@ -429,17 +443,16 @@ class FormdataProcessor extends \Contao\Frontend
 
             // Replace Insert tags and conditional tags
             $objMailProperties = $this->Formdata->prepareMailData($objMailProperties, $arrSubmitted, $arrFiles, $arrForm, $arrFormFields);
-            //$this->log("PBD formdataProcessor 1 vor SendMail", __METHOD__, 'ERROR');
             // Send Mail
             $blnConfirmationSent = false;
 
             if (!empty($objMailProperties->recipients)) {
-                //$this->log("PBD formdataProcessor 1 vor new Email", __METHOD__, 'ERROR');
         if (SENDMAILCOMMAND) {   // PBD aus config.php
           // PBD z.B. zum setzen des -t flags
           $this->myMailer->getTransport()->setCommand(SENDMAILCOMMAND);
-            $this->log('efg_co4 formdataProcessor  SENDMAILCOMMAND SwiftMailer transport gesetzt => '.SENDMAILCOMMAND, __METHOD__, 'TL_CONFIGURATION');    // PBD
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'SENDMAILCOMMAND SwiftMailer transport gesetzt => '.SENDMAILCOMMAND);
         }
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, '1 vor new Email');
                 $objMail = new \Email($myMailer);
 
                 $objMail->from = $objMailProperties->sender;
@@ -488,6 +501,7 @@ class FormdataProcessor extends \Contao\Frontend
         if ($blnFEedit && !$arrForm['sendFormattedMailOnFrontendEditing']) {
             $arrForm['sendFormattedMail'] = false;
         }
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'sendFormattedMail '.$arrForm['sendFormattedMail']);
 
         if ($arrForm['sendFormattedMail']) {
             $objMailProperties = new \stdClass();
@@ -517,6 +531,7 @@ class FormdataProcessor extends \Contao\Frontend
                 }
                 $objMailProperties->replyTo = $replyTo;
             }
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Set recipient(s) '.$arrForm['sendFormattedMail']);
 
             // Set recipient(s)
             $varRecipient = $arrForm['formattedMailRecipient'];
@@ -536,6 +551,7 @@ class FormdataProcessor extends \Contao\Frontend
             $objMailProperties->recipients = $arrRecipient;
 
             // Check if we want custom attachments... (Thanks to Torben Schwellnus)
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Check if we want custom addFormattedMailAttachments '.$arrForm['sendFormattedMail']);
             if ($arrForm['addFormattedMailAttachments']) {
                 if ($arrForm['formattedMailAttachments']) {
                     $arrCustomAttachments = deserialize($arrForm['formattedMailAttachments'], true);
@@ -543,9 +559,11 @@ class FormdataProcessor extends \Contao\Frontend
                     if (\is_array($arrCustomAttachments)) {
                         foreach ($arrCustomAttachments as $varFile) {
                             $objFileModel = \FilesModel::findById($varFile);
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Check if we want custom addFormattedMailAttachments file '.$varFile);
 
                             if (null !== $objFileModel) {
-                                $objFile = new \File($objFileModel->path);
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'objFileModel->path '.$objFileModel->path);
+                               $objFile = new \File($objFileModel->path);
                                 if ($objFile->size) {
                                     $objMailProperties->attachments[TL_ROOT.'/'.$objFile->path] = [
                                         'file' => TL_ROOT.'/'.$objFile->path,
@@ -563,19 +581,19 @@ class FormdataProcessor extends \Contao\Frontend
             $objMailProperties->messageText = \StringUtil::decodeEntities($arrForm['formattedMailText']);
             $objMailProperties->messageHtmlTmpl = $arrForm['formattedMailTemplate'];
 
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Replace Insert tags and conditional tags');
             // Replace Insert tags and conditional tags
             $objMailProperties = $this->Formdata->prepareMailData($objMailProperties, $arrSubmitted, $arrFiles, $arrForm, $arrFormFields);
-            //$this->log("PBD formdataProcessor 2 vor SendMail", __METHOD__, 'ERROR');
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, '2 vor SendMail');
 
             // Send Mail
             $blnInformationSent = false;
 
             if (!empty($objMailProperties->recipients)) {
-                //$this->log("PBD formdataProcessor 2 vor new Email", __METHOD__, 'ERROR');
         if (SENDMAILCOMMAND) {   // PBD aus config.php
           // PBD z.B. zum setzen des -t flags
           $this->myMailer->getTransport()->setCommand(SENDMAILCOMMAND);
-            $this->log('efg_co4 formdataProcessor  SENDMAILCOMMAND SwiftMailer transport gesetzt => '.SENDMAILCOMMAND, __METHOD__, 'TL_CONFIGURATION');    // PBD
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'SENDMAILCOMMAND SwiftMailer transport gesetzt => '.SENDMAILCOMMAND);
         }
 
                 $objMail = new \Email($myMailer);
@@ -606,13 +624,24 @@ class FormdataProcessor extends \Contao\Frontend
                 }
 
                 foreach ($objMailProperties->recipients as $recipient) {
-                    //$this->log("PBD formdataProcessor 2 vor sendTo", __METHOD__, 'ERROR');
+
+
+                  try {
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, '2 vor sendTo');
                     $objMail->sendTo($recipient);
-                    //$this->log("PBD formdataProcessor 2 nach sendTo", __METHOD__, 'ERROR');
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, '2 nach sendTo');
                     $blnInformationSent = true;
+                  }
+                  //catch exception
+                  catch(Exception $e) {
+       EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'sendmail ERROR '.$e->getMessage());
+        $this->log('sendmail ERROR '.$e->getMessage(), __METHOD__, TL_errot);
+                  }
+
                 }
             }
         }
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Redirect after frontend editing');
 
         // Redirect after frontend editing
         if ($blnFEedit) {
@@ -650,7 +679,7 @@ class FormdataProcessor extends \Contao\Frontend
             }
 
             $this->import('Formdata');
-            $this->log('PBD FormdataProcessor d) bearbeite FORM id:  '.$arrForm['id'].' title: '.$arrForm['title'], __METHOD__, TL_GENERAL);
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'd) bearbeite FORM id:  '.$arrForm['id'].' title: '.$arrForm['title']);
 
             $arrFormFields = $this->Formdata->getFormfieldsAsArray((int) ($arrSubmitted['_formId_']));
 
