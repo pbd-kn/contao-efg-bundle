@@ -76,23 +76,23 @@ $GLOBALS['TL_DCA']['tl_formdata'] = [
             'edit' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_formdata']['edit'],
                 'href' => 'act=edit',
-                'icon' => 'PBDKN/Efgco4/Resources/contao/assets/edit.gif',
+                'icon' => 'bundles/contaoefgco4/icons/edit.gif',   
             ],
             'delete' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_formdata']['delete'],
                 'href' => 'act=delete',
-                'icon' => 'PBDKN/Efgco4/Resources/contao/assets/delete.gif',
+                'icon' => 'bundles/contaoefgco4/icons/delete.gif',
                 'attributes' => 'onclick="if (!confirm(\''.$GLOBALS['TL_LANG']['MSC']['deleteConfirm'].'hallo'.'\')) return false; Backend.getScrollOffset();"',
             ],
             'show' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_formdata']['show'],
                 'href' => 'act=show',
-                'icon' => 'PBDKN/Efgco4/Resources/contao/assets/show.gif',
+                'icon' => 'bundles/contaoefgco4/icons/show.gif',
             ],
             'mail' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_formdata']['mail'],
                 'href' => 'act=mail',
-                'icon' => 'PBDKN/Efgco4/Resources/contao/assets/mail.gif',
+                'icon' => 'bundles/contaoefgco4/icons/mail.gif',
             ],
         ],
     ],

@@ -449,7 +449,7 @@ class FormdataProcessor extends \Contao\Frontend
             if (!empty($objMailProperties->recipients)) {
         if (SENDMAILCOMMAND) {   // PBD aus config.php
           // PBD z.B. zum setzen des -t flags
-          $this->myMailer->getTransport()->setCommand(SENDMAILCOMMAND);
+          $this->myMailer->getTransport()->setCommand(sendmail_path.' '.SENDMAILCOMMAND);
        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'SENDMAILCOMMAND SwiftMailer transport gesetzt => '.SENDMAILCOMMAND);
         }
        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, '1 vor new Email');

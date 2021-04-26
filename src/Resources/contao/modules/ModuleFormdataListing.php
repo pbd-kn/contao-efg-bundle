@@ -589,7 +589,7 @@ class ModuleFormdataListing extends \Module
         if ($this->efg_list_searchtype) {
             $strSearchFormType = $this->efg_list_searchtype;
         }
-        $this->strIconFolder = (\strlen($this->efg_iconfolder) ? $this->efg_iconfolder : 'bundles/contaoefgco4/images');
+        $this->strIconFolder = (\strlen($this->efg_iconfolder) ? $this->efg_iconfolder : 'bundles/contaoefgco4/icons');
         $this->log('PBD ModuleFormdataListing compile efg_iconfolder'.$this->efg_iconfolder.' strIconFolder '.$this->strIconFolder, __METHOD__, TL_GENERAL);
 
         $this->import('FrontendUser', 'Member');
