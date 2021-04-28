@@ -70,12 +70,12 @@ $GLOBALS['TL_DCA']['tl_formdata_details'] = [
             'edit' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_formdata']['edit'],
                 'href' => 'act=edit',
-                'icon' => 'edit.gif',
+                'icon' => 'bundles/contaoefgco4/icons/edit.gif',
             ],
             'show' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_formdata']['show'],
                 'href' => 'act=show',
-                'icon' => 'show.gif',
+                'icon' => 'bundles/contaoefgco4/icons/show.gif',
             ],
         ],
     ],

@@ -403,8 +403,8 @@ class ModuleFormdataListing extends \Module
         }
 
         // file download
-        $download=\Input::get('download' );
-        if (isset($download) && \strlen(\Input::get('download'))) {
+        $down= \Input::get('download');
+        if (isset($down)&&\strlen($down)) {
             $allowedDownload = trimsplit(',', strtolower($GLOBALS['TL_CONFIG']['allowedDownload']));
 
             $arrParams = explode('.', \Input::get('download'));
@@ -423,7 +423,7 @@ class ModuleFormdataListing extends \Module
                 }
 
                 // Send file to the browser
-                if (is_file(\System::getContainer()->getParameter('kernel.project_dir').'/'.$arrDownload['value'])) {
+                if (is_file(TL_ROOT.'/'.$arrDownload['value'])) {
                     $objFile = new \File($arrDownload['value']);
                     if (\in_array($objFile->extension, $allowedDownload, true)) {
                         $this->sendFileToBrowser($arrDownload['value']);
@@ -446,7 +446,7 @@ class ModuleFormdataListing extends \Module
      */
     public function generateEditForm($objFormElement, $objRecord)
     {
-        $this->log('PBD ModuleFormdataListing generateEditForm '.\Input::get('do'), __METHOD__, TL_GENERAL);
+        $this->log('PBD ModuleFormdataListing generateEditForm '.$objFormElement, __METHOD__, TL_GENERAL);
 
         if (TL_MODE === 'BE') {
             return '';
@@ -454,6 +454,7 @@ class ModuleFormdataListing extends \Module
 
         $objFormElement->typePrefix = 'ce_';
 
+        $this->log('PBD ModuleFormdataListing generateEditForm vor create '.$objFormElement, __METHOD__, TL_GENERAL);
         $this->EditForm = new ExtendedForm($objFormElement);
         $this->EditForm->objEditRecord = $objRecord;
 
@@ -528,7 +529,7 @@ class ModuleFormdataListing extends \Module
         }
 
         // E-mail addresses
-        if ($value && ('email' === $rgxp || false !== (isset($this->arrFF[$k]['name'])&&strpos($this->arrFF[$k]['name'], 'mail')) || false !== strpos($k, 'mail'))) {
+        if ($value && ('email' === $rgxp || false !== strpos($this->arrFF[$k]['name'], 'mail') || false !== strpos($k, 'mail'))) {
             $value = \StringUtil::encodeEmail($value);
             $value = '<a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;'.$value.'">'.$value.'</a>';
 
@@ -589,7 +590,7 @@ class ModuleFormdataListing extends \Module
         if ($this->efg_list_searchtype) {
             $strSearchFormType = $this->efg_list_searchtype;
         }
-        $this->strIconFolder = (\strlen($this->efg_iconfolder) ? $this->efg_iconfolder : 'bundles/contaoefgco4/icons');
+        $this->strIconFolder = (\strlen($this->efg_iconfolder) ? $this->efg_iconfolder : 'bundles/contaoefgco4/images');
         $this->log('PBD ModuleFormdataListing compile efg_iconfolder'.$this->efg_iconfolder.' strIconFolder '.$this->strIconFolder, __METHOD__, TL_GENERAL);
 
         $this->import('FrontendUser', 'Member');
@@ -670,7 +671,7 @@ class ModuleFormdataListing extends \Module
                 if (\array_key_exists('efgExportXls', $GLOBALS['TL_HOOKS']) && \is_array($GLOBALS['TL_HOOKS']['efgExportXls'])) {
                     $blnCustomXlsExport = true;
                 } else {
-                    include \System::getContainer()->getParameter('kernel.project_dir').'/plugins/xls_export/xls_export.php';
+                    include TL_ROOT.'/plugins/xls_export/xls_export.php';
                 }
             }
         } else {
@@ -714,10 +715,10 @@ class ModuleFormdataListing extends \Module
         $this->arrBaseFields = $GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['baseFields'];
         $this->arrDetailFields = $GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['detailFields'];
 
-        if (isset($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterKey'])&&\strlen($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterKey'])) {
+        if (\strlen($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterKey'])) {
             $this->strFormFilterKey = $GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterKey'];
         }
-        if (isset($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterValue'])&&\strlen($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterValue'])) {
+        if (\strlen($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterValue'])) {
             $this->strFormFilterValue = $GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterValue'];
         }
 
@@ -730,7 +731,7 @@ class ModuleFormdataListing extends \Module
             $strListWhere = $this->prepareListWhere();
             $strWhere .= (\strlen($strListWhere) ? ' AND '.$strListWhere : '');
 
-            if (isset($this->strFormKey)&&\strlen($this->strFormKey)) {
+            if (\strlen($this->strFormKey)) {
                 $strWhere .= (\strlen($strWhere) ? ' AND ' : ' WHERE ').$this->strFormFilterKey."='".$this->strFormFilterValue."'";
             }
 
@@ -859,8 +860,8 @@ class ModuleFormdataListing extends \Module
 
                 case 'multiplefields':
                     $arrOptions = [];
-                    $search=\Input::get('search');
-                    if (isset($search)&&\strlen($search) && \is_array(\Input::get('for'))) {
+
+                    if (\strlen(\Input::get('search')) && \is_array(\Input::get('for'))) {
                         $arrConds = [];
                         $arrKeywords = [];
                         foreach (\Input::get('for') as $field => $for) {
@@ -897,7 +898,7 @@ class ModuleFormdataListing extends \Module
                     }
 
                     foreach (trimsplit(',', $this->list_search) as $field) {
-                        if (isset($this->arrBaseFields)&&\in_array($field, $this->arrBaseFields, true)) {
+                        if (\in_array($field, $this->arrBaseFields, true)) {
                             if (\strlen($this->strFormKey) && 'form' === $field) {
                                 continue;
                             }
@@ -1008,7 +1009,7 @@ class ModuleFormdataListing extends \Module
 
                 ++$intLastCol;
 
-                if (isset($this->arrBaseFields)&&\in_array($field, $this->arrBaseFields, true)) {
+                if (\in_array($field, $this->arrBaseFields, true)) {
                     $strListFields .= ','.$field;
                 }
 
@@ -1152,9 +1153,7 @@ class ModuleFormdataListing extends \Module
 
                 $class = '';
                 $sort = 'asc';
-                $label = $GLOBALS['TL_DCA'][$this->list_table]['fields'][$arrFields[$i]]['label'][0];
-                if(!isset($label)) $label='';
-                $strField = \strlen($label) ? $label : $arrFields[$i];
+                $strField = \strlen($label = $GLOBALS['TL_DCA'][$this->list_table]['fields'][$arrFields[$i]]['label'][0]) ? $label : $arrFields[$i];
 
                 if (\Input::get('order_by') === $arrFields[$i]) {
                     $sort = ('asc' === \Input::get('sort')) ? 'desc' : 'asc';
@@ -1389,12 +1388,12 @@ class ModuleFormdataListing extends \Module
                     if ('fileTree' === $GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['inputType']) {
                         $value = $arrListItems[$i][$k]['raw'];
 
-                        if (\is_string($value) && \strlen($value) && is_dir(\System::getContainer()->getParameter('kernel.project_dir').'/'.$value)) {
+                        if (\is_string($value) && \strlen($value) && is_dir(TL_ROOT.'/'.$value)) {
                             $arrTd[$class][\count($arrTd[$class]) - 1]['content'] = '&nbsp;';
                             $arrListItems[$i][$k]['content'] = '&nbsp;';
                         }
                         // single file
-                        elseif (\is_string($value) && \strlen($value) && is_file(\System::getContainer()->getParameter('kernel.project_dir').'/'.$value)) {
+                        elseif (\is_string($value) && \strlen($value) && is_file(TL_ROOT.'/'.$value)) {
                             $objFile = new \File($value);
                             if (!\in_array($objFile->extension, $allowedDownload, true)) {
                                 $arrTd[$class][\count($arrTd[$class]) - 1]['content'] = '&nbsp;';
@@ -1437,7 +1436,7 @@ class ModuleFormdataListing extends \Module
                             $arrListItems[$i][$k]['type'] = 'file';
 
                             foreach ($value as $kF => $strFile) {
-                                if (\strlen($strFile) && is_file(\System::getContainer()->getParameter('kernel.project_dir').'/'.$strFile)) {
+                                if (\strlen($strFile) && is_file(TL_ROOT.'/'.$strFile)) {
                                     $objFile = new \File($strFile);
 
                                     if (!\in_array($objFile->extension, $allowedDownload, true)) {
@@ -1917,13 +1916,13 @@ class ModuleFormdataListing extends \Module
             ];
 
             if ('fileTree' === $GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['inputType']) {
-                if (is_dir(\System::getContainer()->getParameter('kernel.project_dir').'/'.$arrFields[$class]['content'])) {
+                if (is_dir(TL_ROOT.'/'.$arrFields[$class]['content'])) {
                     $arrFields[$class]['content'] = '&nbsp;';
                     $arrItem[$k]['content'] = '&nbsp;';
                 }
 
                 // single file
-                elseif (!\is_array($arrFields[$class]['raw']) && \strlen($arrFields[$class]['raw']) && is_file(\System::getContainer()->getParameter('kernel.project_dir').'/'.$arrFields[$class]['raw'])) {
+                elseif (!\is_array($arrFields[$class]['raw']) && \strlen($arrFields[$class]['raw']) && is_file(TL_ROOT.'/'.$arrFields[$class]['raw'])) {
                     $objFile = new \File($arrFields[$class]['content']);
 
                     if (!\in_array($objFile->extension, $allowedDownload, true)) {
@@ -1968,7 +1967,7 @@ class ModuleFormdataListing extends \Module
                     $arrItem[$k]['type'] = 'file';
 
                     foreach ($arrFields[$class]['raw'] as $kF => $strFile) {
-                        if (\strlen($strFile) && is_file(\System::getContainer()->getParameter('kernel.project_dir').'/'.$strFile)) {
+                        if (\strlen($strFile) && is_file(TL_ROOT.'/'.$strFile)) {
                             $objFile = new \File($strFile);
 
                             if (!\in_array($objFile->extension, $allowedDownload, true)) {
@@ -2204,9 +2203,7 @@ class ModuleFormdataListing extends \Module
             if (\array_key_exists('efgExportXls', $GLOBALS['TL_HOOKS']) && \is_array($GLOBALS['TL_HOOKS']['efgExportXls'])) {
                 $blnCustomXlsExport = true;
             } else {
-              $vendorPath='vendor/pbd-kn/contao-efg-bundle/';
-
-                include \System::getContainer()->getParameter('kernel.project_dir').$vendorPath.'xls_export.php';
+                include TL_ROOT.'/system/modules/efg_co4/plugins/xls_export/xls_export.php';
             }
 
             if (!$blnCustomXlsExport) {
@@ -2507,7 +2504,7 @@ class ModuleFormdataListing extends \Module
         $intFormId = 0;
 
         // Fallback template
-        if (isset($this->list_edit_layout)&&!\strlen($this->list_edit_layout)) {
+        if (!\strlen($this->list_edit_layout)) {
             $this->list_edit_layout = 'edit_fd_default';
         }
         $this->log('PBD ModuleFormdataListing  list_edit_layout '.$this->list_edit_layout, __METHOD__, 'ERROR');

@@ -74,7 +74,7 @@ array_insert($GLOBALS['BE_MOD'], 1, array('formdata' => array()));
 $GLOBALS['BE_MOD']['formdata']['feedback'] = array
 (
 	'tables'     => array('tl_formdata', 'tl_formdata_details'),
-	'icon'       => 'PBDKN/Efgco4/Resources/contao/assets/formdata_all.gif',
+	'icon'       => 'bundles/contaoefgco4/icons/formdata_all.gif',
     'stylesheet' => 'bundles/contaoefgco4/css/style.css'
 );
 

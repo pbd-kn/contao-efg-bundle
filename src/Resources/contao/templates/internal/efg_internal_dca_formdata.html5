@@ -286,20 +286,20 @@ $GLOBALS['TL_DCA']['tl_formdata'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_formdata']['edit'],
 				'href'                => 'act=edit',
 				'button_callback'     => array('FormdataBackend', 'callbackEditButton'),
-				'icon'                => 'edit.gif'
+				'icon'                => 'bundles/contaoefgco4/icons/edit.gif'
 			),
 			'delete' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_formdata']['delete'],
 				'href'                => 'act=delete',
-				'icon'                => 'delete.gif',
+				'icon'                => 'bundles/contaoefgco4/icons/delete.gif',
 				'attributes'          => 'onclick="if (!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\')) return false; Backend.getScrollOffset();"',
 			),
 			'show' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_formdata']['show'],
 				'href'                => 'act=show',
-				'icon'                => 'show.gif'
+				'icon'                => 'bundles/contaoefgco4/icons/show.gif'
 			)
 
 <?php if ($this->blnBackendMail): ?>
@@ -308,7 +308,7 @@ $GLOBALS['TL_DCA']['tl_formdata'] = array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_formdata']['mail'],
 				'href'                => 'act=mail',
-				'icon'                => 'PBDKN/Efgco4/Resources/contao/assets/mail.gif'
+				'icon'                => 'bundles/contaoefgco4/icons/mail.gif'
 			)
 <?php endif; ?>
 		)
