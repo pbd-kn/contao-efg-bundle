@@ -423,7 +423,7 @@ class ModuleFormdataListing extends \Module
                 }
 
                 // Send file to the browser
-                if (is_file(TL_ROOT.'/'.$arrDownload['value'])) {
+                if (is_file(\System::getContainer()->getParameter('kernel.project_dir').'/'.$arrDownload['value'])) {
                     $objFile = new \File($arrDownload['value']);
                     if (\in_array($objFile->extension, $allowedDownload, true)) {
                         $this->sendFileToBrowser($arrDownload['value']);
@@ -670,7 +670,7 @@ class ModuleFormdataListing extends \Module
                 if (\array_key_exists('efgExportXls', $GLOBALS['TL_HOOKS']) && \is_array($GLOBALS['TL_HOOKS']['efgExportXls'])) {
                     $blnCustomXlsExport = true;
                 } else {
-                    include TL_ROOT.'/plugins/xls_export/xls_export.php';
+                    include \System::getContainer()->getParameter('kernel.project_dir').'/plugins/xls_export/xls_export.php';
                 }
             }
         } else {
@@ -1389,12 +1389,12 @@ class ModuleFormdataListing extends \Module
                     if ('fileTree' === $GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['inputType']) {
                         $value = $arrListItems[$i][$k]['raw'];
 
-                        if (\is_string($value) && \strlen($value) && is_dir(TL_ROOT.'/'.$value)) {
+                        if (\is_string($value) && \strlen($value) && is_dir(\System::getContainer()->getParameter('kernel.project_dir').'/'.$value)) {
                             $arrTd[$class][\count($arrTd[$class]) - 1]['content'] = '&nbsp;';
                             $arrListItems[$i][$k]['content'] = '&nbsp;';
                         }
                         // single file
-                        elseif (\is_string($value) && \strlen($value) && is_file(TL_ROOT.'/'.$value)) {
+                        elseif (\is_string($value) && \strlen($value) && is_file(\System::getContainer()->getParameter('kernel.project_dir').'/'.$value)) {
                             $objFile = new \File($value);
                             if (!\in_array($objFile->extension, $allowedDownload, true)) {
                                 $arrTd[$class][\count($arrTd[$class]) - 1]['content'] = '&nbsp;';
@@ -1437,7 +1437,7 @@ class ModuleFormdataListing extends \Module
                             $arrListItems[$i][$k]['type'] = 'file';
 
                             foreach ($value as $kF => $strFile) {
-                                if (\strlen($strFile) && is_file(TL_ROOT.'/'.$strFile)) {
+                                if (\strlen($strFile) && is_file(\System::getContainer()->getParameter('kernel.project_dir').'/'.$strFile)) {
                                     $objFile = new \File($strFile);
 
                                     if (!\in_array($objFile->extension, $allowedDownload, true)) {
@@ -1917,13 +1917,13 @@ class ModuleFormdataListing extends \Module
             ];
 
             if ('fileTree' === $GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['inputType']) {
-                if (is_dir(TL_ROOT.'/'.$arrFields[$class]['content'])) {
+                if (is_dir(\System::getContainer()->getParameter('kernel.project_dir').'/'.$arrFields[$class]['content'])) {
                     $arrFields[$class]['content'] = '&nbsp;';
                     $arrItem[$k]['content'] = '&nbsp;';
                 }
 
                 // single file
-                elseif (!\is_array($arrFields[$class]['raw']) && \strlen($arrFields[$class]['raw']) && is_file(TL_ROOT.'/'.$arrFields[$class]['raw'])) {
+                elseif (!\is_array($arrFields[$class]['raw']) && \strlen($arrFields[$class]['raw']) && is_file(\System::getContainer()->getParameter('kernel.project_dir').'/'.$arrFields[$class]['raw'])) {
                     $objFile = new \File($arrFields[$class]['content']);
 
                     if (!\in_array($objFile->extension, $allowedDownload, true)) {
@@ -1968,7 +1968,7 @@ class ModuleFormdataListing extends \Module
                     $arrItem[$k]['type'] = 'file';
 
                     foreach ($arrFields[$class]['raw'] as $kF => $strFile) {
-                        if (\strlen($strFile) && is_file(TL_ROOT.'/'.$strFile)) {
+                        if (\strlen($strFile) && is_file(\System::getContainer()->getParameter('kernel.project_dir').'/'.$strFile)) {
                             $objFile = new \File($strFile);
 
                             if (!\in_array($objFile->extension, $allowedDownload, true)) {
@@ -2204,7 +2204,9 @@ class ModuleFormdataListing extends \Module
             if (\array_key_exists('efgExportXls', $GLOBALS['TL_HOOKS']) && \is_array($GLOBALS['TL_HOOKS']['efgExportXls'])) {
                 $blnCustomXlsExport = true;
             } else {
-                include TL_ROOT.'/system/modules/efg_co4/plugins/xls_export/xls_export.php';
+              $vendorPath='vendor/pbd-kn/contao-efg-bundle/';
+
+                include \System::getContainer()->getParameter('kernel.project_dir').$vendorPath.'xls_export.php';
             }
 
             if (!$blnCustomXlsExport) {

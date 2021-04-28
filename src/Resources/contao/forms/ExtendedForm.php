@@ -418,7 +418,7 @@ class ExtendedForm extends \Form
                                     // File has been uploaded, store it in temp folder
                                     if (is_uploaded_file($_SESSION['FILES'][$objField->name]['tmp_name'])) {
                                         $this->import('Files');
-                                        $strDstFile = TL_ROOT.'/system/tmp/'.md5_file($_SESSION['FILES'][$objField->name]['tmp_name']);
+                                        $strDstFile = \System::getContainer()->getParameter('kernel.project_dir').'/system/tmp/'.md5_file($_SESSION['FILES'][$objField->name]['tmp_name']);
                                         if (@copy($_SESSION['FILES'][$objField->name]['tmp_name'], $strDstFile)) {
                                             $_SESSION['FILES'][$objField->name]['tmp_name'] = $strDstFile;
                                             $_SESSION['FILES'][$objField->name]['uploaded'] = true;
@@ -475,7 +475,7 @@ class ExtendedForm extends \Form
                                 $_SESSION['FILES'][$objField->name] = [
                                     'name' => $objFile->basename,
                                     'type' => $objFile->mime,
-                                    'tmp_name' => TL_ROOT.'/'.$objFile->value,
+                                    'tmp_name' => \System::getContainer()->getParameter('kernel.project_dir').'/'.$objFile->value,
                                     'size' => $objFile->size,
                                     'uploaded' => true,
                                 ];

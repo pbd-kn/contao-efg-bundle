@@ -1969,8 +1969,8 @@ class Formdata extends \Contao\Frontend
                                         $objFile = new \File($arrSubmitted[$strKey]);
                                         if ($objFile->size) {
                                             $arrFiles[$strKey] = [
-                                                'tmp_name' => TL_ROOT.'/'.$objFile->path,
-                                                'file' => TL_ROOT.'/'.$objFile->path,
+                                                'tmp_name' => \System::getContainer()->getParameter('kernel.project_dir').'/'.$objFile->path,
+                                                'file' => \System::getContainer()->getParameter('kernel.project_dir').'/'.$objFile->path,
                                                 'name' => $objFile->basename,
                                                 'mime' => $objFile->mime,
                                             ];

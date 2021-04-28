@@ -106,7 +106,7 @@ class EmailSMime extends \Contao\Email
             // Embed images
             if ($this->blnEmbedImages) {
                 if ('' === $this->strImageDir) {
-                    $this->strImageDir = TL_ROOT.'/';
+                    $this->strImageDir = \System::getContainer()->getParameter('kernel.project_dir').'/';
                 }
 
                 $arrCid = [];

@@ -2670,8 +2670,8 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
                         if (null !== $objFileModel) {
                             $objFile = new \File($objFileModel->path, true);
                             if ($objFile->size) {
-                                $objMailProperties->attachments[TL_ROOT.'/'.$objFile->path] = [
-                                    'file' => TL_ROOT.'/'.$objFile->path,
+                                $objMailProperties->attachments[\System::getContainer()->getParameter('kernel.project_dir').'/'.$objFile->path] = [
+                                    'file' => \System::getContainer()->getParameter('kernel.project_dir').'/'.$objFile->path,
                                     'name' => $objFile->basename,
                                     'mime' => $objFile->mime,
                                 ];
@@ -2802,7 +2802,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
         if (!empty($objMailProperties->attachments)) {
             $attachments = [];
             foreach ($objMailProperties->attachments as $strFile => $arr) {
-                $attachments[] = str_replace(TL_ROOT.'/', '', $strFile);
+                $attachments[] = str_replace(\System::getContainer()->getParameter('kernel.project_dir').'/', '', $strFile);
             }
 
             $return .= '

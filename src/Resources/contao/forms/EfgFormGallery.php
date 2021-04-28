@@ -192,7 +192,7 @@ class EfgFormGallery extends \ContentElement
         // Get all images
         while ($objFiles->next()) {
             // Continue if the files has been processed or does not exist
-            if (isset($images[$objFiles->path]) || !file_exists(TL_ROOT.'/'.$objFiles->path)) {
+            if (isset($images[$objFiles->path]) || !file_exists(\System::getContainer()->getParameter('kernel.project_dir').'/'.$objFiles->path)) {
                 continue;
             }
 

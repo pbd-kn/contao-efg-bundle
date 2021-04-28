@@ -285,7 +285,7 @@ class tl_formdata extends \Backend
         if ('' !== $varFormKey && \is_string($varFormKey)) {
             if ('tl_formdata' !== $varFormKey) {
                 if (\array_key_exists($varFormKey, $GLOBALS['BE_MOD']['formdata'])) {
-                    $strFile = sprintf('%s/vendor/pbd-kn/contao-efg-bundle/src/Resources/contao/dca/%s.php', TL_ROOT, \Input::get('do'));
+                    $strFile = sprintf('%s/vendor/pbd-kn/contao-efg-bundle/src/Resources/contao/dca/%s.php', \System::getContainer()->getParameter('kernel.project_dir'), \Input::get('do'));
                     EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "varformkey in FE strFile $strFile");
 
                     if (file_exists($strFile)) {
@@ -313,7 +313,7 @@ class tl_formdata extends \Backend
 
             if (\array_key_exists(\Input::get('do'), $GLOBALS['BE_MOD']['formdata'])) {
                 EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "do exist in BE_MOD strFileName $strFileName input do=".\Input::get('do'));
-                $strFile = sprintf('%s/vendor/pbd-kn/contao-efg-bundle/src/Resources/contao/dca/%s.php', TL_ROOT, $strFileName);
+                $strFile = sprintf('%s/vendor/pbd-kn/contao-efg-bundle/src/Resources/contao/dca/%s.php', \System::getContainer()->getParameter('kernel.project_dir'), $strFileName);
 
                 if (file_exists($strFile)) {
                     $strName = \Input::get('do');
@@ -340,7 +340,7 @@ class tl_formdata extends \Backend
             }
         }
 
-        @include TL_ROOT.'/system/config/dcaconfig.php'; // das gibts wohl nicht mehr zur Sicherheit mal drin gelassen
+        @include \System::getContainer()->getParameter('kernel.project_dir').'/system/config/dcaconfig.php'; // das gibts wohl nicht mehr zur Sicherheit mal drin gelassen
 
         //$this->log("PBD tl_formdata loadDCA <- ", __METHOD__, 'ERROR');
         EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, '<- ');

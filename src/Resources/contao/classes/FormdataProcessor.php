@@ -426,8 +426,8 @@ class FormdataProcessor extends \Contao\Frontend
                             if (null !== $objFileModel) {
                                 $objFile = new \File($objFileModel->path);
                                 if ($objFile->size) {
-                                    $objMailProperties->attachments[TL_ROOT.'/'.$objFile->path] = [
-                                        'file' => TL_ROOT.'/'.$objFile->path,
+                                    $objMailProperties->attachments[\System::getContainer()->getParameter('kernel.project_dir').'/'.$objFile->path] = [
+                                        'file' => \System::getContainer()->getParameter('kernel.project_dir').'/'.$objFile->path,
                                         'name' => $objFile->basename,
                                         'mime' => $objFile->mime, ];
                                 }
@@ -565,8 +565,8 @@ class FormdataProcessor extends \Contao\Frontend
        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'objFileModel->path '.$objFileModel->path);
                                $objFile = new \File($objFileModel->path);
                                 if ($objFile->size) {
-                                    $objMailProperties->attachments[TL_ROOT.'/'.$objFile->path] = [
-                                        'file' => TL_ROOT.'/'.$objFile->path,
+                                    $objMailProperties->attachments[\System::getContainer()->getParameter('kernel.project_dir').'/'.$objFile->path] = [
+                                        'file' => \System::getContainer()->getParameter('kernel.project_dir').'/'.$objFile->path,
                                         'name' => $objFile->basename,
                                         'mime' => $objFile->mime,
                                     ];
