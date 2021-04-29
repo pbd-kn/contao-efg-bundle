@@ -26,13 +26,13 @@
 
 
 // This file is created when saving a form in form generator
-// last created on 2021-04-26 15:27:49
+// last created on 2021-04-29 12:32:49
 /*
  * you can set the swiftmail transport set in efg_internal_config.html
  * example define('SENDMAILCOMMAND', ini_get ('sendmail_path') . ' -t')
 */
 
-define('SENDMAILCOMMAND', (ini_get ('sendmail_path'))? ini_get ('sendmail_path'). ' -t':'');    // set mailtransport for Swiftmailer
+define('SENDMAILCOMMAND', ini_get ('sendmail_path') . ' -t');    // set mailtransport for Swiftmailer
 define('debsmall',1);
 define('debmedium',2+debsmall);
 define('debfull',4+debmedium);
@@ -46,7 +46,7 @@ define('debmailfull',32+debmailmedium);
 */
 if (TL_MODE == 'BE')
 {
-	$GLOBALS['TL_CSS'][] = 'bundles/contaoefgco4/icons/w50_fix.css';
+	$GLOBALS['TL_CSS'][] = 'bundles/contaoefgco4/css/w50_fix.css';
 }
 
 
@@ -74,7 +74,7 @@ $GLOBALS['BE_MOD']['formdata']['feedback'] = array
 );
 
 // following are used for the form dependent modules
-$GLOBALS['BE_MOD']['formdata']['fd_vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv'] = array
+$GLOBALS['BE_MOD']['formdata']['fd_mytestformular-do'] = array
 (
 	'tables'     => array('tl_formdata', 'tl_formdata_details'),
 	'import'     => array('FormdataBackend', 'importCsv'),

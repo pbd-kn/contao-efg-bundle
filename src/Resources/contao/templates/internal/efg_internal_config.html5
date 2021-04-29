@@ -50,7 +50,7 @@ define('debmailfull',32+debmailmedium);
 */
 if (TL_MODE == 'BE')
 {
-	$GLOBALS['TL_CSS'][] = 'PBDKN/Efgco4/Resources/assets/w50_fix.css';
+	$GLOBALS['TL_CSS'][] = 'bundles/contaoefgco4/css/w50_fix.css';
 }
 
 

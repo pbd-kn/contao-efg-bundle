@@ -509,7 +509,7 @@ class ModuleFormdataListing extends \Module
         }
 
         // owner fields fd_member, fd_user
-        if (\in_array($k, $this->arrBaseFields, true) && \in_array($k, $this->arrOwnerFields, true)) {
+        if (isset($this->arrBaseFields)&&\in_array($k, $this->arrBaseFields, true) && \in_array($k, $this->arrOwnerFields, true)) {
             if ('fd_member' === $k) {
                 $value = $this->arrMembers[$value];
             } elseif ('fd_user' === $k) {
@@ -536,7 +536,7 @@ class ModuleFormdataListing extends \Module
             return $value;
         }
 
-        if (\strlen($value)) {
+        if (isset($value)&&\strlen($value)) {
             $value = \StringUtil::decodeEntities($value);
             $value = ampersand($value);
 
@@ -590,7 +590,7 @@ class ModuleFormdataListing extends \Module
         if ($this->efg_list_searchtype) {
             $strSearchFormType = $this->efg_list_searchtype;
         }
-        $this->strIconFolder = (\strlen($this->efg_iconfolder) ? $this->efg_iconfolder : 'bundles/contaoefgco4/images');
+        $this->strIconFolder = (\strlen($this->efg_iconfolder) ? $this->efg_iconfolder : 'bundles/contaoefgco4/icons');
         $this->log('PBD ModuleFormdataListing compile efg_iconfolder'.$this->efg_iconfolder.' strIconFolder '.$this->strIconFolder, __METHOD__, TL_GENERAL);
 
         $this->import('FrontendUser', 'Member');
@@ -715,10 +715,10 @@ class ModuleFormdataListing extends \Module
         $this->arrBaseFields = $GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['baseFields'];
         $this->arrDetailFields = $GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['detailFields'];
 
-        if (\strlen($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterKey'])) {
+        if (isset($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterKey'])&&\strlen($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterKey'])) {
             $this->strFormFilterKey = $GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterKey'];
         }
-        if (\strlen($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterValue'])) {
+        if (isset($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterValue'])&&\strlen($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterValue'])) {
             $this->strFormFilterValue = $GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterValue'];
         }
 
@@ -898,7 +898,7 @@ class ModuleFormdataListing extends \Module
                     }
 
                     foreach (trimsplit(',', $this->list_search) as $field) {
-                        if (\in_array($field, $this->arrBaseFields, true)) {
+                        if (isset($this->arrBaseFields)&&\in_array($field, $this->arrBaseFields, true)) {
                             if (\strlen($this->strFormKey) && 'form' === $field) {
                                 continue;
                             }
@@ -1009,7 +1009,7 @@ class ModuleFormdataListing extends \Module
 
                 ++$intLastCol;
 
-                if (\in_array($field, $this->arrBaseFields, true)) {
+                if (isset($this->arrBaseFields)&&\in_array($field, $this->arrBaseFields, true)) {
                     $strListFields .= ','.$field;
                 }
 
@@ -1153,7 +1153,7 @@ class ModuleFormdataListing extends \Module
 
                 $class = '';
                 $sort = 'asc';
-                $strField = \strlen($label = $GLOBALS['TL_DCA'][$this->list_table]['fields'][$arrFields[$i]]['label'][0]) ? $label : $arrFields[$i];
+                $strField = (isset($GLOBALS['TL_DCA'][$this->list_table]['fields'][$arrFields[$i]]['label'][0])&&\strlen($label = $GLOBALS['TL_DCA'][$this->list_table]['fields'][$arrFields[$i]]['label'][0])) ? $label : $arrFields[$i];
 
                 if (\Input::get('order_by') === $arrFields[$i]) {
                     $sort = ('asc' === \Input::get('sort')) ? 'desc' : 'asc';
@@ -1374,7 +1374,7 @@ class ModuleFormdataListing extends \Module
                         'id' => $arrRows[$i]['id'],
                         'alias' => $arrRows[$i]['alias'],
                         'name' => $k,
-                        'label' => \strlen($GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['label'][0]) ? htmlspecialchars($GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['label'][0]) : htmlspecialchars($k),
+                        'label' => (isset($GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['label'][0])&&\strlen($GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['label'][0])) ? htmlspecialchars($GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['label'][0]) : htmlspecialchars($k),
                         'content' => ('' !== $value) ? $value : '&nbsp;',
                         'raw' => $v,
                         'class' => 'field_'.$j.$ff_class.((0 === $j) ? ' field_first' : '').(($j === ($intLastCol - 1)) ? ' field_last' : ''),
