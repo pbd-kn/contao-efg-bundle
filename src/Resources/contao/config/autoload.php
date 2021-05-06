@@ -26,12 +26,16 @@ declare(strict_types=1);
  *  extended by insert_tag  {{efg_insert::formalias::aliasvalue::column(::format)}}
  *
  */
-
+/*
+ClassLoader::addClasses(array
+(
+	// Forms
+	'Contao\ExtendedForm'            => 'PBDKN/Efgco4/Resources/contao/forms/ExtendedForm.php',
+));
+*/
 class_alias(PBDKN\Efgco4\Resources\contao\drivers\DC_Formdata::class, 'DC_Formdata');
 class_alias(PBDKN\Efgco4\Resources\contao\classes\Formdata::class, 'Formdata');
 class_alias(PBDKN\Efgco4\Resources\contao\classes\FormdataBackend::class, 'FormdataBackend');
-
-
 
 /*
  * Register the templates

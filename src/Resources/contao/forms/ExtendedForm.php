@@ -31,7 +31,7 @@ declare(strict_types=1);
  * Namespace.
  */
 
-namespace Contao;
+namespace PBDKN\Efgco4\Resources\contao\forms;
 
 
 /**
