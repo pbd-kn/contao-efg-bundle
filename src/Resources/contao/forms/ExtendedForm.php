@@ -31,7 +31,8 @@ declare(strict_types=1);
  * Namespace.
  */
 
-namespace PBDKN\Efgco4\Resources\contao\forms;
+namespace Contao;
+
 
 /**
  * Class ExtendedForm.
@@ -40,7 +41,7 @@ namespace PBDKN\Efgco4\Resources\contao\forms;
  *
  * @copyright  Thomas Kuhn 2007-2014
  */
-class ExtendedForm extends \Form
+class ExtendedForm extends Form
 {
     /**
      * Active page.
@@ -116,6 +117,7 @@ class ExtendedForm extends \Form
      */
     protected function compile()
     {
+        $this->log('PBD ExtendedForm compile', __METHOD__, TL_GENERAL);
 
         $hasUpload = false;
         $doNotSubmit = false;
@@ -123,6 +125,7 @@ class ExtendedForm extends \Form
         $blnAddDateJS = true;
 
         $this->loadDataContainer('tl_form_field');
+        $this->log('PBD ExtendedForm loadDataContainer tl_form_field', __METHOD__, TL_GENERAL);
         $formId = ('' !== $this->formID) ? 'auto_'.$this->formID : 'auto_form_'.$this->id;
         $this->log('PBD ExtendedForm compile formId '.$formId, __METHOD__, TL_GENERAL);
 

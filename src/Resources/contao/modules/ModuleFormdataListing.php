@@ -30,7 +30,7 @@ declare(strict_types=1);
 namespace PBDKN\Efgco4\Resources\contao\modules;
 
 use PBDKN\Efgco4\Resources\contao\forms\ExtendedForm;
-
+use PBDKN\Efgco4\Resources\contao\classes\EfgLog;
 /**
  * Class ModuleFormdataListing.
  *
@@ -150,6 +150,14 @@ class ModuleFormdataListing extends \Module
      * Fields to ignore on export.
      */
     protected $arrExportIgnoreFields;
+    /* so geht das nicht
+    public function __construct()
+    {
+        $this->log('PBD ModuleFormdataListing construct 1', __METHOD__, TL_GENERAL);
+        EfgLog::setEfgDebugmode('form');
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'TL_MODE '.TL_MODE);
+    }
+    */
 
     /**
      * Display a wildcard in the back end.
@@ -158,6 +166,8 @@ class ModuleFormdataListing extends \Module
      */
     public function generate()
     {
+        EfgLog::setEfgDebugmode('form');
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'TL_MODE '.TL_MODE);
         if (TL_MODE === 'BE') {
             $objTemplate = new \BackendTemplate('be_wildcard');
             $objTemplate->wildcard = '### LISTING FORMDATA ###';
@@ -189,16 +199,19 @@ class ModuleFormdataListing extends \Module
         }
 
         // remove download and export from referer
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'vor remove download and export from referer');
         $session = $this->Session->getData();
         $session['referer']['last'] = preg_replace('@(\?|&amp;|&)download=.*?(&amp;|&|$)@si', '', $session['referer']['last']);
         $session['referer']['current'] = preg_replace('@(\?|&amp;|&)download=.*?(&amp;|&|$)@si', '', $session['referer']['current']);
         $session['referer']['last'] = preg_replace('@(\?|&amp;|&)act=export(&amp;|&|$)@si', '', $session['referer']['last']);
         $session['referer']['current'] = preg_replace('@(\?|&amp;|&)act=export(&amp;|&|$)@si', '', $session['referer']['current']);
         $this->Session->setData($session);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'vor checking strDetailKey this->list_layout '.$this->list_layout);
 
         if (\Input::get($this->strDetailKey) && !\strlen($this->list_info) && !\strlen(\Input::get('act'))) {
             return '';
         }
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'nach checking strDetailKey this->list_layout '.$this->list_layout);
 
         // Fallback template
         if ('' === $this->list_layout) {
@@ -214,6 +227,8 @@ class ModuleFormdataListing extends \Module
         $this->arrMemberGroups = $this->Formdata->arrMemberGroups;
         $this->arrUsers = $this->Formdata->arrUsers;
         $this->arrUserGroups = $this->Formdata->arrUserGroups;
+
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'check list access '.$this->efg_fe_list_access);
 
         // check list access
         if (\strlen($this->efg_list_access)) {
@@ -265,7 +280,7 @@ class ModuleFormdataListing extends \Module
         // check edit access
         if (\strlen($this->efg_fe_edit_access)) {
             $arrAllowedOwnerIds = [];
-            $this->log('PBD ModuleFormdataListing check edit '.$this->efg_fe_edit_access, __METHOD__, TL_GENERAL);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'check edit access '.$this->efg_fe_edit_access);
             switch ($this->efg_fe_edit_access) {
                 case 'member': // edit own records only
                     if ((int) ($this->Member->id) > 0) {
@@ -404,6 +419,7 @@ class ModuleFormdataListing extends \Module
 
         // file download
         $down= \Input::get('download');
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'input download '.$down);
         if (isset($down)&&\strlen($down)) {
             $allowedDownload = trimsplit(',', strtolower($GLOBALS['TL_CONFIG']['allowedDownload']));
 
@@ -435,6 +451,7 @@ class ModuleFormdataListing extends \Module
         }
 
         $this->strTemplate = $this->list_layout;
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'call parent generate strTemplate '.$this->strTemplate);
 
         return parent::generate();
     }
@@ -446,7 +463,7 @@ class ModuleFormdataListing extends \Module
      */
     public function generateEditForm($objFormElement, $objRecord)
     {
-        $this->log('PBD ModuleFormdataListing generateEditForm '.$objFormElement, __METHOD__, TL_GENERAL);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, '-> ');
 
         if (TL_MODE === 'BE') {
             return '';
@@ -454,10 +471,12 @@ class ModuleFormdataListing extends \Module
 
         $objFormElement->typePrefix = 'ce_';
 
-        $this->log('PBD ModuleFormdataListing generateEditForm vor create '.$objFormElement, __METHOD__, TL_GENERAL);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'generateEditForm vor create strTemplate '.$this->strTemplate);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'class objFormElement '.get_class($objFormElement));
         $this->EditForm = new ExtendedForm($objFormElement);
         $this->EditForm->objEditRecord = $objRecord;
 
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'generateEditForm nach create strTemplate '.$this->strTemplate.' extendedForm Class '.get_class($this->EditForm));
         return $this->EditForm->generate();
     }
 
@@ -591,7 +610,7 @@ class ModuleFormdataListing extends \Module
             $strSearchFormType = $this->efg_list_searchtype;
         }
         $this->strIconFolder = (\strlen($this->efg_iconfolder) ? $this->efg_iconfolder : 'bundles/contaoefgco4/icons');
-        $this->log('PBD ModuleFormdataListing compile efg_iconfolder'.$this->efg_iconfolder.' strIconFolder '.$this->strIconFolder, __METHOD__, TL_GENERAL);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'efg_iconfolder'.$this->efg_iconfolder.' strIconFolder '.$this->strIconFolder);
 
         $this->import('FrontendUser', 'Member');
 
@@ -600,6 +619,7 @@ class ModuleFormdataListing extends \Module
         $allowedDownload = trimsplit(',', strtolower($GLOBALS['TL_CONFIG']['allowedDownload']));
 
         // get names of detail fields
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'query detailfields '."SELECT ff.name, ff.label, ff.type, ff.rgxp FROM tl_form_field ff, tl_form f WHERE (ff.pid=f.id) AND ff.name != '' AND f.storeFormdata=1");
         $objFF = \Database::getInstance()->prepare("SELECT ff.name, ff.label, ff.type, ff.rgxp FROM tl_form_field ff, tl_form f WHERE (ff.pid=f.id) AND ff.name != '' AND f.storeFormdata=?")
             ->execute('1')
         ;
@@ -611,6 +631,7 @@ class ModuleFormdataListing extends \Module
                 $arrField = $objFF->row();
                 $this->arrFF[$arrField['name']] = $arrField;
                 $this->arrFFNames[] = $arrField['name'];
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'row gespeichert '.$arrField['name']);
             }
         }
 
@@ -621,6 +642,7 @@ class ModuleFormdataListing extends \Module
         $this->strFormFilterKey = '';
         $this->strFormFilterValue = '';
 
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'this->list_formdata '.$this->list_formdata);
         if (\strlen($this->list_formdata)) {
             if ('feedback' === $this->list_formdata || 'fd_feedback' === $this->list_formdata || 'tl_formdata' === $this->list_formdata) {
                 $this->strFormKey = '';
@@ -636,6 +658,7 @@ class ModuleFormdataListing extends \Module
             }
         }
 
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'vor loadDataContainer '.$this->strDcaKey.' strFormKey '.$this->strFormKey);
         // load dca-config into $GLOBALS['TL_DCA']['tl_formdata']
         $this->loadDataContainer($this->strDcaKey);
         \System::loadLanguageFile('tl_formdata');
@@ -739,6 +762,7 @@ class ModuleFormdataListing extends \Module
             $strWhere = $this->replaceWhereTags($strWhere);
             $strWhere = $this->replaceInsertTags($strWhere, false);
             $strQuery .= $strWhere;
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'check strQuery '.$strQuery.' strDetailKey '.\Input::get($this->strDetailKey));
 
             $objCheck = \Database::getInstance()->prepare($strQuery)
                 ->execute(\Input::get($this->strDetailKey), \Input::get($this->strDetailKey))
@@ -746,9 +770,9 @@ class ModuleFormdataListing extends \Module
 
             if (1 === $objCheck->numRows) {
                 $this->intRecordId = (int) ($objCheck->id);
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'numrows=1 id '.$objCheck->numRows);
             } else {
-                $this->log('Could not identify record by ID "'.\Input::get($this->strDetailKey).'"', __METHOD__, TL_GENERAL);
-
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Could not identify record by ID "'.\Input::get($this->strDetailKey).'"');
                 $strUrl = preg_replace('/\?.*$/', '', urldecode(\Environment::get('request')));
                 $strUrlParams = '';
                 $strUrlSuffix = $GLOBALS['TL_CONFIG']['urlSuffix'];
@@ -768,6 +792,7 @@ class ModuleFormdataListing extends \Module
             }
 
             if ('edit' === \Input::get('act') && (int) ($this->intRecordId) > 0) {
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'id -> editSingleRecord id'.$this->intRecordId);
                 $this->editSingleRecord();
 
                 return;
@@ -860,8 +885,8 @@ class ModuleFormdataListing extends \Module
 
                 case 'multiplefields':
                     $arrOptions = [];
-
-                    if (\strlen(\Input::get('search')) && \is_array(\Input::get('for'))) {
+                    $sr=\Input::get('search');
+                    if (isset($sr)&&\strlen($sr) && \is_array(\Input::get('for'))) {
                         $arrConds = [];
                         $arrKeywords = [];
                         foreach (\Input::get('for') as $field => $for) {
@@ -2437,7 +2462,9 @@ class ModuleFormdataListing extends \Module
      */
     protected function editSingleRecord(): void
     {
-        //$this->log('PBD FormdataProcessor editSingleRecord', __METHOD__, 'ERROR');
+        //EfgLog::setEfgDebugmode('form');
+        //EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'TL_MODE '.TL_MODE);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'PBD FormdataProcessor editSingleRecord');
 
         /**
          * Prepare URL.
@@ -2504,39 +2531,41 @@ class ModuleFormdataListing extends \Module
         $intFormId = 0;
 
         // Fallback template
-        if (!\strlen($this->list_edit_layout)) {
+        //if (isset($this->list_edit_layout)&&!\strlen($this->list_edit_layout)) {
+        if (!isset($this->list_edit_layout)||!\strlen($this->list_edit_layout)) {
             $this->list_edit_layout = 'edit_fd_default';
         }
-        $this->log('PBD ModuleFormdataListing  list_edit_layout '.$this->list_edit_layout, __METHOD__, 'ERROR');
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'list_edit_layout editSingleRecord layouit: '.$this->list_edit_layout);
 
         // Get the form
         $objCheckRecord = \Database::getInstance()->prepare('SELECT form FROM tl_formdata WHERE id=?')
             ->limit(1)
             ->execute($this->intRecordId)
         ;
-        //$this->log("PBD SELECT form FROM tl_formdata WHERE id=? " . $this->intRecordId , __METHOD__, 'ERROR');
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'SELECT form FROM tl_formdata WHERE id=' . $this->intRecordId);
 
         if (1 === $objCheckRecord->numRows) {
             $strForm = $objCheckRecord->form;
-            $this->log('PBD ModuleFormdataListing found Listenname "'.$strForm.'"', __METHOD__, 'ERROR');
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'found Form "'.$strForm.'"');
         }
 
-        $this->log('PBD ModuleFormdataListing form "'.$strForm.'"', __METHOD__, 'ERROR');
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'ContentModel::findOneBy("form", ID) not null ID: ' . $objForm->id);
         // Get the ContentElement holding the form
         if (\strlen($strForm)) {
             $objForm = \FormModel::findOneBy('title', $strForm);
-            //$this->log("PBD search  FormModel::findOneBy('title', $strForm) " , __METHOD__, 'ERROR');
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "FormModel::findOneBy('title', $strForm) class ".get_class($objForm));
 
             if (null !== $objForm) {
                 $objFormElement = \ContentModel::findOneBy('form', $objForm->id);
-                //$this->log("PBD search ContentModel::findOneBy('form', ID) ID: " . $objForm->id , __METHOD__, 'ERROR');
+             EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'objFormElement class '.get_class($objFormElement).' title '.$objFormElement->title);
             }
         }
 
-        //$this->log("PBD list value table " . $this->list_table , __METHOD__, 'ERROR');
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'list value table "' . $this->list_table.'"');
 
         if (null === $objFormElement) {
             $this->log('Could not find a ContentElement containing the form "'.$strForm.'"', __METHOD__, 'ERROR');
+            EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'Could not find a ContentElement containing the form "'.$strForm.'"');
 
             $strRed = preg_replace(['/\/'.$this->strDetailKey.'\/'.\Input::get($this->strDetailKey).'/i', '/'.$this->strDetailKey.'='.\Input::get($this->strDetailKey).'/i', '/act=edit/i'], ['', '', ''], $strUrl).(\strlen($strUrlParams) ? '?'.$strUrlParams : '');
             //$this->log("PBD redirect to $strRed ", __METHOD__, 'ERROR');
@@ -2570,17 +2599,17 @@ class ModuleFormdataListing extends \Module
             ->limit(1)
             ->execute($this->intRecordId)
         ;
-        //$this->log("PBD search recordid " . $this->intRecordId , __METHOD__, 'ERROR');
-        //$this->log("PBD search query $strQuery " , __METHOD__, 'ERROR');
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'search query '.$strQuery.' recordid '.$this->intRecordId.' numRows '.$objRecord->numRows);
 
-        if ($objRecord->numRows < 1) {
-            //$this->log("PBD numRows " . $objRecord->numRows , __METHOD__, 'ERROR');
+        if ((int) $objRecord->numRows < 1) {
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'PBD numRows kleiner 1');
             return;
         }
-        //$this->log("PBD search objrecord da" , __METHOD__, 'ERROR');
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'PBD search objrecord da');
         $_SESSION['EFP']['LISTING_MOD']['id'] = $intListingId;
 
         if (null !== $objFormElement) {
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'objFormElement != null class '.get_class($objFormElement));
             $this->Template->editform = $this->generateEditForm($objFormElement, $objRecord);
         }
     }
