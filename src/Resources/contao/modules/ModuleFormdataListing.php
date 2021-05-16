@@ -29,7 +29,7 @@ declare(strict_types=1);
 
 namespace PBDKN\Efgco4\Resources\contao\modules;
 
-use PBDKN\Efgco4\Resources\contao\forms\ExtendedForm;
+use PBDKN\Efgco4\Resources\contao\forms\ExtendedHasteForm;
 use PBDKN\Efgco4\Resources\contao\classes\EfgLog;
 /**
  * Class ModuleFormdataListing.
@@ -461,7 +461,7 @@ class ModuleFormdataListing extends \Module
      *
      * @return string
      */
-    public function generateEditForm($objFormElement, $objRecord)
+    public function generateEditForm($formId,$objForm, $objRecord)
     {
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, '-> ');
 
@@ -472,12 +472,19 @@ class ModuleFormdataListing extends \Module
         $objFormElement->typePrefix = 'ce_';
 
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'generateEditForm vor create strTemplate '.$this->strTemplate);
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'class objFormElement '.get_class($objFormElement));
-        $this->EditForm = new ExtendedForm($objFormElement);
-        $this->EditForm->objEditRecord = $objRecord;
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'class objForm '.get_class($objForm).' objRecord class '.get_class($objRecord));
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'vor getForm');
+        $this->EditForm = new ExtendedHasteForm($objForm);   // wird ueber vererbung bis Hybird Class durchgereicht
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'vor set Data');
+        $this->EditForm->objEditRecord = $objRecord;            // zugehöriger Datensatz class Contao\Database\Result
+        $this->EditForm->formID=$formId;
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'vor generate');
+        //$formResult = $this->getForm($formId);
+        $formResult = $this->EditForm->generate();
 
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'generateEditForm nach create strTemplate '.$this->strTemplate.' extendedForm Class '.get_class($this->EditForm));
-        return $this->EditForm->generate();
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'nach getForm  formResult '.$formResult);
+        return $formResult;
+        //return $this->EditForm->generate();
     }
 
     /**
@@ -490,6 +497,7 @@ class ModuleFormdataListing extends \Module
         global $objPage;
 
         $value = deserialize($value);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'k '.$k.' value '.$value);
 
         $rgxp = '';
         if ($GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['eval']['rgxp']) {
@@ -546,12 +554,13 @@ class ModuleFormdataListing extends \Module
 
             return $value;
         }
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'e-Mail k '.$k.'  arrFF["name"] '.$this->arrFF[$k]['name'].' value '.$value);
 
         // E-mail addresses
-        if ($value && ('email' === $rgxp || false !== strpos($this->arrFF[$k]['name'], 'mail') || false !== strpos($k, 'mail'))) {
+        if ($value && ('email' === $rgxp || false !== (isset($this->arrFF[$k]['name'])&&strpos($this->arrFF[$k]['name'], 'mail')) || false !== strpos($k, 'mail'))) {
             $value = \StringUtil::encodeEmail($value);
             $value = '<a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;'.$value.'">'.$value.'</a>';
-
+                                                                                                                                  
             return $value;
         }
 
@@ -792,7 +801,7 @@ class ModuleFormdataListing extends \Module
             }
 
             if ('edit' === \Input::get('act') && (int) ($this->intRecordId) > 0) {
-            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'id -> editSingleRecord id'.$this->intRecordId);
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'id -> editSingleRecord id '.$this->intRecordId);
                 $this->editSingleRecord();
 
                 return;
@@ -1367,7 +1376,7 @@ class ModuleFormdataListing extends \Module
                             $strLinkExport = $strUrl.'?'.$this->strDetailKey.'='.$arrRows[$i]['id'].'&amp;act=export'.(\strlen($strUrlParams) ? '&amp;'.$strUrlParams : '');
                         }
                     }
-
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'vor formatValue 1  k '.$k.' v '.$v);
                     $value = $this->formatValue($k, $v);
                     $v = \StringUtil::decodeEntities($v);
 
@@ -1911,7 +1920,7 @@ class ModuleFormdataListing extends \Module
         foreach ($arrListFields as $intKey => $strVal) {
             $k = $strVal;
             $v = $arrRow[$k];
-
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'vor formatValue 2  k '.$k.' v '.$v);
             $value = $this->formatValue($k, $v);
             $v = deserialize(\StringUtil::decodeEntities($v));
 
@@ -2464,7 +2473,7 @@ class ModuleFormdataListing extends \Module
     {
         //EfgLog::setEfgDebugmode('form');
         //EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'TL_MODE '.TL_MODE);
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'PBD FormdataProcessor editSingleRecord');
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, '->');
 
         /**
          * Prepare URL.
@@ -2490,6 +2499,7 @@ class ModuleFormdataListing extends \Module
             $strRed = preg_replace(['/\/'.$this->strDetailKey.'\/'.\Input::get($this->strDetailKey).'/i', '/'.$this->strDetailKey.'='.\Input::get($this->strDetailKey).'/i'], ['', ''], $strUrl).(\strlen($strUrlParams) ? '?'.$strUrlParams : '');
             \Controller::redirect($strRed);
         }
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'query SELECT fd_member,alias FROM tl_formdata WHERE id='.$this->intRecordId);
 
         // Check Owner and Alias
         $objOwner = \Database::getInstance()->prepare('SELECT fd_member,alias FROM tl_formdata WHERE id=?')
@@ -2553,11 +2563,17 @@ class ModuleFormdataListing extends \Module
         // Get the ContentElement holding the form
         if (\strlen($strForm)) {
             $objForm = \FormModel::findOneBy('title', $strForm);
-            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "FormModel::findOneBy('title', $strForm) class ".get_class($objForm));
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'FormModel::findOneBy("title",'.$strForm.') class '.get_class($objForm));
 
             if (null !== $objForm) {
                 $objFormElement = \ContentModel::findOneBy('form', $objForm->id);
-             EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'objFormElement class '.get_class($objFormElement).' title '.$objFormElement->title);
+              EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "ContentModel::findOneBy('form',".$objForm->id.") class ".get_class($objFormElement));
+		      if (!$objFormElement instanceof ContentModel)
+		      {
+              EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'objFormElement ist not Instanz von Contentmodel');
+              } else {
+              EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'objFormElement ist Instanz von Contentmodel');
+              }
             }
         }
 
@@ -2573,6 +2589,7 @@ class ModuleFormdataListing extends \Module
         }
 
         $this->Template = new \FrontendTemplate($this->list_edit_layout);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'edit Template "' . $this->list_edit_layout.'"');
 
         $arrRecordFields = array_merge($this->arrBaseFields, $this->arrDetailFields);
 
@@ -2610,7 +2627,8 @@ class ModuleFormdataListing extends \Module
 
         if (null !== $objFormElement) {
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'objFormElement != null class '.get_class($objFormElement));
-            $this->Template->editform = $this->generateEditForm($objFormElement, $objRecord);
+            $this->Template->editform = $this->generateEditForm($objForm->id,$objForm, $objRecord);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'len Result '.strlen($this->Template->editform));
         }
     }
 

@@ -36,13 +36,13 @@ use PBDKN\Efgco4\Resources\contao\classes\EfgLog;
 
 
 /**
- * Class ExtendedForm.
+ * Class ExtendedHasteForm.
  *
  * Provide methods to handle front end forms (multi page and formdata frontend editing)
  *
  * @copyright  Thomas Kuhn 2007-2014
  */
-class ExtendedForm extends \Form
+class ExtendedHasteForm extends \Form
 {
     /**
      * Active page.
