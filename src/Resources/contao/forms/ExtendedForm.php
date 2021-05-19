@@ -32,8 +32,8 @@ declare(strict_types=1);
  */
 
 namespace PBDKN\Efgco4\Resources\contao\forms;
-use PBDKN\Efgco4\Resources\contao\classes\EfgLog;
 
+use PBDKN\Efgco4\Resources\contao\classes\EfgLog;
 
 /**
  * Class ExtendedForm.
@@ -104,17 +104,18 @@ class ExtendedForm extends \Form
             case 'objEditRecord':
                 if ($varValue instanceof \Database\Result) {
                     $this->objEditRecord = $varValue;
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'objEditRecord set ');
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'objEditRecord set ');
                 }
                 break;
             case 'formID':
-                $this->id=$varValue;
-                $this->formID=$varValue;                
+                $this->id = $varValue;
+                $this->formID = $varValue;
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'this formId set key '.$strKey.' val '.$varValue);
                 break;
 
             default:
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'call parent setter set key '.$strKey);
+
                 return parent::__set($strKey, $varValue);
                 break;
         }
@@ -127,7 +128,7 @@ class ExtendedForm extends \Form
      */
     protected function compile()
     {
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'compile class '.get_class($this));
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'compile class '.static::class);
 
         $hasUpload = false;
         $doNotSubmit = false;
@@ -136,7 +137,7 @@ class ExtendedForm extends \Form
 
         $this->loadDataContainer('tl_form_field');
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'loadDataContainer tl_form_field');
-        $formId = (isset($this->formID)&&'' !== $this->formID) ? 'auto_'.$this->formID : 'auto_form_'.$this->id;
+        $formId = (isset($this->formID) && '' !== $this->formID) ? 'auto_'.$this->formID : 'auto_form_'.$this->id;
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'compile formId '.$formId);
 
         $arrUnset = ['FORM_NEXT', 'FORM_BACK'];
@@ -147,7 +148,7 @@ class ExtendedForm extends \Form
         // Form is used to edit existing formdata record
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'objEditRecord class ');
         if ($this->objEditRecord instanceof \Database\Result) {
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'objEditRecord da class '.get_class($this->objEditRecord));
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'objEditRecord da class '.\get_class($this->objEditRecord));
             $arrEditRecord = $this->objEditRecord->row();
             $this->blnEditform = true;
             $this->import('Formdata');
@@ -178,7 +179,7 @@ class ExtendedForm extends \Form
             $_SESSION['FILES'] = [];
 
             $this->strTemplate = 'form';
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Use the core class Form '.$formId.' vor parent compile');
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Use the core class Form '.$formId.' vor parent compile');
 
             return parent::compile();
         }
@@ -201,23 +202,23 @@ class ExtendedForm extends \Form
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'frentendtemplate geladen '.$this->strTemplate.' formId '.$formId);
 
         // render a previous completed page
-        if (isset($_SESSION['EFP'][$formId]['render_page'])&&\strlen($_SESSION['EFP'][$formId]['render_page'])) {
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'render Page');
+        if (isset($_SESSION['EFP'][$formId]['render_page']) && \strlen($_SESSION['EFP'][$formId]['render_page'])) {
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'render Page');
             $intActivePage = (int) $_SESSION['EFP'][$formId]['render_page'];
             $this->intActivePage = (int) $_SESSION['EFP'][$formId]['render_page'];
             $strMode = 'reload';
             unset($_SESSION['EFP'][$formId]['render_page']);
-        } elseif (isset($_POST['FORM_SUBMIT'])&&!\strlen($_POST['FORM_SUBMIT'])) {
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'unset');
+        } elseif (isset($_POST['FORM_SUBMIT']) && !\strlen($_POST['FORM_SUBMIT'])) {
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'unset');
             unset($_SESSION['EFP'][$formId]['render_page'], $_SESSION['EFP'][$formId]['completed']);
         }
 
         if (\Input::post('FORM_SUBMIT') === $formId && (\strlen($_POST['FORM_PAGE']) || \is_array($_POST['FORM_STEP']))) {
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'post Form_submit');
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'post Form_submit');
             $intActivePage = (int) $_POST['FORM_PAGE'];
             $intGoto = 0;
 
-            if ((isset($_POST['FORM_BACK'])&&\strlen($_POST['FORM_BACK'])) || (isset($_POST['FORM_BACK_x'])&&\strlen($_POST['FORM_BACK_x']))) {
+            if ((isset($_POST['FORM_BACK']) && \strlen($_POST['FORM_BACK'])) || (isset($_POST['FORM_BACK_x']) && \strlen($_POST['FORM_BACK_x']))) {
                 $intActivePage = ((int) $_POST['FORM_PAGE']);
                 $doNotValidate = true;
                 $strMode = 'back';
@@ -278,7 +279,7 @@ class ExtendedForm extends \Form
                 $arrFields = $this->{$callback[0]}->{$callback[1]}($arrFields, $formId, $this);         //Änderung PBD
             }
         }
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'prozess all Formfields len '.count($arrFields));
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'prozess all Formfields len '.\count($arrFields));
 
         // Process the fields
         if (!empty($arrFields) && \is_array($arrFields)) {
@@ -306,7 +307,7 @@ class ExtendedForm extends \Form
 
                 // Continue if the class is not defined
                 if (!class_exists($strClass)) {
-                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, ' class existiert nicht '.$strClass);
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, ' class existiert nicht '.$strClass);
                     continue;
                 }
 
@@ -337,7 +338,7 @@ class ExtendedForm extends \Form
                 }
 
                 $objWidget = new $strClass($arrData);
-                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, ' objWidget class erzeugt '.get_class($objWidget));
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, ' objWidget class erzeugt '.\get_class($objWidget));
                 $objWidget->required = $objField->mandatory ? true : false;
 
                 if ($objWidget->required) {
@@ -348,7 +349,7 @@ class ExtendedForm extends \Form
                 // (to avoid wrong validation against session values and to avoid usage of values of other forms):
                 // This behaviour can be deactivated by setting: $GLOBALS['EFP'][$formId]['doNotCleanStoredSessionData'] = true;
                 if ('reload' !== $strMode && \strlen($objField->name)) {
-                    if (isset($_POST['FORM_SUBMIT'])&&!\strlen($_POST['FORM_SUBMIT']) || isset($_POST['FORM_SUBMIT'])&&!$_SESSION['EFP'][$formId]['completed']['page_'.$this->intActivePage]) {
+                    if (isset($_POST['FORM_SUBMIT']) && !\strlen($_POST['FORM_SUBMIT']) || isset($_POST['FORM_SUBMIT']) && !$_SESSION['EFP'][$formId]['completed']['page_'.$this->intActivePage]) {
                         if (!$GLOBALS['EFP'][$formId]['doNotCleanStoredSessionData']) {
                             unset($_SESSION['FORM_DATA'][$objField->name]);
                         }
@@ -364,13 +365,12 @@ class ExtendedForm extends \Form
                 if (true === $GLOBALS['EFP'][$formId]['doNotCleanStoredSessionData'] && isset($_SESSION['FORM_DATA'][$objField->name])) {
                     $objWidget->value = $_SESSION['FORM_DATA'][$objField->name];
                 }
-				//if ($strMode == 'reload' || ($this->blnEditform && !strlen($_POST['FORM_BACK']) && !strlen($_POST['FORM_BACK_x'])))
-                if ('reload' === $strMode || ($this->blnEditform && (isset($_POST['FORM_BACK'])&&!\strlen($_POST['FORM_BACK'])) && (isset($_POST['FORM_BACK'])&&!\strlen($_POST['FORM_BACK_x'])))) {
-
+                //if ($strMode == 'reload' || ($this->blnEditform && !strlen($_POST['FORM_BACK']) && !strlen($_POST['FORM_BACK_x'])))
+                if ('reload' === $strMode || ($this->blnEditform && (isset($_POST['FORM_BACK']) && !\strlen($_POST['FORM_BACK'])) && (isset($_POST['FORM_BACK']) && !\strlen($_POST['FORM_BACK_x'])))) {
                     // Frontend editing
-                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Frontend editing');
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Frontend editing');
                     if ($this->blnEditform && !$_SESSION['EFP'][$formId]['completed']['page_'.$this->intActivePage]) {
-                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'blnEditform '.$this->blnEditform);
+                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'blnEditform '.$this->blnEditform);
                         if (\is_array($objWidget->options)) {
                             $arrData['options'] = $objWidget->options;
                         }
@@ -396,7 +396,7 @@ class ExtendedForm extends \Form
 
                         // Prepare value
                         $varFieldValue = $this->Formdata->prepareDatabaseValueForWidget($arrEditRecord[$objField->name], $arrData);
-                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'set Widget Value '.$varFieldValue);
+                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'set Widget Value '.$varFieldValue);
 
                         $objWidget->value = $varFieldValue;
                     } else {
@@ -413,7 +413,7 @@ class ExtendedForm extends \Form
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'vor Hook ');
 
                 // HOOK: Load form field callback
-                if ((isset($_POST['FORM_BACK'])&&!\strlen($_POST['FORM_BACK'])) && (isset($_POST['FORM_BACK_x'])&&!\strlen($_POST['FORM_BACK_x']))) {
+                if ((isset($_POST['FORM_BACK']) && !\strlen($_POST['FORM_BACK'])) && (isset($_POST['FORM_BACK_x']) && !\strlen($_POST['FORM_BACK_x']))) {
                     if (isset($GLOBALS['TL_HOOKS']['loadFormField']) && \is_array($GLOBALS['TL_HOOKS']['loadFormField'])) {
                         foreach ($GLOBALS['TL_HOOKS']['loadFormField'] as $callback) {
                             $this->import($callback[0]);
@@ -579,14 +579,14 @@ class ExtendedForm extends \Form
             $arrAttributes[1] = trim($arrAttributes[1].' multipage form_page_'.$this->intActivePage);
         }
 
-        if (isset($arrAttributes[1])&&\strlen($arrAttributes[1])) {
+        if (isset($arrAttributes[1]) && \strlen($arrAttributes[1])) {
             $strAttributes .= ' class="'.$arrAttributes[1].'"';
         }
 
         $this->Template->hasError = $doNotSubmit;
         $this->Template->attributes = $strAttributes;
         $this->Template->enctype = $hasUpload ? 'multipart/form-data' : 'application/x-www-form-urlencoded';
-        $this->Template->formId = (isset($arrAttributes[0])&&\strlen($arrAttributes[0])) ? $arrAttributes[0] : 'f'.$this->id;
+        $this->Template->formId = (isset($arrAttributes[0]) && \strlen($arrAttributes[0])) ? $arrAttributes[0] : 'f'.$this->id;
         $this->Template->action = \Environment::get('indexFreeRequest');
         $this->Template->maxFileSize = $hasUpload ? $this->objModel->getMaxUploadFileSize() : false;
         $this->Template->novalidate = $this->novalidate ? ' novalidate' : '';

@@ -76,7 +76,7 @@ class FormdataBackend extends \Backend
         $cp = realpath($this->rootDir.'/var/cache/'.$_ENV['APP_ENV'].'/contao/');   // cachpath
         EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "cp '".$cp."'");
         if (!empty($cp) && (\strlen($cp) > 0)) {      // cache vorhanden
-          $this->cachePath = 'var/cache/'.$_ENV['APP_ENV'].'/contao/';
+            $this->cachePath = 'var/cache/'.$_ENV['APP_ENV'].'/contao/';
             EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "set cachepath '".$this->cachePath."'");
         }
         parent::__construct();
@@ -285,17 +285,17 @@ class FormdataBackend extends \Backend
             $objMod->close();
             EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'neu erzeugt '.$this->vendorPath.'src/Resources/contao/languages/'.$strModLang.'/modules.php');
             if (\strlen($this->cachePath) > 0) {      // cache vorhanden dann modulefiles loeschen
-               // Remove cached language files
-               //$objCache = new \File($this->cachePath.'language/'.$strModLang.'/modules.php');
-               //$objCache->delete();
-               //$objCache = new \File($this->cachePath.'language/'.$strModLang.'/tl_formdata.php');
-               //$objCache->delete();
+                // Remove cached language files
+                //$objCache = new \File($this->cachePath.'language/'.$strModLang.'/modules.php');
+                //$objCache->delete();
+                //$objCache = new \File($this->cachePath.'language/'.$strModLang.'/tl_formdata.php');
+                //$objCache->delete();
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'modules cache from '.$this->cachePath.'languages/'.$strModLang.'/modules.php');
                 $objCache = new \File($this->cachePath.'languages/'.$strModLang.'/modules.php');
                 $strmodulescache = $objCache->getContent();
                 $startpos = stripos($strmodulescache, '// begin modules efg');
                 if (false === $startpos) {
-                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'no startpos modules cache from '.$this->cachePath.'languages/'.$strModLang.'/modules.php');
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'no startpos modules cache from '.$this->cachePath.'languages/'.$strModLang.'/modules.php');
                 } else {
                     $endpos = stripos($strmodulescache, '// end modules efg', $startpos);
                     $pars = $tplMod->parse();

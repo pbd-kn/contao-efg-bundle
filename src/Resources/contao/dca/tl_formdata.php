@@ -76,7 +76,7 @@ $GLOBALS['TL_DCA']['tl_formdata'] = [
             'edit' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_formdata']['edit'],
                 'href' => 'act=edit',
-                'icon' => 'bundles/contaoefgco4/icons/edit.gif',   
+                'icon' => 'bundles/contaoefgco4/icons/edit.gif',
             ],
             'delete' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_formdata']['delete'],
