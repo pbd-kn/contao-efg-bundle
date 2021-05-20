@@ -498,9 +498,14 @@ class ModuleFormdataListing extends \Module
         if ($objForm->validate()) {
             EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'is validate');
             // Get all the submitted and parsed data (only works with POST):
+            $objFF = \Database::getInstance()->prepare("UPDATE tl_formdata_details SET `value` =? WHERE `ff_name`=? and pid=$formId");
+                //UPDATE tl_formdata_details SET `value` = 'neue' WHERE `ff_name`='name1' and pid=175
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'update query '."UPDATE tl_formdata_details SET `value` =? WHERE `ff_name`=? and pid=$formId");
+
             $resData = $objForm->fetchAll();
             foreach ($resData as $k => $v) {
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "arrData fetchAll arrData[$k]: $v");
+                
             }
             /* For your convenience you can also use a callable to walk over all widgets
             $arrData = $objForm->fetchAll(function($strName, $objWidget) {
