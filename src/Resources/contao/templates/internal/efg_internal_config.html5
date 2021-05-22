@@ -34,9 +34,15 @@
   echo ' * you can set the swiftmail transport set in efg_internal_config.html' . PHP_EOL;
   echo " * example define('SENDMAILCOMMAND', ini_get ('sendmail_path') . ' -t')" . PHP_EOL;
   echo '*/' . PHP_EOL;
+
+if(ini_get('sendmail_path')){
+  echo "define('SENDMAILCOMMAND', ini_get ('sendmail_path') . ' -t');   // set mailtransport for Swiftmailer". PHP_EOL;
+  echo "                                                              // for standard comment out this line". PHP_EOL;
+} else {
+  echo "define('SENDMAILCOMMAND', 'no_sendmail_path');    // set mailtransport for Swiftmailer". PHP_EOL;
+}
 ?>
 
-define('SENDMAILCOMMAND', ini_get ('sendmail_path') . ' -t');    // set mailtransport for Swiftmailer
 define('debsmall',1);
 define('debmedium',2+debsmall);
 define('debfull',4+debmedium);

@@ -32,7 +32,12 @@
  * example define('SENDMAILCOMMAND', ini_get ('sendmail_path') . ' -t')
 */
 
-define('SENDMAILCOMMAND', ini_get ('sendmail_path') . ' -t');    // set mailtransport for Swiftmailer
+if(ini_get ('sendmail_path')){
+define('SENDMAILCOMMAND', ini_get ('sendmail_path') . ' -t');   // set mailtransport for Swiftmailer
+                                                                // for standard comment out this line
+} else {
+define('SENDMAILCOMMAND', 'no_sendmail_path');    // set mailtransport for Swiftmailer
+}
 define('debsmall',1);
 define('debmedium',2+debsmall);
 define('debfull',4+debmedium);

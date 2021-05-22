@@ -448,7 +448,11 @@ class FormdataProcessor extends \Contao\Frontend
 
             if (!empty($objMailProperties->recipients)) {
         if (SENDMAILCOMMAND) {   // PBD aus config.php
-          // PBD z.B. zum setzen des -t flags
+          if (SENDMAILCOMMAND=='no_sendmail_path') {
+             EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'no sendmail_path in php.ini ');
+             $this->log('Could send EMail because no sendmail_path in php.ini', __METHOD__, TL_ERROR);
+             return;
+          }          // PBD z.B. zum setzen des -t flags
           $this->myMailer->getTransport()->setCommand(sendmail_path.' '.SENDMAILCOMMAND);
        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'SENDMAILCOMMAND SwiftMailer transport gesetzt => '.SENDMAILCOMMAND);
         }
@@ -591,7 +595,11 @@ class FormdataProcessor extends \Contao\Frontend
 
             if (!empty($objMailProperties->recipients)) {
         if (SENDMAILCOMMAND) {   // PBD aus config.php
-          // PBD z.B. zum setzen des -t flags
+          if (SENDMAILCOMMAND=='no_sendmail_path') {
+             EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'no sendmail_path in php.ini ');
+             $this->log('Could send EMail because no sendmail_path in php.ini', __METHOD__, TL_ERROR);
+             return;
+          }          // PBD z.B. zum setzen des -t flags
           $this->myMailer->getTransport()->setCommand(SENDMAILCOMMAND);
        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'SENDMAILCOMMAND SwiftMailer transport gesetzt => '.SENDMAILCOMMAND);
         }
