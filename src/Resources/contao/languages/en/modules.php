@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+
+// begin modules efg
+
 /*
  *
  *  Contao Open Source CMS
