@@ -26,7 +26,7 @@ declare(strict_types=1);
  *  extended by insert_tag  {{efg_insert::formalias::aliasvalue::column(::format)}}
  *
  */
-/*
+
 
 class_alias(PBDKN\Efgco4\Resources\contao\drivers\DC_Formdata::class, 'DC_Formdata');
 class_alias(PBDKN\Efgco4\Resources\contao\classes\Formdata::class, 'Formdata');
