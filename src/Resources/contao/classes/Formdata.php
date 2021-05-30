@@ -87,7 +87,7 @@ class Formdata extends \Contao\Frontend
     public function __construct()
     {
         parent::__construct();
-        EfgLog::setEfgDebugmode(\Input::get('do'));
+        EfgLog::setEfgDebugmode('form');
 
         EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "do '".\Input::get('do')."' act '".\Input::get('act')."'");
 
@@ -654,6 +654,7 @@ class Formdata extends \Contao\Frontend
                 case 'condition': // conditionalforms
                     $strSep = '';
                     $strVal = '';
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, '657 prepareWidgetOptions strType'.$strType.' len arrfield '.count($arrField));
                     $arrOptions = $this->prepareWidgetOptions($arrField);
 
                     $arrSel = [];
@@ -685,6 +686,7 @@ class Formdata extends \Contao\Frontend
                 case 'efgLookupRadio':
                 case 'radio':
                     $strVal = $varSubmitted;
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, '689 prepareWidgetOptions strType'.$strType.' len arrfield '.count($arrField));
                     $arrOptions = $this->prepareWidgetOptions($arrField);
                     foreach ($arrOptions as $o => $mxVal) {
                         if ($mxVal['value'] === $varSubmitted) {
@@ -705,6 +707,7 @@ class Formdata extends \Contao\Frontend
                 case 'cm_alternative':
                     $strSep = '';
                     $strVal = '';
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, '711 prepareWidgetOptions strType'.$strType.' len arrfield '.count($arrField));
                     $arrOptions = $this->prepareWidgetOptions($arrField);
 
                     // select multiple
@@ -975,6 +978,7 @@ class Formdata extends \Contao\Frontend
                 case 'condition': // conditionalforms
                     $strSep = '';
                     $strVal = '';
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, '981 prepareWidgetOptions strType'.$strType.' len arrfield '.count($arrField));
                     $arrOptions = $this->prepareWidgetOptions($arrField);
 
                     $arrSel = [];
@@ -1003,6 +1007,7 @@ class Formdata extends \Contao\Frontend
                 case 'efgLookupRadio':
                 case 'radio':
                     $strVal = (\is_array($varSubmitted)) ? $varSubmitted[0] : $varSubmitted;
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, '1011 prepareWidgetOptions strType'.$strType.' len arrfield '.count($arrField));
                     $arrOptions = $this->prepareWidgetOptions($arrField);
                     foreach ($arrOptions as $o => $mxVal) {
                         if ($mxVal['value'] === $varSubmitted) {
@@ -1019,6 +1024,7 @@ class Formdata extends \Contao\Frontend
                 case 'cm_alternative': // cm_alternativeforms
                     $strSep = '';
                     $strVal = '';
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, '1027 prepareWidgetOptions strType'.$strType.' len arrfield '.count($arrField));
                     $arrOptions = $this->prepareWidgetOptions($arrField);
 
                     // select multiple
@@ -1310,6 +1316,7 @@ class Formdata extends \Contao\Frontend
                     if ($arrField['options']) {
                         $arrOptions = deserialize($arrField['options']);
                     } else {
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, '1320 prepareWidgetOptions strType'.$strType.' len arrfield '.count($arrField));
                         $arrOptions = $this->prepareWidgetOptions($arrField);
                     }
 
@@ -1391,6 +1398,7 @@ class Formdata extends \Contao\Frontend
                     if ($arrField['options']) {
                         $arrOptions = deserialize($arrField['options']);
                     } else {
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, '1401 prepareWidgetOptions strType'.$strType.' len arrfield '.count($arrField));
                         $arrOptions = $this->prepareWidgetOptions($arrField);
                     }
 
@@ -1463,9 +1471,9 @@ class Formdata extends \Contao\Frontend
         if (!\is_array($arrField)) {
             return false;
         }
-
         $strType = $arrField['type'];
         if (TL_MODE === 'FE' && !empty($arrField['formfieldType'])) {
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'TL_MODE FE Type "'.$arrField['formfieldType'].'"');
             $strType = $arrField['formfieldType'];
         } elseif (TL_MODE === 'BE' && !empty($arrField['inputType'])) {
             $strType = $arrField['inputType'];
@@ -1477,10 +1485,16 @@ class Formdata extends \Contao\Frontend
             case 'efgLookupCheckbox':
             case 'efgLookupRadio':
             case 'efgLookupSelect':
+        EfgLog::EfgwriteStack(debfull);
                 // Get efgLookupOptions: array('lookup_field' => TABLENAME.FIELDNAME, 'lookup_val_field' => TABLENAME.FIELDNAME, 'lookup_where' => CONDITION, 'lookup_sort' => ORDER BY)
                 $arrLookupOptions = deserialize($arrField['efgLookupOptions']);
                 $strLookupField = $arrLookupOptions['lookup_field'];
-                $strLookupValField = (\strlen($arrLookupOptions['lookup_val_field'])) ? $arrLookupOptions['lookup_val_field'] : null;
+                if(!isset($strLookupField))$strLookupField='';   // pbd
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strLookupField '.$strLookupField.' len arrLookupOptions '.count($arrLookupOptions) );
+//EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, '!!!!! falscher break von mir len arrfield'.count($arrField));
+//break;
+                $strLookupValField = ((isset($arrLookupOptions['lookup_val_field'])&&\strlen($arrLookupOptions['lookup_val_field']))) ? $arrLookupOptions['lookup_val_field'] : null;
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strLookupValField '.$strLookupValField);
 
                 $strLookupWhere = \StringUtil::decodeEntities($arrLookupOptions['lookup_where']);
                 if (!empty($strLookupWhere)) {
@@ -1490,7 +1504,7 @@ class Formdata extends \Contao\Frontend
                 $arrLookupField = explode('.', $strLookupField);
                 $sqlLookupTable = $arrLookupField[0];
                 $sqlLookupField = $arrLookupField[1];
-                $sqlLookupValField = (\strlen($strLookupValField)) ? substr($strLookupValField, strpos($strLookupValField, '.') + 1) : null;
+                $sqlLookupValField = (isset($strLookupValField)&&\strlen($strLookupValField)) ? substr($strLookupValField, strpos($strLookupValField, '.') + 1) : null;
 
                 $sqlLookupIdField = 'id';
                 $sqlLookupWhere = (!empty($strLookupWhere) ? ' WHERE '.$strLookupWhere : '');

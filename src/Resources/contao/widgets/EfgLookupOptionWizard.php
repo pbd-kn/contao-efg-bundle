@@ -32,6 +32,7 @@ declare(strict_types=1);
  */
 
 namespace PBDKN\Efgco4\Resources\contao\widgets;
+use PBDKN\Efgco4\Resources\contao\classes\EfgLog;
 
 /**
  * Class EfgLookupOptionWizard.
@@ -40,7 +41,7 @@ namespace PBDKN\Efgco4\Resources\contao\widgets;
  *
  * @copyright  Thomas Kuhn 2007-2014
  */
-class EfgLookupOptionWizard extends \Widget
+class EfgLookupOptionWizard extends \Contao\Widget
 {
     /**
      * Submit user input.
@@ -107,6 +108,7 @@ class EfgLookupOptionWizard extends \Widget
      */
     public function generate()
     {
+EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, '-> ');
         $this->arrIgnoreTables = [
             'tl_formdata',
             'tl_formdata_details',
@@ -181,11 +183,13 @@ class EfgLookupOptionWizard extends \Widget
 
         $return = '';
 
+EfgLog::EfgwriteLog(debsfull, __METHOD__, __LINE__, 'Begin table strSelectedTable '.$strSelectedTable);
         // Begin table
 
         // table field used as option label
         $return .= '<div class="w50"><h3><label for="'.$this->strId.'_lookup_field">'.$GLOBALS['TL_LANG'][$this->strTable]['lookup_field'][0].'</label></h3>
 				<select name="'.$this->strId.'[lookup_field]" id="'.$this->strId.'_lookup_field" class="tl_select tl_chosen" onchange="Backend.autoSubmit(\'tl_form_field\');" onfocus="Backend.getScrollOffset();">';
+EfgLog::EfgwriteLog(debsfull, __METHOD__, __LINE__, "return 1\n".$return);
         foreach ($this->arrDbStruct as $strTable => $arrFields) {
             $return .= '<optgroup label="'.$strTable.'">';
             foreach ($arrFields as $strField) {
@@ -198,6 +202,7 @@ class EfgLookupOptionWizard extends \Widget
             $return .= '</optgroup>';
         }
         $return .= '</select>';
+EfgLog::EfgwriteLog(debsfull, __METHOD__, __LINE__, "return 2\n".$return);
         $return .= '
 			<p class="tl_help tl_tip">'.$GLOBALS['TL_LANG'][$this->strTable]['lookup_field'][1].'</p></div>';
 

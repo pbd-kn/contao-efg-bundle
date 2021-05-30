@@ -68,6 +68,7 @@ class FormdataBackend extends \Backend
 
     public function __construct()
     {
+        $this->log('Formdata __construct input do '.\Input::get('do'), __METHOD__, TL_GENERAL);
         EfgLog::setEfgDebugmode(\Input::get('do'));
         EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "construct do '".\Input::get('do')."'");
         $this->rootDir = \System::getContainer()->getParameter('kernel.project_dir');
@@ -255,7 +256,7 @@ class FormdataBackend extends \Backend
             $objCache->close();
         }
         //EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'rewrite cache config var/cache/'.$_ENV['APP_ENV'].'/contao/config/config.php');
-        //$this->log('rewrite config.php in cache and vendor', __METHOD__, TL_GENERAL);
+        $this->log('rewrite config.php in cache and vendor', __METHOD__, TL_GENERAL);
         EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'rewrite config.php in vendor and cache');
         if (empty($arrStoringForms)) {
             \Message::addInfo('Cache bitte neu erzeugen');
@@ -305,7 +306,7 @@ class FormdataBackend extends \Backend
                 }
                 $objCache->close();
             }
-            //$this->log('rewrite cache and vendor modules.php in '.$strModLang, __METHOD__, TL_GENERAL);
+            $this->log('rewrite cache and vendor modules.php in '.$strModLang, __METHOD__, TL_GENERAL);
             EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'rewrite cache and vendor modules.php in '.$strModLang);
         }
         }
@@ -435,7 +436,7 @@ class FormdataBackend extends \Backend
                     $objDcaCache = new \File('var/cache/'.$_ENV['APP_ENV'].'/contao/dca/fd_'.$strFormKey.'.php');
                     $objDcaCache->write($tplDca->parse());
                     $objDcaCache->close();
-                    //$this->log('dca rewrite in cache und vendor fd_'.$strFormKey.'.php', __METHOD__, TL_GENERAL);
+                    $this->log('dca rewrite in cache und vendor fd_'.$strFormKey.'.php', __METHOD__, TL_GENERAL);
                     EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'dca rewrite vendor und cache'.$this->vendorPath.'src/Resources/contao/dca/fd_'.$strFormKey.'.php');
                 }
             }
@@ -482,7 +483,7 @@ class FormdataBackend extends \Backend
             $objDca = new \File($this->vendorPath.'src/Resources/contao/dca/fd_'.$strFormKey.'.php');
             $objDca->write($tplDca->parse());
             $objDca->close();
-            //$this->log('dca rewrite '.$this->vendorPath.'src/Resources/contao/dca/fd_'.$strFormKey.'.php', __METHOD__, TL_GENERAL);  // PBD
+            $this->log('dca rewrite '.$this->vendorPath.'src/Resources/contao/dca/fd_'.$strFormKey.'.php', __METHOD__, TL_GENERAL);  // PBD
             EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'dca rewrite '.$this->vendorPath.'src/Resources/contao/dca/fd_'.$strFormKey.'.php');
         }
         // Rebuild internal cache

@@ -131,7 +131,39 @@ class EfgLog
                 self::$cnt++;
         */
     }
-
+    /**
+     * Write in stack log file, if debug is enabled.
+     *
+     * @param int    $level
+     */
+    public static function EfgwriteStack($level): void
+    {
+        if ('' === self::$debFormKey) {
+            return;
+        } 
+        if (($level & self::$myefgdebuglevel) === $level) {   
+            $barr=debug_backtrace();
+            foreach ($barr as $k=>$v) { 
+               if (str_contains($v['file'], 'symfony')) {
+                   $str='file: '.$v['file'].' line: '.$v['line'].' function: '.$v['function'];
+               } else {
+                   $str='file: '.$v['file'].' line: '.$v['line'].' function: '.$v['function'];
+                   foreach ($v['args'] as $k1=>$v1)  {
+                       if (is_array($v1)) {
+                           $str.=" isarray[$k1]: [ ";
+                           foreach ($v1 as $k2=>$v2)  {
+                               $str .=" [$k2]:$v2, ";
+                           }
+                           $str.='],  ';
+                       } else {
+                           $str .=" args[$k1]:$v1, ";
+                       } 
+                   }
+               }
+               self::logMessage(sprintf('[%s] [%s] %s', self::$uniqid, $level,'PBD '.$str), 'efg_debug');
+            }
+        }
+    }
     /**
      * Wrapper for old log_message.
      *

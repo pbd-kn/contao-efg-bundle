@@ -231,7 +231,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
     public function __construct($strTable, $arrModule = [])
     {
         parent::__construct();
-        EfgLog::setEfgDebugmode(\Input::get('do'));
+        EfgLog::setEfgDebugmode('form');
         EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "do '".\Input::get('do')."' strTable '$strTable' id '".\Input::get('id')."'");
         // Check the request token (see #4007)
         if (isset($_GET['act'])) {
@@ -1288,7 +1288,6 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
                         $this->varValue = trimsplit($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['csv'], $this->varValue);
                     }
 
-                    /*
                     // Call load_callback
                     if (is_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['load_callback']))
                     {
@@ -1308,7 +1307,6 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
 
                         $this->objActiveRecord->{$this->strField} = $this->varValue;
                     }
-                    */
 
                     // prepare values of special fields like radio, select and checkbox
                     $strInputType = $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['inputType'];
@@ -1476,6 +1474,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
 
                     // field type efgLookupSelect
                     elseif ('efgLookupSelect' === $strInputType) {
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'prepareWidgetOptions strType'.$strInputType.'this->strTable'.$this->strTable.'this->strField'.$this->strField.' val '.$GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]);
                         $arrFieldOptions = $this->Formdata->prepareWidgetOptions($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]);
                         $arrNewOptions = [];
 
@@ -1503,6 +1502,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
                             }
                         }
 
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'render type efgLookupSelect as SelectMenu this->strTable '.$this->strTable.' this->strField '.$this->strField);
                         // render type efgLookupSelect as SelectMenu
                         $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['inputType'] = 'select';
                     }
@@ -2070,6 +2070,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
 
                     // field type efgLookupSelect
                     elseif ('efgLookupSelect' === $strInputType) {
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, '657 prepareWidgetOptions strType'.$strInputType.'this->strTable'.$this->strTable.'this->strField'.$this->strField.' val '.$GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]);
                         $arrFieldOptions = $this->Formdata->prepareWidgetOptions($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]);
 
                         // prepare options array and value
@@ -2097,12 +2098,14 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
                             }
                         }
 
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'render type efgLookupSelect as SelectMenu this->strTable '.$this->strTable.' this->strField '.$this->strField);
                         // render type efgLookupSelect as SelectMenu
                         $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['inputType'] = 'select';
                     }
 
                     // field type efgLookupCheckbox
                     elseif ('efgLookupCheckbox' === $strInputType) {
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, '657 prepareWidgetOptions strType'.$strInputType.'this->strTable'.$this->strTable.'this->strField'.$this->strField.' val '.$GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]);
                         $arrFieldOptions = $this->Formdata->prepareWidgetOptions($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]);
 
                         // prepare options array and value

@@ -31,6 +31,8 @@ declare(strict_types=1);
 class_alias(PBDKN\Efgco4\Resources\contao\drivers\DC_Formdata::class, 'DC_Formdata');
 class_alias(PBDKN\Efgco4\Resources\contao\classes\Formdata::class, 'Formdata');
 class_alias(PBDKN\Efgco4\Resources\contao\classes\FormdataBackend::class, 'FormdataBackend');
+//class_alias(PBDKN\Efgco4\Resources\contao\widgets\EfgLookupOptionWizard::class, 'EfgLookupOptionWizard');
+
 
 /*
  * Register the templates
@@ -46,4 +48,5 @@ TemplateLoader::addFiles([
     'info_fd_table_default' => 'PBDKN/Efgco4/Resources/contao/templates/listing/info',
     'list_fd_simple_default' => 'PBDKN/Efgco4/Resources/contao/templates/listing/list',
     'list_fd_table_default' => 'PBDKN/Efgco4/Resources/contao/templates/listing/list',
+    'form_widget' => 'PBDKN/Efgco4/Resources/contao/templates/forms',
 ]);
