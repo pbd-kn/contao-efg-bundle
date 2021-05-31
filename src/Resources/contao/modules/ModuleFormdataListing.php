@@ -1885,6 +1885,7 @@ class ModuleFormdataListing extends \Module
         $strQuery .= ' FROM '.$this->list_table.' f';
         $strWhere .= (\strlen($strWhere) ? ' AND ' : ' WHERE ').'id=?';
         $strQuery .= $strWhere;
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'query '.$strQuery.' this->intRecordId '.$this->intRecordId);
 
         $objRecord = \Database::getInstance()->prepare($strQuery)
             ->limit(1)
@@ -1901,7 +1902,7 @@ class ModuleFormdataListing extends \Module
 
         $strLinkEdit = '';
         if ($blnEditAllowed) {
-            if (\strlen($arrRow['alias']) && !$GLOBALS['TL_CONFIG']['disableAlias']) {
+            if ((isset($arrRow['alias'])&&\strlen($arrRow['alias'])) && !$GLOBALS['TL_CONFIG']['disableAlias']) {
                 $strLinkEdit = $strUrl.'?act=edit'.(\strlen($strUrlParams) ? '&amp;'.$strUrlParams : '');
             } else {
                 $strLinkEdit = $strUrl.'?'.$this->strDetailKey.'='.$this->intRecordId.'&amp;act=edit'.(\strlen($strUrlParams) ? '&amp;'.$strUrlParams : '');
@@ -1910,7 +1911,7 @@ class ModuleFormdataListing extends \Module
 
         $strLinkDelete = '';
         if ($blnDeleteAllowed) {
-            if (\strlen($arrRow['alias']) && !$GLOBALS['TL_CONFIG']['disableAlias']) {
+            if ((isset($arrRow['alias'])&&\strlen($arrRow['alias'])) && !$GLOBALS['TL_CONFIG']['disableAlias']) {
                 $strLinkDelete = $strUrl.'?act=delete'.(\strlen($strUrlParams) ? '&amp;'.$strUrlParams : '');
             } else {
                 $strLinkDelete = $strUrl.'?'.$this->strDetailKey.'='.$this->intRecordId.'&amp;act=delete'.(\strlen($strUrlParams) ? '&amp;'.$strUrlParams : '');
@@ -1919,7 +1920,7 @@ class ModuleFormdataListing extends \Module
 
         $strLinkExport = '';
         if ($blnExportAllowed) {
-            if (\strlen($arrRow['alias']) && !$GLOBALS['TL_CONFIG']['disableAlias']) {
+            if ((isset($arrRow['alias'])&&\strlen($arrRow['alias'])) && !$GLOBALS['TL_CONFIG']['disableAlias']) {
                 $strLinkExport = $strUrl.'?act=export'.(\strlen($strUrlParams) ? '&amp;'.$strUrlParams : '');
             } else {
                 $strLinkExport = $strUrl.'?'.$this->strDetailKey.'='.$this->intRecordId.'&amp;act=export'.(\strlen($strUrlParams) ? '&amp;'.$strUrlParams : '');
