@@ -206,7 +206,7 @@ class EfgFormLookupCheckbox extends \Widget
 
         return sprintf('<div id="ctrl_%s" class="checkbox_container%s">%s</div>',
             $this->strId,
-            (\strlen($this->strClass) ? ' '.$this->strClass : ''),
+            (isset($this->strClass)&&\strlen($this->strClass) ? ' '.$this->strClass : ''),
             $strOptions).$this->addSubmit();
     }
 }

@@ -798,18 +798,12 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                     }
 
                     $arrDetailSet['value'] = $strVal;
-                    //$this->log("PBD DC_Formdata.php create insert into tl_formdata_details  " . implode(",",$arrDetailSet) , __METHOD__, TL_GENERAL);
-                    //foreach ($arrDetailSet as $k=>$v) {
-                    //$this->log("PBD DC_Formdata.php create insert into tl_formdata_details arrDetailSet[$k]$v " , __METHOD__, TL_GENERAL);
-                    //}
 
                     $objInsertStmt = \Database::getInstance()->prepare('INSERT INTO tl_formdata_details %s')
                         ->set($arrDetailSet)
                         ->execute()
                     ;
-                    //$this->log("PBD DC_Formdata.php create changed rows tl_formdata_details" . $objInsertStmt->affectedRows , __METHOD__, TL_GENERAL);
                     $insertIDdetail = $objInsertStmt->insertId;
-                    //$this->log("PBD DC_Formdata.php create tl_formdata_details insertIDdetail " . $objInsertStmt->insertId );
                     EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'tl_formdata_details insertIDdetail '.$objInsertStmt->insertId);
                 }
 
@@ -827,7 +821,6 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                 if (\is_array($GLOBALS['TL_DCA'][$this->strTable]['config']['oncreate_callback'])) {
                     foreach ($GLOBALS['TL_DCA'][$this->strTable]['config']['oncreate_callback'] as $callback) {
                         if (\is_array($callback)) {
-                            //$this->log("PBD DC_Formdata.php create call callback" . $callback[0] , __METHOD__, TL_GENERAL);
                             EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'call callback'.$callback[0]);
                             $this->import($callback[0]);
                             $this->{$callback[0]}->{$callback[1]}($this->strTable, $insertID, $this->set, $this);    //Änderung PBD
@@ -841,11 +834,9 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                 $this->log('A new entry in table "'.$this->strTable.'" has been created (ID: '.$insertID.')', __METHOD__, TL_GENERAL);
                 \Controller::redirect($this->switchToEdit($insertID).$s2e);
             } else {
-                //$this->log("PBD DC_Formdata.php create keine Aenderungen rows " , __METHOD__, TL_GENERAL);
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'keine Aenderungen rows '.$callback[0]);
             }
         }
-        //$this->log("PBD DC_Formdata.php create vor redirect " , __METHOD__, TL_GENERAL);
 
         \Controller::redirect($this->getReferer());
     }
@@ -885,7 +876,6 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
      */
     public function delete($blnDoNotRedirect = false): void
     {
-        //$this->log("PBD DC_Formdata call delete  ", __METHOD__, TL_GENERAL);
         EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "do '".\Input::get('do')."'");
 
         if ($GLOBALS['TL_DCA'][$this->strTable]['config']['notDeletable']) {
@@ -948,17 +938,14 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                 ++$affected;
             }
         }
-        //$this->log("PBD DC_Formdata call delete vor import Backend ", __METHOD__, TL_GENERAL);
         EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "vor import Backend '".\Input::get('do')."'");
 
         $this->import('BackendUser', 'User');
-        //$this->log("PBD DC_Formdata call delete nach import Backend ", __METHOD__, TL_GENERAL);
 
         $objUndoStmt = \Database::getInstance()->prepare('INSERT INTO tl_undo (pid, tstamp, fromTable, query, affectedRows, data) VALUES (?, ?, ?, ?, ?, ?)')
             ->execute($this->User->id, time(), $this->strTable, 'DELETE FROM '.$this->strTable.' WHERE id='.$this->intId, $affected, serialize($data))
         ;
         EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "nach objUndoStmt '".\Input::get('do')."'");
-        //$this->log("PBD DC_Formdata call nach objUndoStmt ", __METHOD__, TL_GENERAL);
         // Delete the records
         if ($objUndoStmt->affectedRows) {
             // Call ondelete_callback
@@ -966,20 +953,16 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                 foreach ($GLOBALS['TL_DCA'][$this->strTable]['config']['ondelete_callback'] as $callback) {
                     //$this->log("PBD DC_Formdata call ondelete_callback " . $this->strTable, __METHOD__, TL_GENERAL);
                     if (\is_array($callback)) {       // hier wird u.U haste model delete aufgerufe
-//$this->log("PBD DC_Formdata call ondelete_callback is array import " . $callback[0], __METHOD__, TL_GENERAL);
-EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array import '.$callback[0]);
+                        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array import '.$callback[0]);
                         $this->import($callback[0]);
                         //$this->log("PBD DC_Formdata call ondelete_callback is array call import " . $callback[1], __METHOD__, TL_GENERAL);
                         $this->{$callback[0]}->{$callback[1]}($this, $objUndoStmt->insertId);    //Änderung PBD
-//$this->log("PBD DC_Formdata call ondelete_callback ok ", __METHOD__, TL_GENERAL);
                     } elseif (\is_callable($callback)) {
-                        //$this->log("PBD DC_Formdata call ondelete_callback is not array ", __METHOD__, TL_GENERAL);
                         $callback($this, $objUndoStmt->insertId);
                     }
                     //$this->log("PBD DC_Formdata call ondelete_callback ok ", __METHOD__, TL_GENERAL);
                 }
             }
-            //$this->log("PBD DC_Formdata call vor delete entry ", __METHOD__, TL_GENERAL);
             EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "vor delete entry '".\Input::get('do')."'");
 
             // Delete the records
@@ -1140,7 +1123,6 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
      */
     public function edit($intID = null, $ajaxId = null)
     {
-        //$this->log("PBD DC_Formdata edit intID $intID this->intId " . $this->intId, __METHOD__, TL_GENERAL);
         EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "intID '$intID' this->intId '".$this->intId."'");
 
         $table_alias = ('tl_formdata' === $this->strTable ? ' f' : '');
@@ -1165,7 +1147,6 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
         if ('' !== $sqlWhere) {
             $sqlQuery .= $sqlWhere;
         }
-        //$this->log("PBD DC_Formdata edit sqlQuery $sqlQuery", __METHOD__, TL_GENERAL);
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "sqlQuery $sqlQuery this->intId ".$this->intId);
 
         $objRow = \Database::getInstance()->prepare($sqlQuery)
@@ -1219,7 +1200,6 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
             $blnIsFirst = true;
 
             // Render boxes
-            //$this->log("PBD DC_Formdata getFilepickerJavascript Render boxes ", __METHOD__, TL_GENERAL);
             EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Render boxes');
             foreach ($boxes as $k => $v) {
                 $strAjax = '';
@@ -1310,7 +1290,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
 
                     // prepare values of special fields like radio, select and checkbox
                     $strInputType = $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['inputType'];
-                    //$this->log("PBD DC_Formdata strInputType $strInputType ", __METHOD__, TL_GENERAL);
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strInputType '. $strInputType);
 
                     // field types radio, select, multi checkbox
                     if (\in_array($strInputType, ['radio', 'select', 'conditionalselect', 'countryselect'], true)
@@ -1672,7 +1652,6 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
 
         // Reload the page to prevent _POST variables from being sent twice
         if (\Input::post('FORM_SUBMIT') === $this->strTable && !$this->noReload) {
-            //$this->log("PBD DC_Formdata.php edit FORM_SUBMIT this->strTable " . $this->strTable, __METHOD__, TL_GENERAL);
             EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'FORM_SUBMIT this->strTable '.$this->strTable);
             $arrValues = $this->values;
             array_unshift($arrValues, time());
@@ -1718,15 +1697,12 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
                 \System::setcookie('BE_PAGE_OFFSET', 0, 0, '/');
                 //$strUrl = \Environment::get('script') . '?do=' . \Input::get('do');
                 $strUrl = 'contao'.'?do='.\Input::get('do');    // PBD redirekt auf contao geht jetzt so !!
-//$this->log("PBD DC_Formdata.php edit saveNcreate $strUrl $strUrl script " . \Environment::get('script'), __METHOD__, TL_GENERAL);
 
                 if (isset($_GET['table'])) {
                     $strUrl .= '&amp;table='.\Input::get('table');
                 }
 
                 $strUrl .= (isset($GLOBALS['TL_DCA'][$this->strTable]['config']['ptable']) && \strlen($GLOBALS['TL_DCA'][$this->strTable]['config']['ptable'])) ? '&amp;act=create&amp;mode=2&amp;pid='.CURRENT_ID : '&amp;act=create';
-                //$this->log("PBD DC_Formdata.php edit controler redirekt strUrl $strUrl ", __METHOD__, TL_GENERAL);
-                //$this->log("PBD DC_Formdata.php edit controler redirekt referrer " . $this->getReferer(), __METHOD__, TL_GENERAL);
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "controler redirekt strUrl $strUrl referrer ".$this->getReferer());
                 \Controller::redirect($strUrl.'&amp;rt='.REQUEST_TOKEN);
             }
@@ -1760,7 +1736,6 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
      */
     public function editAll($intId = null, $ajaxId = null)
     {
-        //$this->log("PBD DC_Formdata editAll ", __METHOD__, TL_GENERAL);
         EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, '..');
 
         if ($GLOBALS['TL_DCA'][$this->strTable]['config']['notEditable']) {
@@ -2261,7 +2236,6 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
             // TODO: find a better solution to handle toggleSubpalette ...
             $return .= $this->getSubpaletteJavascript();
             $return .= $this->getFilepickerJavascript('reloadEfgFiletree');
-            //$this->log("PBD DC_Formdata getFilepickerJavascript 2529 ", __METHOD__, TL_GENERAL);
             // Set the focus if there is an error
             if ($this->noReload) {
                 $return .= '
@@ -2581,7 +2555,6 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
         }
 
         $arrForm = $objForm->row();
-        //$this->log("PBD DC_Formdata e) bearbeite FORM id:  " . $arrForm['id'] . " title: " . $arrForm['title'], __METHOD__, TL_GENERAL);
         EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, ' e) bearbeite FORM id:  '.$arrForm['id'].' title: '.$arrForm['title']);
         $arrFormFields = $this->Formdata->getFormfieldsAsArray($arrForm['id']);
 
@@ -2691,7 +2664,6 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
 
         // Replace Insert tags and conditional tags
         $objMailProperties = $this->Formdata->prepareMailData($objMailProperties, $arrSubmitted, $arrFiles, $arrForm, $arrFormFields);
-        //$this->log("PBD dc_Formdata 3 vor Mail", __METHOD__, 'ERROR');
 
         $objEmail = new \Email();
         $objEmail->from = $objMailProperties->sender;
@@ -2853,7 +2825,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
 
     public function importFile()
     {
-        //$this->log("PBD DC_Formdata importFile ", __METHOD__, TL_GENERAL);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'importFile import_source '.\Input::post('import_source'));
 
         if ('import' !== \Input::get('key')) {
             return '';
@@ -2879,7 +2851,6 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
         $this->Session->set('EFG_CO4', $arrSessionData);
 
         // Import CSV
-        //$this->log('PBD DC_Formdata importFile FORM_SUBMIT  ' . \Input::post('FORM_SUBMIT') , __METHOD__, TL_GENERAL);
         if ('tl_formdata_import' === $_POST['FORM_SUBMIT']) {
             EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'tl_formdata_import ');
 
@@ -2891,6 +2862,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
             $this->Session->set('EFG_CO4', $arrSessionData);
 
             $this->log('PBD DC_Formdata importFile import_source '.\Input::post('import_source'), __METHOD__, TL_GENERAL);
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'importFile import_source '.\Input::post('import_source'));
 
             $objFileModel = \FilesModel::findById(\Input::post('import_source'));      // PBD  Umstellung auf uuid
 
@@ -2955,7 +2927,6 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
                 $objForm = \FormModel::findOneBy('title', $strFormTitle);
 
                 if (null !== $objForm) {
-                    //$this->log("PBD DC_Formdata ef) bearbeite FORM id:  " . $objForm->id, __METHOD__, TL_GENERAL);
                     EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, ' f) bearbeite FORM id:  '.$objForm->id);
                     $arrFormFields = $this->Formdata->getFormfieldsAsArray($objForm->id);
                 }
@@ -3978,7 +3949,6 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
      */
     protected function listView()
     {
-        //$this->log("PBD DC_Formdata.php listView strTable " . $this->strTable , __METHOD__, TL_GENERAL);
         EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'strTable '.$this->strTable);
 
         $return = '';
@@ -3991,7 +3961,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
             $orderBy = $this->orderBy;
             $firstOrderBy = $this->firstOrderBy;
         }
-        //$this->log("PBD DC_Formdata.php listView table:'" . \Input::get('table') . "' id: '" . \Input::get('id') . "'" , __METHOD__, TL_GENERAL);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'table: '.\Input::get('table').' id: '.\Input::get('id'));
 
         if (\Input::get('table') && $GLOBALS['TL_DCA'][$this->strTable]['config']['ptable'] && \Database::getInstance()->fieldExists('pid', $this->strTable)) {
             $this->procedure[] = 'pid=?';
@@ -4042,22 +4012,16 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
             $arrLimit = explode(',', $this->limit);
             $objRowStmt->limit($arrLimit[1], $arrLimit[0]);
         }
-        //$this->log("PBD DC_Formdata.php listView query $query values '" . implode(", ",$this->values) . "'" , __METHOD__, TL_GENERAL);
         EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "query $query values '".implode(', ', $this->values)."'");
 
         $objRow = $objRowStmt->execute($this->values);
-        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'nach execute');
         $this->bid = ('' !== $return) ? $this->bid : 'tl_buttons';
-        //$this->log("PBD DC_Formdata.php listView closed " . " global_operations " . $GLOBALS['TL_DCA'][$this->strTable]['list']['global_operations'], __METHOD__, TL_GENERAL);
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'closed '.' global_operations '.$GLOBALS['TL_DCA'][$this->strTable]['list']['global_operations']);
-        //$this->log("PBD DC_Formdata.php listView Display !closed '" . !($GLOBALS['TL_DCA'][$this->strTable]['config']['closed']) . "'"  , __METHOD__, TL_GENERAL);
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "Display !closed '".!($GLOBALS['TL_DCA'][$this->strTable]['config']['closed'])."'");
 
         // Display buttons
         if (!$GLOBALS['TL_DCA'][$this->strTable]['config']['closed'] || !empty($GLOBALS['TL_DCA'][$this->strTable]['list']['global_operations'])) {
-            //$this->log("PBD DC_Formdata.php listView Display buttons act '" . \Input::get('act') . "'"  , __METHOD__, TL_GENERAL);
             EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "Display buttons act '".\Input::get('act')."'");
-            //$this->log("PBD DC_Formdata.php listView Display buttons sort mode '" . $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] . "'"  , __METHOD__, TL_GENERAL);
             $return .= '
 
 <div id="'.$this->bid.'">'.(('select' === \Input::get('act') || $this->ptable) ? '
@@ -4066,7 +4030,6 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
 '.(!$GLOBALS['TL_DCA'][$this->strTable]['config']['closed'] ? '<a href="'.(('' !== $this->ptable) ? \Backend::addToUrl('act=create'.(($GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] < 4) ? '&amp;mode=2' : '').'&amp;pid='.$this->intId) : \Backend::addToUrl('act=create')).'" class="header_new" title="'.specialchars($GLOBALS['TL_LANG'][$this->strTable]['new'][1]).'" accesskey="n" onclick="Backend.getScrollOffset()">'.$GLOBALS['TL_LANG'][$this->strTable]['new'][0].'</a> ' : '').$this->generateGlobalButtons() : '').'
 </div>'.\Message::generate(true);
         }
-        //$this->log("PBD DC_Formdata.php listView Display buttons numRows" . $objRow->numRows, __METHOD__, TL_GENERAL);
         EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'Display buttons numRows'.$objRow->numRows);
 
         // Return "no records found" message
@@ -4326,7 +4289,6 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
 </form>';
             }
         }
-        //$this->log("PBD DC_Formdata.php listView return $return", __METHOD__, TL_GENERAL);
         EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'return');
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "return HTML $return");
 
@@ -5244,7 +5206,7 @@ EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'ondelete_callback is array
      */
     protected function formImportSource()
     {
-        //$this->log("PBD DC_Formdata formImportSource ", __METHOD__, TL_GENERAL);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'formImportSource');
 
         $arrSessionData = $this->Session->get('EFG_CO4');
 
@@ -5513,7 +5475,7 @@ window.addEvent('domready', function(){
 
     private function getFilepickerJavascript($strReload)
     {
-        //$this->log("PBD DC_Formdata getFilepickerJavascript strReload $strReload ", __METHOD__, TL_GENERAL);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "getFilepickerJavascript strReload $strReload");
 
         return "
 <script>

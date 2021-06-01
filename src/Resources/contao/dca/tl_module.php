@@ -340,7 +340,6 @@ class tl_module_efg extends \Backend
 
     public function getFieldsOptionsArray($strField)
     {
-        //$this->log("PBD tl_module getFieldsOptionsArray strField $strField", __METHOD__, TL_GENERAL);
         $arrReturn = [];
         if (\count($GLOBALS['TL_DCA']['tl_formdata']['fields'])) {
             $GLOBALS['TL_DCA']['tl_module']['fields'][$strField]['inputType'] = 'CheckboxWizard';
@@ -351,7 +350,6 @@ class tl_module_efg extends \Backend
                     continue;
                 }
                 $arrReturn[$k] = (\strlen($GLOBALS['TL_DCA']['tl_formdata']['fields'][$k]['label'][0]) ? $GLOBALS['TL_DCA']['tl_formdata']['fields'][$k]['label'][0].' ['.$k.']' : $k);
-                //$this->log("PBD tl_module getFieldsOptionsArray arrReturn[$k]:".$arrReturn[$k], __METHOD__, TL_GENERAL);
             }
         }
 

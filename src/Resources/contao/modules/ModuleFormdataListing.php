@@ -153,14 +153,6 @@ class ModuleFormdataListing extends \Module
      * Fields to ignore on export.
      */
     protected $arrExportIgnoreFields;
-    /* so geht das nicht
-    public function __construct()
-    {
-        $this->log('PBD ModuleFormdataListing construct 1', __METHOD__, TL_GENERAL);
-        EfgLog::setEfgDebugmode('form');
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'TL_MODE '.TL_MODE);
-    }
-    */
 
     /**
      * Display a wildcard in the back end.
@@ -484,8 +476,13 @@ class ModuleFormdataListing extends \Module
         if ($objHasteForm->validate()) {   // validate() also checks whether the form has been submitted         
           $resData = $objHasteForm->fetchAll(); // Get all the submitted and parsed data (only works with POST):
           foreach ($resData as $k=>$v) {
+            if (is_array($v)) {
+              EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'v is array '.$k);
+              foreach ($v as $k1=>$v1) {EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "$k v[$k1]: $v1");}
+            }
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'query '.'UPDATE tl_formdata_details SET `value`=? where `ff_name`=? AND pid =?'.$v.','.$k.','.$this->intRecordId);
             $resUp = \Database::getInstance()->prepare('UPDATE tl_formdata_details SET `value`=? where `ff_name`=? AND pid =?')->execute($v,$k,$this->intRecordId);
-            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'resUp '.$resUp->affectedRows);
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'resUp affectedRows '.$resUp->affectedRows);
           }            
           \Controller::reload(); // Jetzt kannst du reloaden
           // Read from POST: \Input::post('year');
