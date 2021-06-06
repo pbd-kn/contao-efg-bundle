@@ -1448,12 +1448,12 @@ class Formdata extends \Contao\Frontend
             return false;
         }
         $strType = $arrField['type'];
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'TL_MODE '.TL_MODE. ' formfieldType '.$arrField['formfieldType']);
         if (TL_MODE === 'FE' && !empty($arrField['formfieldType'])) {
             $strType = $arrField['formfieldType'];
         } elseif (TL_MODE === 'BE' && !empty($arrField['inputType'])) {
             $strType = $arrField['inputType'];
         }
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'TL_MODE '.TL_MODE. ' formfieldType '.$arrField['formfieldType'].' type '.$arrField['type']);
 
         $arrOptions = [];
 
@@ -1464,8 +1464,9 @@ class Formdata extends \Contao\Frontend
                 //EfgLog::EfgwriteStack(debfull);
                 // Get efgLookupOptions: array('lookup_field' => TABLENAME.FIELDNAME, 'lookup_val_field' => TABLENAME.FIELDNAME, 'lookup_where' => CONDITION, 'lookup_sort' => ORDER BY)
                 $arrLookupOptions = deserialize($arrField['efgLookupOptions']);
+                foreach ($arrLookupOptions as $k=>$v) {EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "arrLookupOptions[$k]: $v");}
                 $strLookupField = $arrLookupOptions['lookup_field'];
-                if(!isset($strLookupField))$strLookupField='';   // pbd
+                //if(!isset($strLookupField))$strLookupField='';   // pbd
                 $strLookupValField = ((isset($arrLookupOptions['lookup_val_field'])&&\strlen($arrLookupOptions['lookup_val_field']))) ? $arrLookupOptions['lookup_val_field'] : null;
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strLookupValField '.$strLookupValField);
 

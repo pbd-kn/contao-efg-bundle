@@ -32,6 +32,7 @@ declare(strict_types=1);
  */
 
 namespace PBDKN\Efgco4\Resources\contao\forms;
+use PBDKN\Efgco4\Resources\contao\classes\EfgLog;
 
 /**
  * Class EfgFormLookupCheckbox.
@@ -118,9 +119,21 @@ class EfgFormLookupCheckbox extends \Widget
      */
     public function validate(): void
     {
+            EfgLog::setEfgDebugmode('form');
+
+     EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'TL_MODE '.TL_MODE);
+foreach ($_POST as $k=>$v) {
+  EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "_POST[$k]: $v");
+  if ($k=='checkboxdb') {
+     foreach ($v as $k1=>$v1) {
+       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "v[$k1]: $v1");  
+     }
+   }
+}
         $mandatory = $this->mandatory;
         $options = $this->getPost($this->strName);
-
+     EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'this->strName '.$this->strName.' options '.$options);
+foreach($options as $k=>$v) {EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"options[$k]: $v"); }
         // Check if there is at least one value
         if ($mandatory && \is_array($options)) {
             foreach ($options as $option) {
@@ -132,6 +145,7 @@ class EfgFormLookupCheckbox extends \Widget
         }
 
         $varInput = $this->validator($options);
+     EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'varInput '.$varInput);
 
         if (!$this->hasErrors()) {
             $this->varValue = $varInput;
@@ -144,8 +158,10 @@ class EfgFormLookupCheckbox extends \Widget
 
         // Clear result if nothing has been submitted
         if (!isset($_POST[$this->strName])) {
+     EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'nothing has been submitted');
             $this->varValue = '';
         }
+     EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'this->varValue '.$this->varValue);
     }
 
     /**
@@ -175,13 +191,20 @@ class EfgFormLookupCheckbox extends \Widget
                 $blnSingleEvent = true;
             }
         }
+     EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'this->varValue '.$this->varValue);
 
         foreach ($this->arrOptions as $i => $arrOption) {
             $checked = '';
-            if ((\is_array($this->varValue) && \in_array($arrOption['value'], $this->varValue, true) || $this->varValue === $arrOption['value'])) {
-                $checked = ' checked="checked"';
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "this->arrOptions[$i]: $arrOption");
+            if(is_array($arrOption)){
+              foreach($arrOption as $k=>$v){EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "arrOption[$k]: $v");}
             }
 
+            if ((\is_array($this->varValue) && \in_array($arrOption['value'], $this->varValue, true) || $this->varValue === $arrOption['value']  || $this->varValue === $arrOption['label'])) {
+                $checked = ' checked="checked"';
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'checked set');
+      }
+/*
             $strOptions .= sprintf('<span><input type="checkbox" name="%s" id="opt_%s" class="checkbox" value="%s"%s%s <label for="opt_%s">%s</label></span>',
                 $this->strName.((\count($this->arrOptions) > 1) ? '[]' : ''),
                 $this->strId.'_'.$i,
@@ -190,6 +213,17 @@ class EfgFormLookupCheckbox extends \Widget
                 $this->strTagEnding,
                 $this->strId.'_'.$i,
                 $arrOption['label']);
+*/
+            $strOptions .= sprintf('<span><input type="checkbox" name="%s" id="opt_%s" class="checkbox" value="%s"%s%s <label for="opt_%s">%s</label></span>',
+                $this->strName.((\count($this->arrOptions) > 1) ? '[]' : ''),
+                $this->strId.'_'.$i,
+                $arrOption['label'],
+                $checked,
+                $this->strTagEnding,
+                $this->strId.'_'.$i,
+                $arrOption['label']);
+
+     EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strOptionsthis '.$strOptions);
 
             // render as checked radio if used as lookup on tl_calendar_events and only one event available
             if ('tl_calendar_events' === $strLookupTable && $blnSingleEvent) {

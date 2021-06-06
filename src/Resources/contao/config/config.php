@@ -26,7 +26,7 @@
 
 
 // This file is created when saving a form in form generator
-// last created on 2021-05-30 13:52:57
+// last created on 2021-06-04 09:19:44
 /*
  * you can set the swiftmail transport set in efg_internal_config.html
  * example define('SENDMAILCOMMAND', ini_get ('sendmail_path') . ' -t')
@@ -80,12 +80,6 @@ $GLOBALS['BE_MOD']['formdata']['fd_mytestformular-do'] = array
 	'import'     => array('FormdataBackend', 'importCsv'),
 	'icon'       => 'bundles/contaoefgco4/icons/formdata_all.gif',
     'stylesheet' => 'bundles/contaoefgco4/css/style.css');
-$GLOBALS['BE_MOD']['formdata']['fd_selection-formular'] = array
-(
-	'tables'     => array('tl_formdata', 'tl_formdata_details'),
-	'import'     => array('FormdataBackend', 'importCsv'),
-	'icon'       => 'bundles/contaoefgco4/icons/formdata_all.gif',
-    'stylesheet' => 'bundles/contaoefgco4/css/style.css');
 
 
 /**
@@ -99,6 +93,19 @@ array_insert($GLOBALS['FE_MOD']['application'], count($GLOBALS['FE_MOD']['applic
 	'formdatalisting' => 'PBDKN\Efgco4\Resources\contao\modules\ModuleFormdataListing'
 ));
 
+// Add backend form fields
+$GLOBALS['BE_FFL']['efgLookupOptionWizard'] = 'PBDKN\Efgco4\Resources\contao\widgets\EfgLookupOptionWizard';
+$GLOBALS['BE_FFL']['efgLookupSelect'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormLookupSelectMenu';
+$GLOBALS['BE_FFL']['efgLookupCheckbox'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormLookupCheckbox';
+$GLOBALS['BE_FFL']['efgLookupRadio'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormLookupRadio';
+$GLOBALS['BE_FFL']['efgFormPaginator'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormPaginator';
+
+// Add front end form fields
+$GLOBALS['TL_FFL']['efgLookupSelect'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormLookupSelectMenu';
+$GLOBALS['TL_FFL']['efgLookupCheckbox'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormLookupCheckbox';
+$GLOBALS['TL_FFL']['efgLookupRadio'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormLookupRadio';
+$GLOBALS['TL_FFL']['efgImageSelect'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormImageSelect';
+$GLOBALS['TL_FFL']['efgFormPaginator'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormPaginator';
 
 /**
  * -------------------------------------------------------------------------

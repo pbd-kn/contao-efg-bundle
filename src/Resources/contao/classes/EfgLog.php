@@ -152,11 +152,27 @@ class EfgLog
                        if (is_array($v1)) {
                            $str.=" isarray[$k1]: [ ";
                            foreach ($v1 as $k2=>$v2)  {
+                             if (is_string($v2)) {
                                $str .=" [$k2]:$v2, ";
+                             } else {
+                               if (is_object($v2)) {
+                                 $str .= "value von $k1 ist ein Object class  ".get_class($v2);
+                               } else {
+                                 $str .= "value von $k1 kein string ";
+                               }
+                             }
                            }
                            $str.='],  ';
                        } else {
-                           $str .=" args[$k1]:$v1, ";
+                           if (is_string($v1)) {
+                             $str .=" args[$k1]:$v1, ";
+                           } else {
+                             if (is_object($v1)) {
+                               $str .= "value von $k ist ein Object class  ".get_class($v1);
+                             } else {
+                               $str .= "value von $k kein string ";
+                             }
+                           }
                        } 
                    }
                }
