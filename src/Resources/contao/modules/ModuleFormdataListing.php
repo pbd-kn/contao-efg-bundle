@@ -478,13 +478,13 @@ class ModuleFormdataListing extends \Module
           $resData = $objHasteForm->fetchAll(); // Get all the submitted and parsed data (only works with POST):
           foreach ($resData as $k=>$v) {
             $val=$v;
-/*
+
             if (is_array($v)) {
-              EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'v is array '.$k);
-              foreach ($v as $k1=>$v1) {EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "$k v[$k1]: $v1");}
+              //EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'v is array '.$k);
+              //foreach ($v as $k1=>$v1) {EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "$k v[$k1]: $v1");}
               $val=$v[0];
             }
-*/
+
             EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'query '.'UPDATE tl_formdata_details SET `value`=? where `ff_name`=? AND pid =?'.$val.','.$k.','.$this->intRecordId);
             $resUp = \Database::getInstance()->prepare('UPDATE tl_formdata_details SET `value`=? where `ff_name`=? AND pid =?')->execute($val,$k,$this->intRecordId);
             //EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'resUp affectedRows '.$resUp->affectedRows);
