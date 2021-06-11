@@ -470,6 +470,7 @@ class ModuleFormdataListing extends \Module
         // Callback zum darstellen der aktuellen Werte
         $objHasteForm->addFieldsFromFormGenerator($objForm->id, function(&$strField, &$arrDca) {
           if (isset($this->objEditRecord->$strField)) {   // Wert für Feld vorhanden
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strField '.$strField.' val '.$this->objEditRecord->$strField);
             $arrDca['value'] = $this->objEditRecord->$strField;
           }          
           return true; // you must return true otherwise the field will be skipped
@@ -480,14 +481,14 @@ class ModuleFormdataListing extends \Module
             $val=$v;
 
             if (is_array($v)) {
-              //EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'v is array '.$k);
-              //foreach ($v as $k1=>$v1) {EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "$k v[$k1]: $v1");}
+              EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'v is array '.$k);
+              foreach ($v as $k1=>$v1) {EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "$k v[$k1]: $v1");}
               $val=$v[0];
             }
 
             EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'query '.'UPDATE tl_formdata_details SET `value`=? where `ff_name`=? AND pid =?'.$val.','.$k.','.$this->intRecordId);
             $resUp = \Database::getInstance()->prepare('UPDATE tl_formdata_details SET `value`=? where `ff_name`=? AND pid =?')->execute($val,$k,$this->intRecordId);
-            //EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'resUp affectedRows '.$resUp->affectedRows);
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'resUp affectedRows '.$resUp->affectedRows);
           }            
           \Controller::reload(); // Jetzt kannst du reloaden
           // Read from POST: \Input::post('year');

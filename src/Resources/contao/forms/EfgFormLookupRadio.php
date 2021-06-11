@@ -135,16 +135,16 @@ class EfgFormLookupRadio extends \Widget
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'checked set');
             }
 
+
+			$strOptions .= sprintf('<span><input type="radio" name="%s" id="opt_%s" class="radio" value="%s"%s%s <label for="opt_%s">%s</label></span>',
+				$this->strName,
+				$this->strId.'_'.$i,
+				$arrOption['value'],
+				((is_array($this->varValue) && in_array($arrOption['value'] , $this->varValue) || $this->varValue == $arrOption['value']) ? ' checked="checked"' : ''),
+				$this->strTagEnding,
+				$this->strId.'_'.$i,
+				$arrOption['label']);
 /*
-            $strOptions .= sprintf('<span><input type="radio" name="%s" id="opt_%s" class="radio" value="%s"%s%s <label for="opt_%s">%s</label></span>',
-                $this->strName,
-                $this->strId.'_'.$i,
-                $arrOption['value'],
-                ((\is_array($this->varValue) && \in_array($arrOption['value'], $this->varValue, true) || $this->varValue === $arrOption['value']) ? ' checked="checked"' : ''),
-                $this->strTagEnding,
-                $this->strId.'_'.$i,
-                $arrOption['label']);
-*/
             $strOptions .= sprintf('<span><input type="radio" name="%s" id="opt_%s" class="radio" value="%s"%s%s <label for="opt_%s">%s</label></span>',
                 $this->strName.((\count($this->arrOptions) > 1) ? '[]' : ''),
                 $this->strId.'_'.$i,
@@ -153,6 +153,7 @@ class EfgFormLookupRadio extends \Widget
                 $this->strTagEnding,
                 $this->strId.'_'.$i,
                 $arrOption['label']);
+*/
             EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strOptionsthis '.$strOptions);
         }
 

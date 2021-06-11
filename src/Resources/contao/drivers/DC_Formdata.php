@@ -1223,6 +1223,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
                 // Build rows of the current box
                 foreach ($v as $kk => $vv) {
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Build rows of the current box kk '.$kk.' vv '.$vv);
                     if ('[EOF]' === $vv) {
                         if ($blnAjax && \Environment::get('isAjaxRequest')) {
                             return $strAjax.'<input type="hidden" name="FORM_FIELDS[]" value="'.specialchars($this->strPalette).'">';
@@ -1454,7 +1455,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
                     // field type efgLookupSelect
                     elseif ('efgLookupSelect' === $strInputType) {
-        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'prepareWidgetOptions strType'.$strInputType.'this->strTable'.$this->strTable.'this->strField'.$this->strField.' val '.$GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]);
+EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"['TL_DCA'][".$this->strTable."]['fields'][".$this->strField."]" );
                         $arrFieldOptions = $this->Formdata->prepareWidgetOptions($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]);
                         $arrNewOptions = [];
 
@@ -1465,19 +1466,25 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                                 $arrNewOptions[$v['value']] = $v['label'];
                             }
                         }
-
+foreach ($arrNewOptions as $k=>$v) {EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"gesetzt arrNewOptions[$k]: $v" );}
                         $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['options'] = $arrNewOptions;
-
                         // prepare varValue
                         if (!empty($this->varValue)) {
                             if (!\is_array($this->varValue)) {
                                 $strSep = (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['csv'])) ? $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['csv'] : '|';
+EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"varValue kein Array strSep $strSep varValue ".$this->varValue);
                                 $this->varValue = explode($strSep, $this->varValue);
                             }
                             foreach ($this->varValue as $k => $v) {
-                                $sNewVal = array_search($v, $arrNewOptions, true);
+                                $sNewVal = array_search($v, $arrNewOptions, true);   // suche $v in arrNewOptions der Key wird zurückgeliefert
+                                                                                     // er entspricht dem darzustellenden Wert Nicht dem Optionvalue
+EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupSelect 1 this->varValue[$k]: $v in arrNewOptions ");
                                 if ($sNewVal) {
-                                    $this->varValue[$v] = $sNewVal;
+                                    //$this->varValue[$v] = $sNewVal;              // PBD  so war es Orig 
+                                                                                   // Warum wird varValue hier mit $v indiziert
+                                                                                   // das gibt doch einen neuen Value mit falschem Index
+EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupSelect 1 this->varValue[$k] alter Wert ".$this->varValue[$k]." neu gesetzt auf $sNewVal ");
+                                    $this->varValue[$k] = $sNewVal;
                                 }
                             }
                         }
@@ -1510,8 +1517,13 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                             }
                             foreach ($this->varValue as $k => $v) {
                                 $sNewVal = array_search($v, $arrNewOptions, true);
+EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupCheckbox 1 this->varValue[$k]: $v in arrNewOptions ");
                                 if ($sNewVal) {
-                                    $this->varValue[$v] = $sNewVal;
+                                    //$this->varValue[$v] = $sNewVal;              // PBD  so war es Orig 
+                                                                                   // Warum wird varValue hier mit $v indiziert
+                                                                                   // das gibt doch einen neuen Value mit falschem Index
+EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupCheckbox 1 this->varValue[$k] alter Wert ".$this->varValue[$k]." neu gesetzt auf $sNewVal ");
+                                    $this->varValue[$k] = $sNewVal;
                                 }
                             }
                         }
@@ -1543,8 +1555,13 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                             }
                             foreach ($this->varValue as $k => $v) {
                                 $sNewVal = array_search($v, $arrNewOptions, true);
+EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 1 this->varValue[$k]: $v in arrNewOptions ");
                                 if ($sNewVal) {
-                                    $this->varValue[$v] = $sNewVal;
+                                    //$this->varValue[$v] = $sNewVal;              // PBD  so war es Orig 
+                                                                                   // Warum wird varValue hier mit $v indiziert
+                                                                                   // das gibt doch einen neuen Value mit falschem Index
+EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 1 this->varValue[$k] alter Wert ".$this->varValue[$k]." neu gesetzt auf $sNewVal ");
+                                    $this->varValue[$k] = $sNewVal;
                                 }
                             }
                         }
@@ -1577,6 +1594,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
                 $class = 'tl_box';
                 $return .= "\n".'</fieldset>';
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'render result '.$return);
             }
         }
 
@@ -2067,8 +2085,13 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                             }
                             foreach ($this->varValue as $k => $v) {
                                 $sNewVal = array_search($v, $arrNewOptions, true);
+EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupSelect 2 this->varValue[$k]: $v in arrNewOptions ");
                                 if ($sNewVal) {
-                                    $this->varValue[$v] = $sNewVal;
+                                    //$this->varValue[$v] = $sNewVal;              // PBD  so war es Orig 
+                                                                                   // Warum wird varValue hier mit $v indiziert
+                                                                                   // das gibt doch einen neuen Value mit falschem Index
+EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupSelect 2 this->varValue[$k] alter Wert ".$this->varValue[$k]." neu gesetzt auf $sNewVal ");
+                                    $this->varValue[$k] = $sNewVal;
                                 }
                             }
                         }
@@ -2102,8 +2125,13 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                             }
                             foreach ($this->varValue as $k => $v) {
                                 $sNewVal = array_search($v, $arrNewOptions, true);
+EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupCheckbox 2 this->varValue[$k]: $v in arrNewOptions ");
                                 if ($sNewVal) {
-                                    $this->varValue[$v] = $sNewVal;
+                                    //$this->varValue[$v] = $sNewVal;              // PBD  so war es Orig 
+                                                                                   // Warum wird varValue hier mit $v indiziert
+                                                                                   // das gibt doch einen neuen Value mit falschem Index
+EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupCheckbox 2 this->varValue[$k] alter Wert ".$this->varValue[$k]." neu gesetzt auf $sNewVal ");
+                                    $this->varValue[$k] = $sNewVal;
                                 }
                             }
                         }
@@ -2135,8 +2163,13 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                             }
                             foreach ($this->varValue as $k => $v) {
                                 $sNewVal = array_search($v, $arrNewOptions, true);
+EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 2 this->varValue[$k]: $v in arrNewOptions ");
                                 if ($sNewVal) {
-                                    $this->varValue[$v] = $sNewVal;
+                                    //$this->varValue[$v] = $sNewVal;              // PBD  so war es Orig 
+                                                                                   // Warum wird varValue hier mit $v indiziert
+                                                                                   // das gibt doch einen neuen Value mit falschem Index
+EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 2 this->varValue[$k] alter Wert ".$this->varValue[$k]." neu gesetzt auf $sNewVal ");
+                                    $this->varValue[$k] = $sNewVal;
                                 }
                             }
                         }
@@ -3618,16 +3651,19 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
         if (!\in_array($this->strField, $this->arrOwnerFields, true) && !\in_array($this->strField, $this->arrBaseFields, true)) {
             // Convert checkbox, radio, select, conditionalselect to store the values instead of keys
+            EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "Abfrage true");
             if (('checkbox' === $arrField['inputType'] && $arrField['eval']['multiple'])
                 || \in_array($arrField['inputType'], ['radio', 'select', 'conditionalselect'], true)) {
+                EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "checkbox ....");
                 $arrOpts = $arrField['options'];
-
                 // OptGroups can not be saved so flatten grouped options array
                 $arrNewOpts = [];
 
                 foreach ($arrOpts as $strKey => $varOpt) {
+                    EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "arrOpts[$strKey]: $varOpt");
                     if (\is_array($varOpt) && !empty($varOpt)) {
                         foreach ($varOpt as $keyOpt => $valOpt) {
+                            EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "varOpt[$keyOpt]: $valOpt");
                             $arrNewOpts[$keyOpt] = $valOpt;
                         }
                     } else {
@@ -3636,26 +3672,39 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                 }
                 $arrOpts = $arrNewOpts;
                 unset($arrNewOpts);
+                EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__,'arroptss neu gesetzt');
 
                 $arrSel = deserialize($varValue, true);
                 if (\is_array($arrSel) && !empty($arrSel)) {
-                    $arrSel = array_flip($arrSel);
+                    EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__,'arrSel is array');
+                    foreach ($arrSel as $k=>$v) {EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__,"arrSel[$k]: $v");} 
+                    $arrSel = array_flip($arrSel);             // vertauscht key and Value
+                    foreach ($arrSel as $k=>$v) {EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__,"flip arrSel[$k]: $v");} 
                     // use options value or options labels
+                    foreach (array_intersect_key($arrOpts, $arrSel) as $k=>$v) {EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__,"intersect[$k]: $v");} 
+                    EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__,'efgStoreValues "'.$arrField['eval']['efgStoreValues'].'"');
                     if ($arrField['eval']['efgStoreValues']) {
-                        $arrVals = array_keys(array_intersect_key($arrOpts, $arrSel));
+                        $arrVals = array_keys(array_intersect_key($arrOpts, $arrSel)); 
+                        //$arrVals = array_values(array_intersect_key($arrOpts, $arrSel));
+                        foreach ($arrVals as $k=>$v) {EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__,"Keys arrVals[$k]: $v");}  
                     } else {
-                        $arrVals = array_values(array_intersect_key($arrOpts, $arrSel));
+                        $arrVals = array_values(array_intersect_key($arrOpts, $arrSel));    // PBD das ist doh eigentlich anders
+                        //$arrVals = array_keys(array_intersect_key($arrOpts, $arrSel));
+                        foreach ($arrVals as $k=>$v) {EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__,"Values arrVals[$k]: $v");} 
                     }
                 }
 
                 if (\is_array($arrVals) && !$arrField['eval']['multiple']) {
                     $varValue = $arrVals[0];
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'varValue neu '.$varValue);
                 } else {
                     $varValue = (\is_array($arrVals) && !empty($arrVals)) ? $arrVals : '';
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'varValue neu '.$varValue);
                 }
             }
 
             if ('checkbox' === $arrField['inputType'] && !$arrField['eval']['multiple']) {
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'is a checkbox '.$varValue);
                 if (\is_array($arrField['options'])) {
                     $arrVals = ($arrField['eval']['efgStoreValues'] ? array_keys($arrField['options']) : array_values($arrField['options']));
                 } else {

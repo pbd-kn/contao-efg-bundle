@@ -204,7 +204,7 @@ foreach($options as $k=>$v) {EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"
                 $checked = ' checked="checked"';
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'checked set');
       }
-/*
+
             $strOptions .= sprintf('<span><input type="checkbox" name="%s" id="opt_%s" class="checkbox" value="%s"%s%s <label for="opt_%s">%s</label></span>',
                 $this->strName.((\count($this->arrOptions) > 1) ? '[]' : ''),
                 $this->strId.'_'.$i,
@@ -213,7 +213,7 @@ foreach($options as $k=>$v) {EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"
                 $this->strTagEnding,
                 $this->strId.'_'.$i,
                 $arrOption['label']);
-*/
+/*
             $strOptions .= sprintf('<span><input type="checkbox" name="%s" id="opt_%s" class="checkbox" value="%s"%s%s <label for="opt_%s">%s</label></span>',
                 $this->strName.((\count($this->arrOptions) > 1) ? '[]' : ''),
                 $this->strId.'_'.$i,
@@ -222,7 +222,7 @@ foreach($options as $k=>$v) {EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"
                 $this->strTagEnding,
                 $this->strId.'_'.$i,
                 $arrOption['label']);
-
+*/
      EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strOptionsthis '.$strOptions);
 
             // render as checked radio if used as lookup on tl_calendar_events and only one event available

@@ -1453,7 +1453,7 @@ class Formdata extends \Contao\Frontend
         } elseif (TL_MODE === 'BE' && !empty($arrField['inputType'])) {
             $strType = $arrField['inputType'];
         }
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'TL_MODE '.TL_MODE. ' formfieldType '.$arrField['formfieldType'].' type '.$arrField['type']);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'TL_MODE '.TL_MODE. ' formfieldType '.$arrField['formfieldType'].' type '.$arrField['type'].' strType '.$strType);
 
         $arrOptions = [];
 
@@ -1791,17 +1791,23 @@ class Formdata extends \Contao\Frontend
                 break;
 
             default:
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'default '.$strType);
+
                 if ($arrField['options']) {
                     $arrOptions = deserialize($arrField['options']);
                 } else {
                     $strClass = $GLOBALS['TL_FFL'][$arrField['type']];
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strClass '.$strClass);
                     if (class_exists($strClass)) {
                         $objWidget = new $strClass($arrField);
+                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strClass exist');
 
                         if ($objWidget instanceof \FormSelectMenu || $objWidget instanceof \FormCheckbox || $objWidget instanceof \FormRadioButton) {
                             // HOOK: load form field callback
+                            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'load form field callback??');
                             if (isset($GLOBALS['TL_HOOKS']['loadFormField']) && \is_array($GLOBALS['TL_HOOKS']['loadFormField'])) {
                                 foreach ($GLOBALS['TL_HOOKS']['loadFormField'] as $callback) {
+                                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'hook loadFormField '.$callback[0]);
                                     $this->import($callback[0]);
                                     $objWidget = $this->{$callback[0]}->{$callback[1]}($objWidget, $arrField['pid'], []); //Aenderung PBD
                                 }
@@ -1815,7 +1821,14 @@ class Formdata extends \Contao\Frontend
 
         // Decode 'special chars', encoded by \Input::encodeSpecialChars (for example labels of checkbox options containing '(')
         $arrOptions = $this->decodeSpecialChars($arrOptions);
-
+        foreach ($arrOptions as $k=>$v) {
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"arrOptions[$k]: $v" );
+            if (is_array($v)) {
+                foreach ($v as $k1=>$v1) {
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"    v[$k1]: $v1" );
+                }
+            }
+        }
         return $arrOptions;
     }
 

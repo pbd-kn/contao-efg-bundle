@@ -134,6 +134,7 @@ class EfgFormLookupSelectMenu extends \Widget
      */
     public function generate()
     {
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'this->varValue '.$this->varValue);
         $strOptions = '';
         $strClass = 'select';
         $strReferer = $this->getReferer();
@@ -143,7 +144,7 @@ class EfgFormLookupSelectMenu extends \Widget
            $strLookupTable = substr($arrLookupOptions['lookup_field'], 0, strpos($arrLookupOptions['lookup_field'], '.'));
         } 
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strLookupField '.$strLookupField.' len arrLookupOptions '.count($arrLookupOptions) );
-
+        foreach ($arrLookupOptions as $k=>$v) { EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "arrLookupOptions[$k] :$v");}
         $blnSingleEvent = false;
 
         // if used as lookup on table tl_calendar_events and placed on events detail page
@@ -170,10 +171,15 @@ class EfgFormLookupSelectMenu extends \Widget
         if (empty($this->arrOptions) && !$blnSingleEvent) {
             $this->arrOptions = [['value' => '', 'label' => '-']];
         }
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'this->varValue '.$this->varValue);
         foreach ($this->arrOptions as $i => $arrOption) {
+            foreach($arrOption as $k=>$v) {EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"arrOption[$k]: $v");}
             $selected = '';
-            if ((\is_array($this->varValue) && \in_array($arrOption['value'], $this->varValue, true) || $this->varValue === $arrOption['value'])) {
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'this->varValue '.$this->varValue.' arrOption[value] '.arrOption['value'].' arrOption[label] '.arrOption['label']);
+
+            if ((\is_array($this->varValue) && \in_array($arrOption['value'], $this->varValue, true) || $this->varValue === $arrOption['value'] || $this->varValue === $arrOption['label'])) {
                 $selected = ' selected="selected"';
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'selected set');
             }
 
             $strOptions .= sprintf('<option value="%s"%s>%s</option>',
