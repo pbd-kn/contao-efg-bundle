@@ -237,7 +237,6 @@ class Formdata extends \Contao\Frontend
         // Generate alias if there is none
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "varValue '$varValue' strAliasField '$strAliasField'");
         if (empty($varValue)) {
-            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'varValue empty');
             if (!empty($strAliasField)) {
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strAliasField not empty');
                 $autoAlias = true;
@@ -283,7 +282,7 @@ class Formdata extends \Contao\Frontend
         if ($objAlias->numRows && $autoAlias) {
             $varValue .= (!empty($varValue) ? '.' : '').$intRecId;
         }
-        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "return $varValue");
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "return $varValue");
 
         return $varValue;
     }
@@ -419,7 +418,7 @@ class Formdata extends \Contao\Frontend
     {
         if (!$this->arrStoringForms) {
             // Get all forms marked to store data
-            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Read from DB');
+//            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Read from DB');
             $objForms = \Database::getInstance()->prepare('SELECT id,title,alias,formID,useFormValues,useFieldNames,efgAliasField,efgDebugMode FROM tl_form WHERE storeFormdata=?')
                 ->execute('1')
             ;
@@ -428,7 +427,7 @@ class Formdata extends \Contao\Frontend
                 $strFormKey = (!empty($objForms->alias)) ? $objForms->alias : str_replace('-', '_', standardize($objForms->title));
                 $this->arrStoringForms[$strFormKey] = $objForms->row();
                 $this->arrFormsDcaKey[$strFormKey] = $objForms->title;
-                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "erzeugt fuer title[$strFormKey]".$objForms->title.' efgDebugMode '.$objForms->efgDebugMode);
+//                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "erzeugt fuer title[$strFormKey]".$objForms->title.' efgDebugMode '.$objForms->efgDebugMode);
             }
         }
     }
@@ -1461,12 +1460,10 @@ class Formdata extends \Contao\Frontend
             case 'efgLookupCheckbox':
             case 'efgLookupRadio':
             case 'efgLookupSelect':
-                //EfgLog::EfgwriteStack(debfull);
                 // Get efgLookupOptions: array('lookup_field' => TABLENAME.FIELDNAME, 'lookup_val_field' => TABLENAME.FIELDNAME, 'lookup_where' => CONDITION, 'lookup_sort' => ORDER BY)
                 $arrLookupOptions = deserialize($arrField['efgLookupOptions']);
                 foreach ($arrLookupOptions as $k=>$v) {EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "arrLookupOptions[$k]: $v");}
                 $strLookupField = $arrLookupOptions['lookup_field'];
-                //if(!isset($strLookupField))$strLookupField='';   // pbd
                 $strLookupValField = ((isset($arrLookupOptions['lookup_val_field'])&&\strlen($arrLookupOptions['lookup_val_field']))) ? $arrLookupOptions['lookup_val_field'] : null;
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strLookupValField '.$strLookupValField);
 
@@ -1800,11 +1797,9 @@ class Formdata extends \Contao\Frontend
                     EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strClass '.$strClass);
                     if (class_exists($strClass)) {
                         $objWidget = new $strClass($arrField);
-                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strClass exist');
 
                         if ($objWidget instanceof \FormSelectMenu || $objWidget instanceof \FormCheckbox || $objWidget instanceof \FormRadioButton) {
                             // HOOK: load form field callback
-                            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'load form field callback??');
                             if (isset($GLOBALS['TL_HOOKS']['loadFormField']) && \is_array($GLOBALS['TL_HOOKS']['loadFormField'])) {
                                 foreach ($GLOBALS['TL_HOOKS']['loadFormField'] as $callback) {
                                     EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'hook loadFormField '.$callback[0]);
@@ -1821,6 +1816,7 @@ class Formdata extends \Contao\Frontend
 
         // Decode 'special chars', encoded by \Input::encodeSpecialChars (for example labels of checkbox options containing '(')
         $arrOptions = $this->decodeSpecialChars($arrOptions);
+/*
         foreach ($arrOptions as $k=>$v) {
             EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"arrOptions[$k]: $v" );
             if (is_array($v)) {
@@ -1829,6 +1825,7 @@ class Formdata extends \Contao\Frontend
                 }
             }
         }
+*/
         return $arrOptions;
     }
 
@@ -1854,7 +1851,7 @@ class Formdata extends \Contao\Frontend
         $attachments = $objMailProperties->attachments;
 
         $blnSkipEmptyFields = $objMailProperties->skipEmptyFields;
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "prepareMailData sender $sender subject $subject messageHtmlTmpl $messageHtmlTmpl");
+//        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "prepareMailData sender $sender subject $subject messageHtmlTmpl $messageHtmlTmpl");
 
         if (\Validator::isUuid($messageHtmlTmpl) || (is_numeric($messageHtmlTmpl) && $messageHtmlTmpl > 0)) {
             $objFileModel = \FilesModel::findById($messageHtmlTmpl);
@@ -1862,7 +1859,6 @@ class Formdata extends \Contao\Frontend
                 $messageHtmlTmpl = $objFileModel->path;
             }
         }
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "messageHtmlTmpl '$messageHtmlTmpl'");
         if (isset($messageHtmlTmpl) && \strlen($messageHtmlTmpl) > 0) {
             $fileTemplate = new \File($messageHtmlTmpl);
             if ('text/html' === $fileTemplate->mime) {
@@ -1894,7 +1890,6 @@ class Formdata extends \Contao\Frontend
         $blnEvalMessageText = $this->replaceConditionTags($messageText);
         $blnEvalMessageHtml = $this->replaceConditionTags($messageHtml);
 
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Replace tags in messageText, messageHtml ...');
         // Replace tags in messageText, messageHtml ...
         $tags = [];
         preg_match_all('/__BRCL__.*?__BRCR__/si', $messageText.$messageHtml.$subject.$sender.$senderName, $tags);
@@ -2057,7 +2052,6 @@ class Formdata extends \Contao\Frontend
                     break;
             }
         }
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Replace standard insert tags and eval condition tags');
 
         // Replace standard insert tags and eval condition tags
         if (!empty($messageText)) {
@@ -2119,7 +2113,6 @@ class Formdata extends \Contao\Frontend
         $objMailProperties->messageHtml = $messageHtml;
         $objMailProperties->attachments = $attachments;
 
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'return');
 
         return $objMailProperties;
     }
@@ -2385,7 +2378,7 @@ class Formdata extends \Contao\Frontend
 
                 // Validate the request data
                 if (\Database::getInstance()->tableExists($dc->table)) {
-                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "reloadFiletree tabelle da '".$dc->table." Feld $strField ");
+//                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "reloadFiletree tabelle da '".$dc->table." Feld $strField ");
                     // The field does not exist
                     if (!\in_array($strField, $dc->arrBaseFields, true) && !\in_array($strField, $dc->arrDetailFields, true)) {
                         $this->log('Field "'.$strField.'" does not belong to form data table', 'Formdata executePostActions()', TL_ERROR);
@@ -2445,18 +2438,18 @@ class Formdata extends \Contao\Frontend
 
                 $varValue = \Input::post('value');
                 $strKey = 'fileTree';
-                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "reloadEfgImportSource intId $intId strField $strField varValue $varValue");
+//                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "reloadEfgImportSource intId $intId strField $strField varValue $varValue");
 
                 // Convert the selected values
                 if ('' !== $varValue) {
                     $varValue = explode("\t", $varValue);
-                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "reloadEfgImportSource nach trim varValue $varValue");
+//                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "reloadEfgImportSource nach trim varValue $varValue");
 
                     // Automatically add resources to the DBAFS
                     if ('fileTree' === $strKey) {
                         foreach ($varValue as $k => $v) {
                             $varValue[$k] = \Dbafs::addResource($v)->uuid;
-                            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "reloadEfgImportSource nach set uuid von $v uuid ".$varValue[$k]->uuid);
+//                            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "reloadEfgImportSource nach set uuid von $v uuid ".$varValue[$k]->uuid);
                         }
                     }
 
@@ -2470,7 +2463,7 @@ class Formdata extends \Contao\Frontend
 
                 $objWidget = new $GLOBALS['BE_FFL'][$strKey]($arrAttribs);
                 echo $objWidget->generate().'<script>handleEfgFileselectorButton();</script>';
-                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'reloadEfgImportSource vor generate Widget globals '.$GLOBALS['BE_FFL'][$strKey]."strFieldName $strFieldName strField $strField table ".$dc->table);
+//                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'reloadEfgImportSource vor generate Widget globals '.$GLOBALS['BE_FFL'][$strKey]."strFieldName $strFieldName strField $strField table ".$dc->table);
         exit;                                      // PBD bei Ajax Request mit exit verlassen
                 break; exit;
         }

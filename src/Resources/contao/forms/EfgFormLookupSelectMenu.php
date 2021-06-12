@@ -134,7 +134,6 @@ class EfgFormLookupSelectMenu extends \Widget
      */
     public function generate()
     {
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'this->varValue '.$this->varValue);
         $strOptions = '';
         $strClass = 'select';
         $strReferer = $this->getReferer();
@@ -143,8 +142,6 @@ class EfgFormLookupSelectMenu extends \Widget
         if (isset($arrLookupOptions['lookup_field'])) {
            $strLookupTable = substr($arrLookupOptions['lookup_field'], 0, strpos($arrLookupOptions['lookup_field'], '.'));
         } 
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strLookupField '.$strLookupField.' len arrLookupOptions '.count($arrLookupOptions) );
-        foreach ($arrLookupOptions as $k=>$v) { EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "arrLookupOptions[$k] :$v");}
         $blnSingleEvent = false;
 
         // if used as lookup on table tl_calendar_events and placed on events detail page
@@ -173,17 +170,17 @@ class EfgFormLookupSelectMenu extends \Widget
         }
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'this->varValue '.$this->varValue);
         foreach ($this->arrOptions as $i => $arrOption) {
-            foreach($arrOption as $k=>$v) {EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"arrOption[$k]: $v");}
+//            foreach($arrOption as $k=>$v) {EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"arrOption[$k]: $v");}
             $selected = '';
-            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'this->varValue '.$this->varValue.' arrOption[value] '.arrOption['value'].' arrOption[label] '.arrOption['label']);
 
             if ((\is_array($this->varValue) && \in_array($arrOption['value'], $this->varValue, true) || $this->varValue === $arrOption['value'] || $this->varValue === $arrOption['label'])) {
                 $selected = ' selected="selected"';
-            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'selected set');
+//            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'selected set');
             }
 
             $strOptions .= sprintf('<option value="%s"%s>%s</option>',
-                $arrOption['value'],
+                //$arrOption['value'],                   // fuer die HasteForm nehmen wir direkt den Label
+                $arrOption['label'],
                 $selected,
                 $arrOption['label']);
 
@@ -205,6 +202,7 @@ class EfgFormLookupSelectMenu extends \Widget
                     $strOptions).$this->addSubmit();
             }
         }
+/*
 $val=sprintf('<select name="%s" id="ctrl_%s" class="%s%s"%s>%s</select>',
             $this->strName,
             $this->strId,
@@ -213,13 +211,13 @@ $val=sprintf('<select name="%s" id="ctrl_%s" class="%s%s"%s>%s</select>',
             $this->getAttributes(),
             $strOptions).$this->addSubmit();
 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'return val '.$val);
-            
+*/            
         return sprintf('<select name="%s" id="ctrl_%s" class="%s%s"%s>%s</select>',
             $this->strName,
             $this->strId,
             $strClass,
             (isset($this->strClass)&&\strlen($this->strClass) ? ' '.$this->strClass : ''),
             $this->getAttributes(),
-            $strOptions).$this->addSubmit();
+            $strOptions).$this->addSubmit();    // in strOptions sind die Option des Selects
     }
 }
