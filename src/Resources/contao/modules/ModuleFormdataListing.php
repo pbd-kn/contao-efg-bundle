@@ -2282,9 +2282,9 @@ class ModuleFormdataListing extends \Module
 
                         if ($useFieldNames) {
                             $strName = $v;
-                        } elseif (\strlen($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['label'][0])) {
+                        } elseif (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['label'][0])&&\strlen($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['label'][0])) {
                             $strName = $GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['label'][0];
-                        } elseif (\strlen($GLOBALS['TL_LANG']['tl_formdata'][$v][0])) {
+                        } elseif (isset($GLOBALS['TL_LANG']['tl_formdata'][$v][0])&&\strlen($GLOBALS['TL_LANG']['tl_formdata'][$v][0])) {
                             $strName = $GLOBALS['TL_LANG']['tl_formdata'][$v][0];
                         } else {
                             $strName = strtoupper($v);
@@ -2340,7 +2340,7 @@ class ModuleFormdataListing extends \Module
                     } elseif ('time' === $GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['eval']['rgxp']) {
                         $strVal = ($row[$v] ? date($GLOBALS['TL_CONFIG']['timeFormat'], $row[$v]) : '');
                     } elseif ('datim' === $GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['eval']['rgxp']) {
-                        $strVal = ($row[$v] ? date($GLOBALS['TL_CONFIG']['datimFormat'], $row[$v]) : '');
+                        $strVal = ($row[$v] ? date($GLOBALS['TL_CONFIG']['datimFormat'],(int) $row[$v]) : '');
                     } elseif ('checkbox' === $GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['inputType']
                         && !$GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['eval']['multiple']) {
                         if (1 === $useFormValues) {
@@ -2421,7 +2421,7 @@ class ModuleFormdataListing extends \Module
                         }
                     }
 
-                    if (\strlen($strVal)) {
+                    if (isset($strVal)&&\strlen($strVal)) {
                         $strVal = \StringUtil::decodeEntities($strVal);
                         $strVal = preg_replace(['/<br.*\/*>/si'], ["\n"], $strVal);
 
