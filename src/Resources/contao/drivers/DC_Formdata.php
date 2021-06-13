@@ -3129,7 +3129,8 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 2 this->varVal
 
     public function export($strMode = 'csv'): void
     {
-        if (\strlen(\Input::get('expmode'))) {
+       $expmode=\Input::get('expmode');
+        if (isset($expmode)&&\strlen(\Input::get('expmode'))) {
             $strMode = \Input::get('expmode');
         }
 
@@ -3165,7 +3166,7 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 2 this->varVal
         $orderBy = $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['fields'];
         $firstOrderBy = preg_replace('/\s+.*$/i', '', $orderBy[0]);
 
-        if (\is_array($this->orderBy) && \strlen($this->orderBy[0])) {
+        if (\is_array($this->orderBy) && (isset($this->orderBy[0])&&\strlen($this->orderBy[0]))) {
             $orderBy = $this->orderBy;
             $firstOrderBy = $this->firstOrderBy;
         }
@@ -3181,7 +3182,7 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 2 this->varVal
 
         // Set search value from session
         $strSessionKey = (4 === $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode']) ? $this->strTable.'_'.CURRENT_ID : (\strlen($this->strFormKey)) ? $this->strFormKey : $this->strTable;
-        if (\strlen($session['search'][$strSessionKey]['value'])) {
+        if (isset($session['search'][$strSessionKey]['value'])&&\strlen($session['search'][$strSessionKey]['value'])) {
             $sqlSearchField = $session['search'][$strSessionKey]['field'];
             if (\in_array($sqlSearchField, $this->arrDetailFields, true)) {
                 $sqlSearchField = '(SELECT value FROM tl_formdata_details WHERE ff_name=\''.$session['search'][$strSessionKey]['field'].'\' AND pid=f.id)';
@@ -3363,9 +3364,9 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 2 this->varVal
 
                         if ($useFieldNames) {
                             $strName = $v;
-                        } elseif (\strlen($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['label'][0])) {
+                        } elseif (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['label'][0])&&\strlen($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['label'][0])) {
                             $strName = $GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['label'][0];
-                        } elseif (\strlen($GLOBALS['TL_LANG']['tl_formdata'][$v][0])) {
+                        } elseif (isset($GLOBALS['TL_LANG']['tl_formdata'][$v][0])&&\strlen($GLOBALS['TL_LANG']['tl_formdata'][$v][0])) {
                             $strName = $GLOBALS['TL_LANG']['tl_formdata'][$v][0];
                         } else {
                             $strName = strtoupper($v);
@@ -3424,7 +3425,8 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 2 this->varVal
                         && \in_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['flag'], [5, 6, 7, 8, 9, 10], true)) {
                         $strVal = ($row[$v] ? date($GLOBALS['TL_CONFIG']['datimFormat'], $row[$v]) : '');
                     } elseif (\in_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['flag'], [5, 6, 7, 8, 9, 10], true)) {
-                        $strVal = ($row[$v] ? date($GLOBALS['TL_CONFIG']['datimFormat'], $row[$v]) : '');
+                        if (null !== [$GLOBALS['TL_CONFIG']['datimFormat']]) $strVal = ($row[$v] ? date($GLOBALS['TL_CONFIG']['datimFormat'],(int) $row[$v]) : '');
+                        else $strval='';
                     } elseif ('checkbox' === $GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['inputType']
                         && !$GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['eval']['multiple']) {
                         if (\is_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['options']) && \count($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['options']) > 0) {
@@ -3528,7 +3530,7 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 2 this->varVal
                         }
                     }
 
-                    if (\strlen($strVal)) {
+                    if (isset($strVal)&&\strlen($strVal)) {
                         $strVal = \StringUtil::decodeEntities($strVal);
                         $strVal = preg_replace(['/<br.*\/*>/si'], ["\n"], $strVal);
 
