@@ -1930,13 +1930,15 @@ class ModuleFormdataListing extends \Module
             if (isset($GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['ff_class']) && \strlen($GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['ff_class'])) {
                 $class .= ' '.$GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['ff_class'];
             }
-
+            if (isset($GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['label'][0])) {
             $arrFields[$class] = [
                 'label' => (\strlen($label = $GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['label'][0]) ? htmlspecialchars($label) : htmlspecialchars($this->arrFF[$k]['label'])),
                 'content' => $value,
                 'raw' => $v,
             ];
+            }
 
+            if (isset($GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['label'][0])) {
             $arrItem[$k] = [
                 'name' => $k,
                 'label' => (\strlen($label = $GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['label'][0]) ? htmlspecialchars($label) : htmlspecialchars($this->arrFF[$k]['label'])),
@@ -1944,6 +1946,7 @@ class ModuleFormdataListing extends \Module
                 'raw' => $v,
                 'class' => str_replace('row_', 'field_', $class),
             ];
+            }
 
             if ('fileTree' === $GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['inputType']) {
                 if (is_dir(TL_ROOT.'/'.$arrFields[$class]['content'])) {
