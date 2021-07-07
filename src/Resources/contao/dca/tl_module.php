@@ -27,14 +27,18 @@ declare(strict_types=1);
  *
  */
 
+use Contao\CommentsBundle\ContaoCommentsBundle;
+
 /*
  * Add palettes to tl_module
  */
 $GLOBALS['TL_DCA']['tl_module']['palettes']['formdatalisting'] = '{title_legend},name,headline,type;{config_legend},list_formdata,list_where,list_sort,perPage,list_fields,list_info;{efgSearch_legend},list_search,efg_list_searchtype;{protected_legend:hide},efg_list_access,efg_fe_edit_access,efg_fe_delete_access,efg_fe_export_access;{comments_legend:hide},efg_com_allow_comments;{template_legend:hide},list_layout,list_info_layout;{expert_legend:hide},efg_DetailsKey,efg_iconfolder,efg_fe_keep_id,efg_fe_no_formatted_mail,efg_fe_no_confirmation_mail,align,space,cssID';
 $GLOBALS['TL_DCA']['tl_module']['fields']['type']['load_callback'][] = ['tl_module_efg', 'onloadModuleType'];
 
-$GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'efg_com_allow_comments';
-$GLOBALS['TL_DCA']['tl_module']['subpalettes']['efg_com_allow_comments'] = 'com_moderate,com_bbcode,com_requireLogin,com_disableCaptcha,efg_com_per_page,com_order,com_template,efg_com_notify';
+if (class_exists(ContaoCommentsBundle::class)) {
+    $GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'efg_com_allow_comments';
+    $GLOBALS['TL_DCA']['tl_module']['subpalettes']['efg_com_allow_comments'] = 'com_moderate,com_bbcode,com_requireLogin,com_disableCaptcha,efg_com_per_page,com_order,com_template,efg_com_notify';
+}
 
 /*
  * Add fields to tl_module
@@ -187,59 +191,12 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['efg_com_allow_comments'] = [
     'eval' => ['submitOnChange' => true],
     'sql' => "char(1) NOT NULL default ''",
 ];
-$GLOBALS['TL_DCA']['tl_module']['fields']['com_moderate'] = [
-    'label' => &$GLOBALS['TL_LANG']['tl_module']['com_moderate'],
-    'exclude' => true,
-    'inputType' => 'checkbox',
-    'eval' => ['tl_class' => 'w50'],
-    'sql' => "char(1) NOT NULL default ''",
-];
-$GLOBALS['TL_DCA']['tl_module']['fields']['com_bbcode'] = [
-    'label' => &$GLOBALS['TL_LANG']['tl_module']['com_bbcode'],
-    'exclude' => true,
-    'inputType' => 'checkbox',
-    'eval' => ['tl_class' => 'w50'],
-    'sql' => "char(1) NOT NULL default ''",
-];
-$GLOBALS['TL_DCA']['tl_module']['fields']['com_requireLogin'] = [
-    'label' => &$GLOBALS['TL_LANG']['tl_module']['com_requireLogin'],
-    'exclude' => true,
-    'inputType' => 'checkbox',
-    'eval' => ['tl_class' => 'w50'],
-    'sql' => "char(1) NOT NULL default ''",
-];
-$GLOBALS['TL_DCA']['tl_module']['fields']['com_disableCaptcha'] = [
-    'label' => &$GLOBALS['TL_LANG']['tl_module']['com_disableCaptcha'],
-    'exclude' => true,
-    'inputType' => 'checkbox',
-    'eval' => ['tl_class' => 'w50'],
-    'sql' => "char(1) NOT NULL default ''",
-];
 $GLOBALS['TL_DCA']['tl_module']['fields']['efg_com_per_page'] = [
     'label' => &$GLOBALS['TL_LANG']['tl_module']['efg_com_per_page'],
     'exclude' => true,
     'inputType' => 'text',
     'eval' => ['rgxp' => 'digit', 'tl_class' => 'w50'],
     'sql' => "smallint(5) unsigned NOT NULL default '0'",
-];
-$GLOBALS['TL_DCA']['tl_module']['fields']['com_order'] = [
-    'label' => &$GLOBALS['TL_LANG']['tl_module']['com_order'],
-    'default' => 'ascending',
-    'exclude' => true,
-    'inputType' => 'select',
-    'options' => ['ascending', 'descending'],
-    'reference' => &$GLOBALS['TL_LANG']['MSC'],
-    'eval' => ['tl_class' => 'w50'],
-    'sql' => "varchar(32) NOT NULL default ''",
-];
-$GLOBALS['TL_DCA']['tl_module']['fields']['com_template'] = [
-    'label' => &$GLOBALS['TL_LANG']['tl_module']['com_template'],
-    'default' => 'com_default',
-    'exclude' => true,
-    'inputType' => 'select',
-    'options_callback' => ['tl_module_comments', 'getCommentTemplates'],
-    'eval' => ['tl_class' => 'w50'],
-    'sql' => "varchar(32) NOT NULL default ''",
 ];
 $GLOBALS['TL_DCA']['tl_module']['fields']['efg_com_notify'] = [
     'label' => &$GLOBALS['TL_LANG']['tl_module']['efg_com_notify'],
