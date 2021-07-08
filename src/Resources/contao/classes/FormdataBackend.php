@@ -440,7 +440,7 @@ class FormdataBackend extends \Backend
           }
         }
 
-        // overall storingForms dca/fd_feedback.php  fd_... erzeugen und �bernehmen der Formdata in fd_...
+        // overall storingForms dca/fd_feedback.php  fd_... erzeugen und übernehmen der Formdata in fd_...
         // Get all form fields of all storing forms
         EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'vor dca/fd_Formkey len arrStoringForms '.\count($arrStoringForms));
         // siehe auch Kommentare bei arrforms
