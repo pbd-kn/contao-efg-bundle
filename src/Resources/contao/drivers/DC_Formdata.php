@@ -3870,8 +3870,11 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 2 this->varVal
         /** @var AttributeBagInterface $objSessionBag */
         $objSessionBag = \System::getContainer()->get('session')->getBag('contao_backend');
 
-        $new_records = $objSessionBag->get('new_records');
-        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'in session new_records this->strTable '.$this->strTable.' len new_records '.\count($new_records[$this->strTable]));
+        $new_records = $objSessionBag->get('new_records') ?: [];
+
+        if (isset($new_records[$this->strTable])) {
+            EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'in session new_records this->strTable '.$this->strTable.' len new_records '.\count($new_records[$this->strTable]));
+        }
 
         // HOOK: add custom logic
         if (isset($GLOBALS['TL_HOOKS']['reviseTable']) && \is_array($GLOBALS['TL_HOOKS']['reviseTable'])) {
@@ -4529,7 +4532,7 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 2 this->varVal
 '.implode("\n", $options_sorter).'
 </select>
 <span> = </span>
-<input type="text" name="tl_value" class="tl_text'.($active ? ' active' : '').'" value="'.specialchars($session['search'][$strSessionKey]['value']).'">
+<input type="search" name="tl_value" class="tl_text'.($active ? ' active' : '').'" value="'.specialchars($session['search'][$strSessionKey]['value']).'">
 </div>';
     }
 
@@ -4622,8 +4625,8 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 2 this->varVal
      */
     protected function limitMenu($blnOptional = false)
     {
-        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'this->procedure len '.\count($this->procedure).' this->value len '.\count($this->value));
-        if (\count($this->value) < 2) {
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'this->procedure len '.\count($this->procedure).' this->value len '.\count($this->values));
+        if (\count($this->values) < 2) {
             return false;
         }
         $session = $this->Session->getData();
