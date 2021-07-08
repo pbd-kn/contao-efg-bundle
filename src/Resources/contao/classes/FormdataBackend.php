@@ -32,7 +32,7 @@ declare(strict_types=1);
  */
 /*
  * PBD
- * unter contao 4 ist die Neuerstellung des Caches nicht möglich. Muss evtl separat nachgeholt werden
+ * unter contao 4 ist die Neuerstellung des Caches nicht moeglich. Muss evtl separat nachgeholt werden
  */
 
 namespace PBDKN\Efgco4\Resources\contao\classes;
@@ -197,7 +197,7 @@ class FormdataBackend extends \Backend
         if (null === $arrForms) {
             EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'updateConfig aktuell schon gespeicherte arrStoringForms aktualisieren');
             $arrForms = $arrStoringForms;
-            $createNewForm = false;          // nur aktuelle storingForms aktualisieren. Auch evtl. löschen
+            $createNewForm = false;          // nur aktuelle storingForms aktualisieren. Auch evtl. loeschen
         }
         EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "updateConfig createNewForm $createNewForm len arrStoringForms ".\count($arrStoringForms));
 
@@ -265,7 +265,7 @@ class FormdataBackend extends \Backend
         $arrModLangs = scan($this->rootDir.'/'.$this->vendorPath.'src/Resources/contao/languages');
         $arrLanguages = $this->getLanguages();
 
-        foreach ($arrModLangs as $strModLang) { // über alle Sprachen in Vendor
+        foreach ($arrModLangs as $strModLang) { // ueber alle Sprachen in Vendor
             // Create language files
         if (\array_key_exists($strModLang, $arrLanguages)) {    // vendor Sprache in Sprachen vorhanden
             $strFile = $this->rootDir.'/'.$this->vendorPath.'src/Resources/contao/languages/'.$strModLang.'/tl_efg_modules.php';
@@ -308,7 +308,7 @@ class FormdataBackend extends \Backend
         }
         }
         //*/
-        // dca/fd_FORMKEY.php  fd_... erzeugen und übernehmen der Formdata in fd_...
+        // dca/fd_FORMKEY.php  fd_... erzeugen und uebernehmen der Formdata in fd_...
         EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'vor dca/fd_Formkey len arrForms '.\count($arrForms));
         if (\is_array($arrForms) && !empty($arrForms)) {
             foreach ($arrForms as $arrForm) /* erzeuge die eingabefelder zur form */
@@ -429,7 +429,7 @@ class FormdataBackend extends \Backend
                 $objDca->close();
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'vendor geschrieben file '.$this->vendorPath.'src/Resources/contao/dca/fd_'.$strFormKey.'.php');
                 if (isset($cachepath) && (\strlen($cachepath) > 0)) {      // cache vorhanden dann auch in cache schreiben
-                    // ich weiss nicht ob das Screiben der Datei in den Cache genügt vielleicht ist danach noch ein include notwendig ???
+                    // ich weiss nicht ob das Screiben der Datei in den Cache genuegt vielleicht ist danach noch ein include notwendig ???
                     $objDcaCache = new \File('var/cache/'.$_ENV['APP_ENV'].'/contao/dca/fd_'.$strFormKey.'.php');
                     $objDcaCache->write($tplDca->parse());
                     $objDcaCache->close();
@@ -440,7 +440,7 @@ class FormdataBackend extends \Backend
           }
         }
 
-        // overall storingForms dca/fd_feedback.php  fd_... erzeugen und übernehmen der Formdata in fd_...
+        // overall storingForms dca/fd_feedback.php  fd_... erzeugen und uebernehmen der Formdata in fd_...
         // Get all form fields of all storing forms
         EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'vor dca/fd_Formkey len arrStoringForms '.\count($arrStoringForms));
         // siehe auch Kommentare bei arrforms
@@ -492,7 +492,7 @@ class FormdataBackend extends \Backend
             //			$this->Automator->generateConfigCache();
             //			$this->Automator->generateDcaCache();
             //			$this->Automator->generateDcaExtracts();
-            //$this->Automator->purgeInternalCache(); // löscht den internen cache
+            //$this->Automator->purgeInternalCache(); // loescht den internen cache
             //$this->Automator->generateInternalCache(); // Dauert u.U etwas
             $this->log('update Config file Bitte Cache neu aufbauen', __METHOD__, TL_GENERAL);
             EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'updateConfig Bitte Cache neu aufbauen');
@@ -526,13 +526,8 @@ class FormdataBackend extends \Backend
      */
     private function newTemplate($strTemplate)
     {
-        $deb = \Config::get('debugMode');        // im Debugmodus wird der Text TEMPLATE START und TEMPLATE ENDE eingefügt
-        // das führt bei den internen php templates zu Fehlern
-        \Config::set('debugMode', false);
         $objTemplate = new \BackendTemplate($strTemplate);
         $objTemplate->folder = 'efg_co4';
-        \Config::set('debugMode', $deb);
-
         return $objTemplate;
     }
 }
