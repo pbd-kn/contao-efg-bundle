@@ -19,15 +19,13 @@
             "role": "Developer"
         }
     ],
-    "support": {
-        "email": "pb-contao@gmx.de"
-    },
     "require": {
         "php": "^7.2 || ^8.0",
         "contao/core-bundle": "^4.9",
         "codefog/contao-haste": "^4.24",
         "symfony/config": "^4.4 || ^5.1",
-        "symfony/dependency-injection": "^4.4 || ^5.1"
+        "symfony/dependency-injection": "^4.4 || ^5.1",
+        "symfony/http-kernel": "^4.4 || ^5.1"
     },
     "conflict": {
         "contao/manager-plugin": "<2.0 || >=3.0"
@@ -52,6 +50,7 @@
         }
     },
     "support": {
+        "email": "pb-contao@gmx.de",
         "issues": "https://github.com/pbd-kn/contao-efg-bundle/issues",
         "source": "https://github.com/pbd-kn/contao-efg-bundle"
     },

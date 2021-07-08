@@ -1,0 +1,5 @@
+services:
+    _defaults:
+        autoconfigure: true
+
+    PBDKN\Efgco4\EventListener\DisableDebugModeForInternalTemplatesListener: ~
