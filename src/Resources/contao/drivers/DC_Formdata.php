@@ -4223,7 +4223,9 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 2 this->varVal
                             $args_k = [];
 
                             foreach ($row_v as $option) {
-                                $args_k[] = \strlen($GLOBALS['TL_DCA'][$table]['fields'][$v]['reference'][$option]) ? $GLOBALS['TL_DCA'][$table]['fields'][$v]['reference'][$option] : $option;
+                                if(isset($GLOBALS['TL_DCA'][$table]['fields'][$v]['reference'][$option])) {
+                                    $args_k[] = \strlen($GLOBALS['TL_DCA'][$table]['fields'][$v]['reference'][$option]) ? $GLOBALS['TL_DCA'][$table]['fields'][$v]['reference'][$option] : $option;
+                                }
                             }
 
                             $args[$k] = implode(', ', $args_k);
