@@ -37,6 +37,8 @@ declare(strict_types=1);
 
 namespace PBDKN\Efgco4\Resources\contao\classes;
 
+use Contao\System;
+
 /**
  * Class FormdataBackend.
  *
@@ -74,7 +76,7 @@ class FormdataBackend extends \Backend
         EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "rootDir '".$this->rootDir."'");
         $cp = realpath($this->rootDir.'/var/cache/'.$_ENV['APP_ENV'].'/contao/');   // cachpath
         EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "cp '".$cp."'");
-        if (!empty($cp) && (\strlen($cp) > 0)) {      // cache vorhanden
+        if (!empty($cp) && (\strlen($cp) > 0) && !System::getContainer()->get('kernel')->isDebug()) {      // cache vorhanden
             $this->cachePath = 'var/cache/'.$_ENV['APP_ENV'].'/contao/';
             EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "set cachepath '".$this->cachePath."'");
         }
@@ -191,7 +193,7 @@ class FormdataBackend extends \Backend
           $this->arrStoringForms[$strFormKey] = $objForms->row(); id,title,alias,formID,useFormValues,useFieldNames,efgDebugMode
           $this->arrFormsDcaKey[$strFormKey] = $objForms->title;
         */
-        $arrStoringForms = $this->Formdata->arrStoringForms;
+        $arrStoringForms = $this->Formdata->arrStoringForms ?: [];
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'len arrStoringForms '.\count($arrStoringForms));
         $createNewForm = true;
         if (null === $arrForms) {
@@ -243,8 +245,7 @@ class FormdataBackend extends \Backend
             $objCache = new \File($this->cachePath.'config/config.php');
             $strconfcache = $objCache->getContent();
             $startpos = stripos($strconfcache, '// begin config efg');
-            if (false === $startpos) {
-            } else {
+            if (false !== $startpos) {
                 $endpos = stripos($strconfcache, '// end config efg', $startpos);
                 $pars = $tplConfig->parse();
                 $startpospars = stripos($pars, '// begin config efg');
