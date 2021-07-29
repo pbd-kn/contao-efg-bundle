@@ -2380,7 +2380,7 @@ class Formdata extends \Contao\Frontend
                 if (\Database::getInstance()->tableExists($dc->table)) {
 //                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "reloadFiletree tabelle da '".$dc->table." Feld $strField ");
                     // The field does not exist
-                    if (!\in_array($strField, $dc->arrBaseFields, true) && $dc->arrDetailFields && !\in_array($strField, $dc->arrDetailFields, true)) {
+                    if (!\in_array($strField, $dc->arrBaseFields, true) && !\in_array($strField, $dc->arrDetailFields ?? [], true)) {
                         $this->log('Field "'.$strField.'" does not belong to form data table', 'Formdata executePostActions()', TL_ERROR);
                         header('HTTP/1.1 400 Bad Request');
                         exit('Bad Request');
@@ -2416,7 +2416,7 @@ class Formdata extends \Contao\Frontend
                 }
 
                 // Set the new value
-                if (($dc->arrBaseFields && \in_array($strField, $dc->arrBaseFields, true)) || ($dc->arrDetailFields && \in_array($strField, $dc->arrDetailFields, true))) {
+                if (\in_array($strField, $dc->arrBaseFields ?? [], true) || \in_array($strField, $dc->arrDetailFields ?? [], true)) {
                     $objRow->$strField = $varValue;
                     $arrAttribs['activeRecord'] = $objRow;
                 }
