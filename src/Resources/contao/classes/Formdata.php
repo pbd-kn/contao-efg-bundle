@@ -525,7 +525,7 @@ class Formdata extends \Contao\Frontend
     {
         if (null === $this->arrMembers) {
             $members = [];
-            $objMembers = \Database::getInstance()->prepare("SELECT id, CONCAT(firstname,' ',lastname) AS name,groups,login,username,locked,disable,start,stop FROM tl_member ORDER BY name ASC")
+            $objMembers = \Database::getInstance()->prepare("SELECT id, CONCAT(firstname,' ',lastname) AS name,`groups`,login,username,locked,disable,start,stop FROM tl_member ORDER BY name ASC")
                 ->execute()
             ;
             $members[] = '-';
