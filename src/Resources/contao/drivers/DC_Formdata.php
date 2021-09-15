@@ -4184,22 +4184,22 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 2 this->varVal
 
                     if (\in_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['flag'], [5, 6, 7, 8, 9, 10], true)) {
                         if ('date' === $GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['eval']['rgxp']) {
-                            $args[$k] = \strlen($row[$v]) ? \Date::parse($GLOBALS['TL_CONFIG']['dateFormat'], $row[$v]) : '-';
+                            $args[$k] = !empty($row[$v]) ? \Date::parse($GLOBALS['TL_CONFIG']['dateFormat'], $row[$v]) : '-';
                             $rowFormatted[$v] = $args[$k];
                         } elseif ('time' === $GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['eval']['rgxp']) {
-                            $args[$k] = \strlen($row[$v]) ? \Date::parse($GLOBALS['TL_CONFIG']['timeFormat'], $row[$v]) : '-';
+                            $args[$k] = !empty($row[$v]) ? \Date::parse($GLOBALS['TL_CONFIG']['timeFormat'], $row[$v]) : '-';
                             $rowFormatted[$v] = $args[$k];
                         } else {
-                            $args[$k] = \strlen($row[$v]) ? \Date::parse($GLOBALS['TL_CONFIG']['datimFormat'], $row[$v]) : '-';
+                            $args[$k] = !empty($row[$v]) ? \Date::parse($GLOBALS['TL_CONFIG']['datimFormat'], $row[$v]) : '-';
                             $rowFormatted[$v] = $args[$k];
                         }
                     } elseif ('checkbox' === $GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['inputType']
                         && !$GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['eval']['multiple']) {
                         if (\in_array($v, $this->arrDetailFields, true)) {
-                            $args[$k] = \strlen($row[$v]) ? $row[$v] : '-';
+                            $args[$k] = !empty($row[$v]) ? $row[$v] : '-';
                             $rowFormatted[$v] = $args[$k];
                         } else {
-                            $args[$k] = \strlen($row[$v]) ? $GLOBALS['TL_DCA'][$table]['fields'][$v]['label'][0] : '-';
+                            $args[$k] = !empty($row[$v]) ? $GLOBALS['TL_DCA'][$table]['fields'][$v]['label'][0] : '-';
                             $rowFormatted[$v] = $args[$k];
                         }
                     } elseif (\in_array($v, $this->arrBaseFields, true) && \in_array($v, $this->arrOwnerFields, true)) {
@@ -5069,7 +5069,7 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 2 this->varVal
                     }
 
                     // No empty options allowed
-                    if (!\strlen($option_label)) {
+                    if (empty($option_label)) {
                         $option_label = $vv ?: '-';
                     }
 
