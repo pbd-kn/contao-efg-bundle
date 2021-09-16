@@ -26,7 +26,7 @@
 
 
 // This file is created when saving a form in form generator
-// last created on 2021-09-16 17:40:55
+// last created on 2021-06-04 09:19:44
 
 define('debsmall',1);
 define('debmedium',2+debsmall);
@@ -69,49 +69,7 @@ $GLOBALS['BE_MOD']['formdata']['feedback'] = array
 );
 
 // following are used for the form dependent modules
-$GLOBALS['BE_MOD']['formdata']['fd_anfrage-de'] = array
-(
-	'tables'     => array('tl_formdata', 'tl_formdata_details'),
-	'import'     => array('FormdataBackend', 'importCsv'),
-	'icon'       => 'bundles/contaoefgco4/icons/formdata_all.gif',
-    'stylesheet' => 'bundles/contaoefgco4/css/style.css');
-$GLOBALS['BE_MOD']['formdata']['fd_anfrage-en'] = array
-(
-	'tables'     => array('tl_formdata', 'tl_formdata_details'),
-	'import'     => array('FormdataBackend', 'importCsv'),
-	'icon'       => 'bundles/contaoefgco4/icons/formdata_all.gif',
-    'stylesheet' => 'bundles/contaoefgco4/css/style.css');
-$GLOBALS['BE_MOD']['formdata']['fd_gutschein-de'] = array
-(
-	'tables'     => array('tl_formdata', 'tl_formdata_details'),
-	'import'     => array('FormdataBackend', 'importCsv'),
-	'icon'       => 'bundles/contaoefgco4/icons/formdata_all.gif',
-    'stylesheet' => 'bundles/contaoefgco4/css/style.css');
-$GLOBALS['BE_MOD']['formdata']['fd_kontakt-de'] = array
-(
-	'tables'     => array('tl_formdata', 'tl_formdata_details'),
-	'import'     => array('FormdataBackend', 'importCsv'),
-	'icon'       => 'bundles/contaoefgco4/icons/formdata_all.gif',
-    'stylesheet' => 'bundles/contaoefgco4/css/style.css');
-$GLOBALS['BE_MOD']['formdata']['fd_gutschein-en'] = array
-(
-	'tables'     => array('tl_formdata', 'tl_formdata_details'),
-	'import'     => array('FormdataBackend', 'importCsv'),
-	'icon'       => 'bundles/contaoefgco4/icons/formdata_all.gif',
-    'stylesheet' => 'bundles/contaoefgco4/css/style.css');
-$GLOBALS['BE_MOD']['formdata']['fd_kontakt-en'] = array
-(
-	'tables'     => array('tl_formdata', 'tl_formdata_details'),
-	'import'     => array('FormdataBackend', 'importCsv'),
-	'icon'       => 'bundles/contaoefgco4/icons/formdata_all.gif',
-    'stylesheet' => 'bundles/contaoefgco4/css/style.css');
-$GLOBALS['BE_MOD']['formdata']['fd_anfrage-landingpage-content-de'] = array
-(
-	'tables'     => array('tl_formdata', 'tl_formdata_details'),
-	'import'     => array('FormdataBackend', 'importCsv'),
-	'icon'       => 'bundles/contaoefgco4/icons/formdata_all.gif',
-    'stylesheet' => 'bundles/contaoefgco4/css/style.css');
-$GLOBALS['BE_MOD']['formdata']['fd_anfrage-landingpage-content-en'] = array
+$GLOBALS['BE_MOD']['formdata']['fd_mytestformular-do'] = array
 (
 	'tables'     => array('tl_formdata', 'tl_formdata_details'),
 	'import'     => array('FormdataBackend', 'importCsv'),
@@ -130,7 +88,6 @@ array_insert($GLOBALS['FE_MOD']['application'], count($GLOBALS['FE_MOD']['applic
 	'formdatalisting' => 'PBDKN\Efgco4\Resources\contao\modules\ModuleFormdataListing'
 ));
 
-
 // Add backend form fields
 $GLOBALS['BE_FFL']['efgLookupOptionWizard'] = 'PBDKN\Efgco4\Resources\contao\widgets\EfgLookupOptionWizard';
 $GLOBALS['BE_FFL']['efgLookupSelect'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormLookupSelectMenu';
@@ -144,7 +101,6 @@ $GLOBALS['TL_FFL']['efgLookupCheckbox'] = 'PBDKN\Efgco4\Resources\contao\forms\E
 $GLOBALS['TL_FFL']['efgLookupRadio'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormLookupRadio';
 $GLOBALS['TL_FFL']['efgImageSelect'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormImageSelect';
 $GLOBALS['TL_FFL']['efgFormPaginator'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormPaginator';
-
 
 /**
  * -------------------------------------------------------------------------
