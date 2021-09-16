@@ -28,20 +28,6 @@
 
 <?php echo '// This file is created when saving a form in form generator' . PHP_EOL; ?>
 <?php echo '// last created on ' .date("Y-m-d H:i:s") . PHP_EOL; ?>
-<?php
-  // PBD SENDMAILCOMMAND
-  echo '/*' . PHP_EOL;
-  echo ' * you can set the swiftmail transport set in efg_internal_config.html' . PHP_EOL;
-  echo " * example define('SENDMAILCOMMAND', ini_get ('sendmail_path') . ' -t')" . PHP_EOL;
-  echo '*/' . PHP_EOL;
-
-if(ini_get('sendmail_path')){
-  echo "define('SENDMAILCOMMAND', ini_get ('sendmail_path') . ' -t');   // set mailtransport for Swiftmailer". PHP_EOL;
-  echo "                                                              // for standard comment out this line". PHP_EOL;
-} else {
-  echo "define('SENDMAILCOMMAND', 'no_sendmail_path');    // set mailtransport for Swiftmailer". PHP_EOL;
-}
-?>
 
 define('debsmall',1);
 define('debmedium',2+debsmall);

@@ -27,16 +27,13 @@ declare(strict_types=1);
  *
  */
 
-/* PBD
- * Korrektur zum senden von Mails mittels Contao 4
- * Das sendmail Komanndo wird aus dm Configfile define(SENDMAILCOMMAND,...)
- * gelesen.
- * ist keine define vorhanden bleibt die Einstellung
 /**
  * Namespace
  */
 
 namespace PBDKN\Efgco4\Resources\contao\classes;
+
+use Contao\Email;
 
 /**
  * Class FormdataProcessor.
@@ -446,17 +443,8 @@ class FormdataProcessor extends \Contao\Frontend
             $blnConfirmationSent = false;
 
             if (!empty($objMailProperties->recipients)) {
-                if (SENDMAILCOMMAND) {   // PBD aus config.php
-                    if (SENDMAILCOMMAND=='no_sendmail_path') {
-                        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'no sendmail_path in php.ini ');
-                        $this->log('Could send EMail because no sendmail_path in php.ini', __METHOD__, TL_ERROR);
-                        return;
-                    }          // PBD z.B. zum setzen des -t flags
-                    $this->myMailer->getTransport()->setCommand(sendmail_path.' '.SENDMAILCOMMAND);
-                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'SENDMAILCOMMAND SwiftMailer transport gesetzt => '.SENDMAILCOMMAND);
-                }
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'vor new Email');
-                $objMail = new \Email($myMailer);
+                $objMail = new Email();
 
                 $objMail->from = $objMailProperties->sender;
 
@@ -593,17 +581,7 @@ class FormdataProcessor extends \Contao\Frontend
             $blnInformationSent = false;
 
             if (!empty($objMailProperties->recipients)) {
-                if (SENDMAILCOMMAND) {   // PBD aus config.php
-                  if (SENDMAILCOMMAND=='no_sendmail_path') {
-                    EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'no sendmail_path in php.ini ');
-                    $this->log('Could send EMail because no sendmail_path in php.ini', __METHOD__, TL_ERROR);
-                    return;
-                  }          // PBD z.B. zum setzen des -t flags
-                  $this->myMailer->getTransport()->setCommand(SENDMAILCOMMAND);
-                  EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'SENDMAILCOMMAND SwiftMailer transport gesetzt => '.SENDMAILCOMMAND);
-                }
-
-                $objMail = new \Email($myMailer);
+                $objMail = new Email();
                 $objMail->from = $objMailProperties->sender;
                 if (!empty($objMailProperties->senderName)) {
                     $objMail->fromName = $objMailProperties->senderName;
