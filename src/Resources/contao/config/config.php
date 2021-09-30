@@ -27,11 +27,6 @@
 
 // This file is created when saving a form in form generator
 // last created on 2021-06-04 09:19:44
-/*
- * you can set the swiftmail transport set in efg_internal_config.html
- * example define('SENDMAILCOMMAND', ini_get ('sendmail_path') . ' -t')
-*/
-define('SENDMAILCOMMAND', 'no_sendmail_path');    // set mailtransport for Swiftmailer
 
 define('debsmall',1);
 define('debmedium',2+debsmall);
