@@ -110,7 +110,7 @@ $GLOBALS['TL_FFL']['efgFormPaginator'] = 'PBDKN\Efgco4\Resources\contao\forms\Ef
 
 $GLOBALS['TL_HOOKS']['processFormData'][] = array('PBDKN\Efgco4\Resources\contao\classes\FormdataProcessor', 'processSubmittedData');
 $GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array('PBDKN\Efgco4\Resources\contao\classes\FormdataProcessor', 'processConfirmationContent');
-$GLOBALS['TL_HOOKS']['listComments'][] = array('PBDKN\Efgco4\Resources\classes\contao\FormdataComments', 'listComments');
+$GLOBALS['TL_HOOKS']['listComments'][] = array('PBDKN\Efgco4\Resources\contao\classes\FormdataComments', 'listComments');
 $GLOBALS['TL_HOOKS']['getSearchablePages'][] = array('PBDKN\Efgco4\Resources\contao\classes\Formdata', 'getSearchablePages');
 $GLOBALS['TL_HOOKS']['executePostActions'][] = array('PBDKN\Efgco4\Resources\contao\classes\Formdata', 'executePostActions');
 $GLOBALS['TL_HOOKS']['replaceInsertTags'][] = array('PBDKN\Efgco4\Resources\contao\classes\EfgInsertTag', 'Efg_InsertTags');
