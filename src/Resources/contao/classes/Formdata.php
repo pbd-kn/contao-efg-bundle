@@ -551,7 +551,7 @@ class Formdata extends \Contao\Frontend
             $users = [];
 
             // Get all users
-            $objUsers = \Database::getInstance()->prepare('SELECT id,username,name,locked,disable,start,stop,admin,groups,modules,inherit,fop FROM tl_user ORDER BY name ASC')
+            $objUsers = \Database::getInstance()->prepare('SELECT id,username,name,locked,disable,start,stop,admin,`groups`,modules,inherit,fop FROM tl_user ORDER BY name ASC')
                 ->execute()
             ;
             $users[] = '-';
