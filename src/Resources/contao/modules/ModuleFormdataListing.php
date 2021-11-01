@@ -1083,6 +1083,12 @@ class ModuleFormdataListing extends \Module
                     $strSort = trim($strSort);
                     preg_match_all('/^(.*?)(\s|$)/i', $strSort, $arrMatch);
 
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'len match '.count($arrMatch));
+if ($this->arrDetailFields) {
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'arrDetailFields da len arrDetailFields '.count($this->arrDetailFields));
+} else {
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Keine arrDetailFields '.count($this->arrDetailFields).' evtl. muss Formular neu gespeichert werden');
+}
                     if (!\in_array($arrMatch[1][0], $arrListFields, true)) {
                         if (\in_array($arrMatch[1][0], $this->arrDetailFields, true)) {
                             if (\in_array($GLOBALS['TL_DCA']['tl_formdata']['fields'][$arrMatch[1][0]]['eval']['rgxp'], $arrSortSigned, true)) {
