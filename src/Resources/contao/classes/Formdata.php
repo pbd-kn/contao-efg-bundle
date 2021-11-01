@@ -550,7 +550,7 @@ class Formdata extends \Contao\Frontend
         if (null === $this->arrUsers) {
             $users = [];
 
-            // Get all users
+            // Get all users mysql like groups
             $objUsers = \Database::getInstance()->prepare('SELECT id,username,name,locked,disable,start,stop,admin,`groups`,modules,inherit,fop FROM tl_user ORDER BY name ASC')
                 ->execute()
             ;
