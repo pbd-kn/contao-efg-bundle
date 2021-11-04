@@ -948,7 +948,7 @@ class ModuleFormdataListing extends \Module
 
                 case 'dropdown':
                 default:
-                    if (\strlen(\Input::get('search')) && \strlen(\Input::get('for'))) {
+                        if (!empty(\Input::get('search'))&&!empty(\Input::get('for'))&&\strlen(\Input::get('search')) && \strlen(\Input::get('for'))) {
                         $varKeyword = '%'.\Input::get('for').'%';
 
                         if (\in_array(\Input::get('search'), $this->arrOwnerFields, true)) {
