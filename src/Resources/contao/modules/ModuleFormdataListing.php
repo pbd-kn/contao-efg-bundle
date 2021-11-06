@@ -973,8 +973,8 @@ class ModuleFormdataListing extends \Module
                             $strWhere .= (\strlen($strWhere) ? ' AND ' : ' WHERE ').'(SELECT value FROM tl_formdata_details WHERE ff_name="'.\Input::get('search').'" AND pid=f.id ) LIKE ?';
                         }
                     }
-
-                    foreach (trimsplit(',', $this->list_search) as $field) {
+                    if (!empty($this->arrBaseFields)) {
+                      foreach (trimsplit(',', $this->list_search) as $field) {
                         if (\in_array($field, $this->arrBaseFields, true)) {
                             if (\strlen($this->strFormKey) && 'form' === $field) {
                                 continue;
@@ -984,6 +984,7 @@ class ModuleFormdataListing extends \Module
                         } elseif (\is_array($this->arrDetailFields) && !empty($this->arrDetailFields) && \in_array($field, $this->arrDetailFields, true)) {
                             $strOptions .= '  <option value="'.$field.'"'.(($field === \Input::get('search')) ? ' selected="selected"' : '').'>'.($GLOBALS['TL_DCA'][$this->list_table]['fields'][$field]['label'][0] ? htmlspecialchars($GLOBALS['TL_DCA'][$this->list_table]['fields'][$field]['label'][0]) : $field).'</option>'."\n";
                         }
+                      }
                     }
 
                     break;
