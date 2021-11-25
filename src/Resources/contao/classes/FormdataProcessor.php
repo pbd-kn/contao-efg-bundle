@@ -43,7 +43,7 @@ use Contao\Email;
 class FormdataProcessor extends \Contao\Frontend
 {
     protected $strFdDcaKey = '';
-    protected $myMailer;
+    //protected $myMailer;
 
     protected $strFormdataDetailsKey = 'details';
 
@@ -51,7 +51,7 @@ class FormdataProcessor extends \Contao\Frontend
     {
         EfgLog::setEfgDebugmode('form');
 
-        $this->myMailer = \Contao\System::getContainer()->get('swiftmailer.mailer');
+        //$this->myMailer = \Contao\System::getContainer()->get('swiftmailer.mailer');
     }
 
     /**
