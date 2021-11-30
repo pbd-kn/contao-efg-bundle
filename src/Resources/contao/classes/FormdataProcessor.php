@@ -691,7 +691,7 @@ class FormdataProcessor extends \Contao\Frontend
                                 $strKey = $arrKey[0];
 
                                 $arrTagParams = null;
-                                if (isset($arrKey[1]) && \strlen($arrKey[1])) {
+                                if (isset($arrKey[1]) && !empty($arrKey[1]) && \strlen($arrKey[1])) {
                                     $arrTagParams = $this->Formdata->parseInsertTagParams($tag);
                                 }
 
@@ -699,7 +699,7 @@ class FormdataProcessor extends \Contao\Frontend
 
                                 $strLabel = '';
                                 $strVal = '';
-                                if ($arrTagParams && \strlen($arrTagParams['label'])) {
+                                if ($arrTagParams && !empty($arrTagParams['label']) && \strlen($arrTagParams['label'])) {
                                     $strLabel = $arrTagParams['label'];
                                 }
 
@@ -708,7 +708,7 @@ class FormdataProcessor extends \Contao\Frontend
                                     $strVal = implode(', ', $strVal);
                                 }
 
-                                if (\strlen($strVal)) {
+                                if (!empty($strVal) && \strlen($strVal)) {
                                     $strVal = nl2br($strVal);
                                 }
 
@@ -716,7 +716,7 @@ class FormdataProcessor extends \Contao\Frontend
                                     $strVal = '';
                                 }
 
-                                if (!\strlen($strVal) && $blnSkipEmptyFields) {
+                                if (!empty($strVal) && !\strlen($strVal) && $blnSkipEmptyFields) {
                                     $strLabel = '';
                                 }
 
