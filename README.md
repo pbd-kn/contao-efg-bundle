@@ -21,6 +21,8 @@ Based on EFG Contao 3
  * 
  * Thomas Kuhn's Efg package has been completely converted to contao 4.9 
 
+ * extended Debug
+ *
  * extended by insert_tag  {{efg_insert::formalias::aliasvalue::column(::format)}}
  * supplies a value from an Efg form.
  * Selection field is the efgalias field that is specified in the form
@@ -29,7 +31,11 @@ Based on EFG Contao 3
  * aliasvalue: value of the alias field should have (input)
  * column: columnname for result
  * format: optional result sprintf (format, $result) 
-   
+  
+ * extended useSendto
+ * use the mailadress from hiddenfield sendto
+ * {{link_url::14}}?sendto=dummy@example.com
+ * add receipients to then Form   
 
                                    
 

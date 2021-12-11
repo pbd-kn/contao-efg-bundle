@@ -51,3 +51,4 @@ $GLOBALS['TL_LANG']['tl_form']['efgStoreFormdata_legend'] = '(EFG) Formular-Date
 $GLOBALS['TL_LANG']['tl_form']['efgSendFormattedMail_legend'] = '(EFG) Per E-Mail versenden';
 $GLOBALS['TL_LANG']['tl_form']['efgSendConfirmationMail_legend'] = '(EFG) Bestätigung per E-Mail versenden';
 $GLOBALS['TL_LANG']['tl_form']['efgDebugMode'] = ['EFG Debugmode', 'Set Debugmode'];
+$GLOBALS['TL_LANG']['tl_form']['useSendto'] = ['Hidden Feld sendto auswerten', 'Unter dem Hiddenfeld sendto können zusätzliche Empfänger angegeben werden'];

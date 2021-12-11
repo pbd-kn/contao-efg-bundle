@@ -60,6 +60,13 @@ class EfgLog
         if (!isset($key)) {
             $key = 'form';
         }
+        if (is_numeric($key)) {
+            self::$myefgdebuglevel=$key;
+            self::$debFormKey = 'form';
+            $arrUniqid = StringUtil::trimsplit('.', uniqid('efgc0n7a0', true));
+            self::$uniqid = $arrUniqid[1];
+            return;
+        }
         if ('' === self::$debFormKey || $key !== self::$debFormKey) {
             // Get all forms marked to store data
             $objForms = \Database::getInstance()->prepare('SELECT alias,title,efgDebugMode FROM tl_form WHERE storeFormdata=?')

@@ -245,6 +245,16 @@ $GLOBALS['TL_DCA']['tl_form']['fields']['efgDebugMode'] = [
     'eval' => ['tl_class' => 'w50'],
     'sql' => "varchar(12) default '-'",
 ];
+$GLOBALS['TL_DCA']['tl_form']['fields']['useSendto'] = [
+    'label' => &$GLOBALS['TL_LANG']['tl_form']['useSendto'],
+    'exclude' => true,
+    'filter' => true,
+    'inputType' => 'checkbox',
+    'eval' => ['tl_class' => 'w50'],
+    'sql' => "char(1) NOT NULL default '0'",
+];
+
+
 
 // Palettes
 $GLOBALS['TL_DCA']['tl_form']['palettes']['__selector__'][] = 'sendFormattedMail';
@@ -252,7 +262,7 @@ $GLOBALS['TL_DCA']['tl_form']['palettes']['__selector__'][] = 'sendConfirmationM
 $GLOBALS['TL_DCA']['tl_form']['palettes']['__selector__'][] = 'addConfirmationMailAttachments';
 $GLOBALS['TL_DCA']['tl_form']['palettes']['__selector__'][] = 'addFormattedMailAttachments';
 $GLOBALS['TL_DCA']['tl_form']['palettes']['__selector__'][] = 'storeFormdata';
-$GLOBALS['TL_DCA']['tl_form']['palettes']['default'] = str_replace(['storeValues', 'sendViaEmail', 'formID'], ['storeValues;{efgStoreFormdata_legend:hide},storeFormdata', 'sendViaEmail;{efgSendFormattedMail_legend:hide},sendFormattedMail;{efgSendConfirmationMail_legend:hide},sendConfirmationMail', 'formID,efgDebugMode'], $GLOBALS['TL_DCA']['tl_form']['palettes']['default']);
+$GLOBALS['TL_DCA']['tl_form']['palettes']['default'] = str_replace(['storeValues', 'sendViaEmail', 'formID'], ['storeValues;{efgStoreFormdata_legend:hide},storeFormdata', 'sendViaEmail;{efgSendFormattedMail_legend:hide},sendFormattedMail;{efgSendConfirmationMail_legend:hide},sendConfirmationMail', 'formID,useSendto,efgDebugMode'], $GLOBALS['TL_DCA']['tl_form']['palettes']['default']);
 // Subpalettes
 array_insert($GLOBALS['TL_DCA']['tl_form']['subpalettes'], \count($GLOBALS['TL_DCA']['tl_form']['subpalettes']),
     ['sendFormattedMail' => 'formattedMailRecipient,formattedMailSubject,formattedMailText,formattedMailTemplate,formattedMailSkipEmpty,addFormattedMailAttachments']

@@ -26,7 +26,7 @@
 
 
 // This file is created when saving a form in form generator
-// last created on 2021-06-04 09:19:44
+// last created on 2021-12-11 15:30:25
 
 define('debsmall',1);
 define('debmedium',2+debsmall);
@@ -58,23 +58,6 @@ if (TL_MODE == 'BE')
  * -------------------------------------------------------------------------
  */
 
-array_insert($GLOBALS['BE_MOD'], 1, array('formdata' => array()));
-
-// this is used for the form independent "Feedback" module
-$GLOBALS['BE_MOD']['formdata']['feedback'] = array
-(
-	'tables'     => array('tl_formdata', 'tl_formdata_details'),
-	'icon'       => 'bundles/contaoefgco4/icons/formdata_all.gif',
-    'stylesheet' => 'bundles/contaoefgco4/css/style.css'
-);
-
-// following are used for the form dependent modules
-$GLOBALS['BE_MOD']['formdata']['fd_mytestformular-do'] = array
-(
-	'tables'     => array('tl_formdata', 'tl_formdata_details'),
-	'import'     => array('FormdataBackend', 'importCsv'),
-	'icon'       => 'bundles/contaoefgco4/icons/formdata_all.gif',
-    'stylesheet' => 'bundles/contaoefgco4/css/style.css');
 
 
 /**
@@ -87,6 +70,7 @@ array_insert($GLOBALS['FE_MOD']['application'], count($GLOBALS['FE_MOD']['applic
 (
 	'formdatalisting' => 'PBDKN\Efgco4\Resources\contao\modules\ModuleFormdataListing'
 ));
+
 
 // Add backend form fields
 $GLOBALS['BE_FFL']['efgLookupOptionWizard'] = 'PBDKN\Efgco4\Resources\contao\widgets\EfgLookupOptionWizard';
@@ -102,6 +86,7 @@ $GLOBALS['TL_FFL']['efgLookupRadio'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgF
 $GLOBALS['TL_FFL']['efgImageSelect'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormImageSelect';
 $GLOBALS['TL_FFL']['efgFormPaginator'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormPaginator';
 
+
 /**
  * -------------------------------------------------------------------------
  * HOOKS
@@ -110,10 +95,15 @@ $GLOBALS['TL_FFL']['efgFormPaginator'] = 'PBDKN\Efgco4\Resources\contao\forms\Ef
 
 $GLOBALS['TL_HOOKS']['processFormData'][] = array('PBDKN\Efgco4\Resources\contao\classes\FormdataProcessor', 'processSubmittedData');
 $GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array('PBDKN\Efgco4\Resources\contao\classes\FormdataProcessor', 'processConfirmationContent');
-$GLOBALS['TL_HOOKS']['listComments'][] = array('PBDKN\Efgco4\Resources\contao\classes\FormdataComments', 'listComments');
+$GLOBALS['TL_HOOKS']['listComments'][] = array('PBDKN\Efgco4\Resources\classes\contao\FormdataComments', 'listComments');
 $GLOBALS['TL_HOOKS']['getSearchablePages'][] = array('PBDKN\Efgco4\Resources\contao\classes\Formdata', 'getSearchablePages');
 $GLOBALS['TL_HOOKS']['executePostActions'][] = array('PBDKN\Efgco4\Resources\contao\classes\Formdata', 'executePostActions');
 $GLOBALS['TL_HOOKS']['replaceInsertTags'][] = array('PBDKN\Efgco4\Resources\contao\classes\EfgInsertTag', 'Efg_InsertTags');
+
+// Hooks zum bearbeiten der Mails 
+//$GLOBALS['TL_HOOKS']['processFormData'][] = array('PBDKN\Efgco4\Resources\contao\classes\efgMailHooks', 'processFormData');   // nur zum Test
+//$GLOBALS['TL_HOOKS']['compileFormFields'][] = array('PBDKN\Efgco4\Resources\contao\classes\efgMailHooks', 'compileFormFields');
+$GLOBALS['TL_HOOKS']['prepareFormData'][] = array('PBDKN\Efgco4\Resources\contao\classes\efgMailHooks', 'prepareFormData');
 
 // end config efg
 

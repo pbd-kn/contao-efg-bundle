@@ -55,3 +55,4 @@ $GLOBALS['TL_LANG']['tl_form']['efgStoreFormdata_legend'] = '(EFG) Store form da
 $GLOBALS['TL_LANG']['tl_form']['efgSendFormattedMail_legend'] = '(EFG) Send via e-mail';
 $GLOBALS['TL_LANG']['tl_form']['efgSendConfirmationMail_legend'] = '(EFG) Send confirmation via e-mail';
 $GLOBALS['TL_LANG']['tl_form']['efgDebugMode'] = ['EFG Debugmode', 'Set Debugmode'];
+$GLOBALS['TL_LANG']['tl_form']['useSendto'] = ['use Hiddenfied sendto', 'Additional recipients can be specified under Hiddenfield sendto'];
