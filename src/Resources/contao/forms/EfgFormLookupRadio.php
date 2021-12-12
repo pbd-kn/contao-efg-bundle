@@ -32,6 +32,7 @@ declare(strict_types=1);
  */
 
 namespace PBDKN\Efgco4\Resources\contao\forms;
+
 use PBDKN\Efgco4\Resources\contao\classes\EfgLog;
 
 /**
@@ -123,29 +124,30 @@ class EfgFormLookupRadio extends \Widget
     {
         $strOptions = '';
 
-
         foreach ($this->arrOptions as $i => $arrOption) {
             $checked = '';
             EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "this->arrOptions[$i]: $arrOption");
-            if(is_array($arrOption)){
-              foreach($arrOption as $k=>$v){EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "arrOption[$k]: $v");}
+            if (\is_array($arrOption)) {
+                foreach ($arrOption as $k => $v) {
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "arrOption[$k]: $v");
+                }
             }
-            if ((\is_array($this->varValue) && \in_array($arrOption['value'], $this->varValue, true) || $this->varValue === $arrOption['value']  || $this->varValue === $arrOption['label'])) {
+            if ((\is_array($this->varValue) && \in_array($arrOption['value'], $this->varValue, true) || $this->varValue === $arrOption['value'] || $this->varValue === $arrOption['label'])) {
                 $checked = ' checked="checked"';
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'checked set');
             }
 
-/*
-			$strOptions .= sprintf('<span><input type="radio" name="%s" id="opt_%s" class="radio" value="%s"%s%s <label for="opt_%s">%s</label></span>',
-				$this->strName,
-				$this->strId.'_'.$i,
-				$arrOption['value'],
-				((is_array($this->varValue) && in_array($arrOption['value'] , $this->varValue) || $this->varValue == $arrOption['value'] || $this->varValue == $arrOption['label']) ? ' checked="checked"' : ''),
-				$this->strTagEnding,
-				$this->strId.'_'.$i,
-				$arrOption['label']);
- meiner Ansicht nach muss als Option das label genommen werden scheint aber bei der Radiobox zu funktionieren !!
-*/
+            /*
+                        $strOptions .= sprintf('<span><input type="radio" name="%s" id="opt_%s" class="radio" value="%s"%s%s <label for="opt_%s">%s</label></span>',
+                            $this->strName,
+                            $this->strId.'_'.$i,
+                            $arrOption['value'],
+                            ((is_array($this->varValue) && in_array($arrOption['value'] , $this->varValue) || $this->varValue == $arrOption['value'] || $this->varValue == $arrOption['label']) ? ' checked="checked"' : ''),
+                            $this->strTagEnding,
+                            $this->strId.'_'.$i,
+                            $arrOption['label']);
+             meiner Ansicht nach muss als Option das label genommen werden scheint aber bei der Radiobox zu funktionieren !!
+            */
             $strOptions .= sprintf('<span><input type="radio" name="%s" id="opt_%s" class="radio" value="%s"%s%s <label for="opt_%s">%s</label></span>',
                 $this->strName.((\count($this->arrOptions) > 1) ? '[]' : ''),
                 $this->strId.'_'.$i,
@@ -154,12 +156,11 @@ class EfgFormLookupRadio extends \Widget
                 $this->strTagEnding,
                 $this->strId.'_'.$i,
                 $arrOption['label']);
-
         }
 
         return sprintf('<div id="ctrl_%s" class="radio_container%s">%s</div>',
             $this->strId,
-            (isset($this->strClass)&&\strlen($this->strClass) ? ' '.$this->strClass : ''),
+            (isset($this->strClass) && \strlen($this->strClass) ? ' '.$this->strClass : ''),
             $strOptions).$this->addSubmit();
     }
 }

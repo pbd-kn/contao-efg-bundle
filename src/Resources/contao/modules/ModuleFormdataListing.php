@@ -29,8 +29,8 @@ declare(strict_types=1);
 
 namespace PBDKN\Efgco4\Resources\contao\modules;
 
-use PBDKN\Efgco4\Resources\contao\forms\ExtendedHasteForm;
 use PBDKN\Efgco4\Resources\contao\classes\EfgLog;
+
 /**
  * Class ModuleFormdataListing.
  *
@@ -50,9 +50,8 @@ class ModuleFormdataListing extends \Module
     protected $strTable = 'tl_formdata';
 
     protected $strIconFolder;
-    
-    protected $objEditRecord;            // zugehöriger Datensatz class Contao\Database\Result damit er für Haste callbackfunktionen existiert
 
+    protected $objEditRecord;            // zugehöriger Datensatz class Contao\Database\Result damit er für Haste callbackfunktionen existiert
 
     /**
      * Related form, like fd_frm_contact.
@@ -218,7 +217,6 @@ class ModuleFormdataListing extends \Module
         $this->arrMemberGroups = $this->Formdata->arrMemberGroups;
         $this->arrUsers = $this->Formdata->arrUsers;
         $this->arrUserGroups = $this->Formdata->arrUserGroups;
-
 
         // check list access
         if (\strlen($this->efg_list_access)) {
@@ -407,8 +405,8 @@ class ModuleFormdataListing extends \Module
         }
 
         // file download
-        $down= \Input::get('download');
-        if (isset($down)&&\strlen($down)) {
+        $down = \Input::get('download');
+        if (isset($down) && \strlen($down)) {
             $allowedDownload = trimsplit(',', strtolower($GLOBALS['TL_CONFIG']['allowedDownload']));
 
             $arrParams = explode('.', \Input::get('download'));
@@ -451,44 +449,44 @@ class ModuleFormdataListing extends \Module
      */
     public function generateEditForm($objForm, $objRecord)
     {
-
         if (TL_MODE === 'BE') {
             return '';
         }
         $this->objEditRecord = $objRecord;            // zugehöriger Datensatz class Contao\Database\Result für haste callbacks
-        $objHasteForm = new \Haste\Form\Form('efg-bundle', 'POST', function($objHaste) { 
+        $objHasteForm = new \Haste\Form\Form('efg-bundle', 'POST', function ($objHaste) {
             return \Input::post('FORM_SUBMIT') === $objHaste->getFormId();
-          });
+        });
         // Callback zum darstellen der aktuellen Werte
-        $objHasteForm->addFieldsFromFormGenerator($objForm->id, function(&$strField, &$arrDca) {
-          if (isset($this->objEditRecord->$strField)) {   // Wert für Feld vorhanden
-            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Wert in Form übernehmen strField '.$strField.' val '.$this->objEditRecord->$strField);
-            $arrDca['value'] = $this->objEditRecord->$strField;
-          }          
-          return true; // you must return true otherwise the field will be skipped
-        });        
-        if ($objHasteForm->validate()) {   // validate() also checks whether the form has been submitted         
-          $resData = $objHasteForm->fetchAll(); // Get all the submitted and parsed data (only works with POST):
-          foreach ($resData as $k=>$v) {
-            $val=$v;
-
-            if (is_array($v)) {  // bei selectboxen. nimm einfach mal den ersten Wert
-              EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'v is array '.$k);
-//              foreach ($v as $k1=>$v1) {EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "$k v[$k1]: $v1");}
-              $val=$v[0];
+        $objHasteForm->addFieldsFromFormGenerator($objForm->id, function (&$strField, &$arrDca) {
+            if (isset($this->objEditRecord->$strField)) {   // Wert für Feld vorhanden
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Wert in Form übernehmen strField '.$strField.' val '.$this->objEditRecord->$strField);
+                $arrDca['value'] = $this->objEditRecord->$strField;
             }
 
-            $resUp = \Database::getInstance()->prepare('UPDATE tl_formdata_details SET `value`=? where `ff_name`=? AND pid =?')->execute($val,$k,$this->intRecordId);
-            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'query '.'UPDATE tl_formdata_details SET `value`=? where `ff_name`=? AND pid =?'.$val.','.$k.','.$this->intRecordId.' resUp affectedRows '.$resUp->affectedRows);
-          }            
-          \Controller::reload(); // Jetzt kannst du reloaden
+            return true; // you must return true otherwise the field will be skipped
+        });
+        if ($objHasteForm->validate()) {   // validate() also checks whether the form has been submitted
+          $resData = $objHasteForm->fetchAll(); // Get all the submitted and parsed data (only works with POST):
+          foreach ($resData as $k => $v) {
+              $val = $v;
+
+              if (\is_array($v)) {  // bei selectboxen. nimm einfach mal den ersten Wert
+                  EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'v is array '.$k);
+//              foreach ($v as $k1=>$v1) {EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "$k v[$k1]: $v1");}
+                  $val = $v[0];
+              }
+
+              $resUp = \Database::getInstance()->prepare('UPDATE tl_formdata_details SET `value`=? where `ff_name`=? AND pid =?')->execute($val, $k, $this->intRecordId);
+              EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'query '.'UPDATE tl_formdata_details SET `value`=? where `ff_name`=? AND pid =?'.$val.','.$k.','.$this->intRecordId.' resUp affectedRows '.$resUp->affectedRows);
+          }
+            \Controller::reload(); // Jetzt kannst du reloaden
           // Read from POST: \Input::post('year');
           // Read from GET: \Input::get('year');
-        } 
+        }
         $formResult = $objHasteForm->generate();
         $formResult .= '{{link::back}}';  // zurück button
+
         return $formResult;
-     
     }
 
     /**
@@ -539,7 +537,7 @@ class ModuleFormdataListing extends \Module
         }
 
         // owner fields fd_member, fd_user
-        if (isset($this->arrBaseFields)&&\in_array($k, $this->arrBaseFields, true) && \in_array($k, $this->arrOwnerFields, true)) {
+        if (isset($this->arrBaseFields) && \in_array($k, $this->arrBaseFields, true) && \in_array($k, $this->arrOwnerFields, true)) {
             if ('fd_member' === $k) {
                 $value = $this->arrMembers[$value];
             } elseif ('fd_user' === $k) {
@@ -559,14 +557,14 @@ class ModuleFormdataListing extends \Module
         }
 
         // E-mail addresses
-        if ($value && ('email' === $rgxp || false !== (isset($this->arrFF[$k]['name'])&&strpos($this->arrFF[$k]['name'], 'mail')) || false !== strpos($k, 'mail'))) {
+        if ($value && ('email' === $rgxp || false !== (isset($this->arrFF[$k]['name']) && strpos($this->arrFF[$k]['name'], 'mail')) || false !== strpos($k, 'mail'))) {
             $value = \StringUtil::encodeEmail($value);
             $value = '<a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;'.$value.'">'.$value.'</a>';
-                                                                                                                                  
+
             return $value;
         }
 
-        if (isset($value)&&\strlen($value)) {
+        if (isset($value) && \strlen($value)) {
             $value = \StringUtil::decodeEntities($value);
             $value = ampersand($value);
 
@@ -747,16 +745,16 @@ class ModuleFormdataListing extends \Module
         $this->arrBaseFields = $GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['baseFields'];
         $this->arrDetailFields = $GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['detailFields'];
 
-        if (isset($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterKey'])&&\strlen($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterKey'])) {
+        if (isset($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterKey']) && \strlen($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterKey'])) {
             $this->strFormFilterKey = $GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterKey'];
         }
-        if (isset($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterValue'])&&\strlen($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterValue'])) {
+        if (isset($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterValue']) && \strlen($GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterValue'])) {
             $this->strFormFilterValue = $GLOBALS['TL_DCA']['tl_formdata']['tl_formdata']['formFilterValue'];
         }
 
         // List, edit or delete a single record
-        $strDetailKey= \Input::get($this->strDetailKey);
-        if (isset($strDetailKey)&&\strlen($strDetailKey)) {
+        $strDetailKey = \Input::get($this->strDetailKey);
+        if (isset($strDetailKey) && \strlen($strDetailKey)) {
             // check details record
             $strQuery = 'SELECT id FROM tl_formdata f';
             $strWhere = ' WHERE (id=? OR alias=?)';
@@ -891,8 +889,8 @@ class ModuleFormdataListing extends \Module
 
                 case 'multiplefields':
                     $arrOptions = [];
-                    $sr=\Input::get('search');
-                    if (isset($sr)&&\strlen($sr) && \is_array(\Input::get('for'))) {
+                    $sr = \Input::get('search');
+                    if (isset($sr) && \strlen($sr) && \is_array(\Input::get('for'))) {
                         $arrConds = [];
                         $arrKeywords = [];
                         foreach (\Input::get('for') as $field => $for) {
@@ -929,7 +927,7 @@ class ModuleFormdataListing extends \Module
                     }
 
                     foreach (trimsplit(',', $this->list_search) as $field) {
-                        if (isset($this->arrBaseFields)&&\in_array($field, $this->arrBaseFields, true)) {
+                        if (isset($this->arrBaseFields) && \in_array($field, $this->arrBaseFields, true)) {
                             if (\strlen($this->strFormKey) && 'form' === $field) {
                                 continue;
                             }
@@ -948,43 +946,43 @@ class ModuleFormdataListing extends \Module
 
                 case 'dropdown':
                 default:
-                        if (!empty(\Input::get('search'))&&!empty(\Input::get('for'))&&\strlen(\Input::get('search')) && \strlen(\Input::get('for'))) {
-                        $varKeyword = '%'.\Input::get('for').'%';
+                        if (!empty(\Input::get('search')) && !empty(\Input::get('for')) && \strlen(\Input::get('search')) && \strlen(\Input::get('for'))) {
+                            $varKeyword = '%'.\Input::get('for').'%';
 
-                        if (\in_array(\Input::get('search'), $this->arrOwnerFields, true)) {
-                            $field = \Input::get('search');
-                            if ('fd_member' === $field) {
-                                $prop = 'arrMembers';
-                            } elseif ('fd_member_group' === $field) {
-                                $prop = 'arrMemberGroups';
-                            } elseif ('fd_user' === $field) {
-                                $prop = 'arrUsers';
-                            } elseif ('fd_user_group' === $field) {
-                                $prop = 'arrUserGroups';
-                            }
+                            if (\in_array(\Input::get('search'), $this->arrOwnerFields, true)) {
+                                $field = \Input::get('search');
+                                if ('fd_member' === $field) {
+                                    $prop = 'arrMembers';
+                                } elseif ('fd_member_group' === $field) {
+                                    $prop = 'arrMemberGroups';
+                                } elseif ('fd_user' === $field) {
+                                    $prop = 'arrUsers';
+                                } elseif ('fd_user_group' === $field) {
+                                    $prop = 'arrUserGroups';
+                                }
 
-                            $arrMatches = $this->array_filter_like($this->{$prop}, \Input::get('for'));
-                            if (!empty($arrMatches)) {
-                                $strWhere .= (\strlen($strWhere) ? ' AND ' : ' WHERE ').$field.' IN('.implode(',', array_keys($arrMatches)).')';
+                                $arrMatches = $this->array_filter_like($this->{$prop}, \Input::get('for'));
+                                if (!empty($arrMatches)) {
+                                    $strWhere .= (\strlen($strWhere) ? ' AND ' : ' WHERE ').$field.' IN('.implode(',', array_keys($arrMatches)).')';
+                                }
+                            } elseif (\in_array(\Input::get('search'), $this->arrBaseFields, true)) {
+                                $strWhere .= (\strlen($strWhere) ? ' AND ' : ' WHERE ').\Input::get('search').' LIKE ?';
+                            } else {
+                                $strWhere .= (\strlen($strWhere) ? ' AND ' : ' WHERE ').'(SELECT value FROM tl_formdata_details WHERE ff_name="'.\Input::get('search').'" AND pid=f.id ) LIKE ?';
                             }
-                        } elseif (\in_array(\Input::get('search'), $this->arrBaseFields, true)) {
-                            $strWhere .= (\strlen($strWhere) ? ' AND ' : ' WHERE ').\Input::get('search').' LIKE ?';
-                        } else {
-                            $strWhere .= (\strlen($strWhere) ? ' AND ' : ' WHERE ').'(SELECT value FROM tl_formdata_details WHERE ff_name="'.\Input::get('search').'" AND pid=f.id ) LIKE ?';
                         }
-                    }
                     if (!empty($this->arrBaseFields)) {
-                      foreach (trimsplit(',', $this->list_search) as $field) {
-                        if (\in_array($field, $this->arrBaseFields, true)) {
-                            if (\strlen($this->strFormKey) && 'form' === $field) {
-                                continue;
-                            }
+                        foreach (trimsplit(',', $this->list_search) as $field) {
+                            if (\in_array($field, $this->arrBaseFields, true)) {
+                                if (\strlen($this->strFormKey) && 'form' === $field) {
+                                    continue;
+                                }
 
-                            $strOptions .= '  <option value="'.$field.'"'.(($field === \Input::get('search')) ? ' selected="selected"' : '').'>'.htmlspecialchars($GLOBALS['TL_DCA'][$this->list_table]['fields'][$field]['label'][0]).'</option>'."\n";
-                        } elseif (\is_array($this->arrDetailFields) && !empty($this->arrDetailFields) && \in_array($field, $this->arrDetailFields, true)) {
-                            $strOptions .= '  <option value="'.$field.'"'.(($field === \Input::get('search')) ? ' selected="selected"' : '').'>'.($GLOBALS['TL_DCA'][$this->list_table]['fields'][$field]['label'][0] ? htmlspecialchars($GLOBALS['TL_DCA'][$this->list_table]['fields'][$field]['label'][0]) : $field).'</option>'."\n";
+                                $strOptions .= '  <option value="'.$field.'"'.(($field === \Input::get('search')) ? ' selected="selected"' : '').'>'.htmlspecialchars($GLOBALS['TL_DCA'][$this->list_table]['fields'][$field]['label'][0]).'</option>'."\n";
+                            } elseif (\is_array($this->arrDetailFields) && !empty($this->arrDetailFields) && \in_array($field, $this->arrDetailFields, true)) {
+                                $strOptions .= '  <option value="'.$field.'"'.(($field === \Input::get('search')) ? ' selected="selected"' : '').'>'.($GLOBALS['TL_DCA'][$this->list_table]['fields'][$field]['label'][0] ? htmlspecialchars($GLOBALS['TL_DCA'][$this->list_table]['fields'][$field]['label'][0]) : $field).'</option>'."\n";
+                            }
                         }
-                      }
                     }
 
                     break;
@@ -1041,7 +1039,7 @@ class ModuleFormdataListing extends \Module
 
                 ++$intLastCol;
 
-                if (isset($this->arrBaseFields)&&\in_array($field, $this->arrBaseFields, true)) {
+                if (isset($this->arrBaseFields) && \in_array($field, $this->arrBaseFields, true)) {
                     $strListFields .= ','.$field;
                 }
 
@@ -1063,8 +1061,8 @@ class ModuleFormdataListing extends \Module
         $strQuery .= $strWhere;
 
         // Order by
-        $ord=\Input::get('order_by');
-        if (isset($ord)&&\strlen($ord)) {
+        $ord = \Input::get('order_by');
+        if (isset($ord) && \strlen($ord)) {
             if (\in_array(\Input::get('order_by'), $arrListFields, true) && (\in_array(\Input::get('order_by'), $this->arrBaseFields, true) || \in_array(\Input::get('order_by'), $this->arrDetailFields, true))) {
                 if (isset($GLOBALS['TL_DCA']['tl_formdata']['fields'][\Input::get('order_by')]['eval']['rgxp']) && 'digit' === $GLOBALS['TL_DCA']['tl_formdata']['fields'][\Input::get('order_by')]['eval']['rgxp']) {
                     $strQuery .= ' ORDER BY CAST(`'.\Input::get('order_by').'` AS DECIMAL(20,5)) '.\Input::get('sort');
@@ -1084,12 +1082,12 @@ class ModuleFormdataListing extends \Module
                     $strSort = trim($strSort);
                     preg_match_all('/^(.*?)(\s|$)/i', $strSort, $arrMatch);
 
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'len match '.count($arrMatch));
-if ($this->arrDetailFields) {
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'arrDetailFields da len arrDetailFields '.count($this->arrDetailFields));
-} else {
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Keine arrDetailFields '.count($this->arrDetailFields).' evtl. muss Formular neu gespeichert werden');
-}
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'len match '.\count($arrMatch));
+                    if ($this->arrDetailFields) {
+                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'arrDetailFields da len arrDetailFields '.\count($this->arrDetailFields));
+                    } else {
+                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Keine arrDetailFields '.\count($this->arrDetailFields).' evtl. muss Formular neu gespeichert werden');
+                    }
                     if (!\in_array($arrMatch[1][0], $arrListFields, true)) {
                         if (\in_array($arrMatch[1][0], $this->arrDetailFields, true)) {
                             if (\in_array($GLOBALS['TL_DCA']['tl_formdata']['fields'][$arrMatch[1][0]]['eval']['rgxp'], $arrSortSigned, true)) {
@@ -1191,7 +1189,7 @@ if ($this->arrDetailFields) {
 
                 $class = '';
                 $sort = 'asc';
-                $strField = (isset($GLOBALS['TL_DCA'][$this->list_table]['fields'][$arrFields[$i]]['label'][0])&&\strlen($label = $GLOBALS['TL_DCA'][$this->list_table]['fields'][$arrFields[$i]]['label'][0])) ? $label : $arrFields[$i];
+                $strField = (isset($GLOBALS['TL_DCA'][$this->list_table]['fields'][$arrFields[$i]]['label'][0]) && \strlen($label = $GLOBALS['TL_DCA'][$this->list_table]['fields'][$arrFields[$i]]['label'][0])) ? $label : $arrFields[$i];
 
                 if (\Input::get('order_by') === $arrFields[$i]) {
                     $sort = ('asc' === \Input::get('sort')) ? 'desc' : 'asc';
@@ -1244,9 +1242,9 @@ if ($this->arrDetailFields) {
 
                 if ($useFieldNames) {
                     $strName = $v;
-                } elseif (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['label'][0])&&\strlen($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['label'][0])) {
+                } elseif (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['label'][0]) && \strlen($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['label'][0])) {
                     $strName = $GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['label'][0];
-                } elseif (isset($GLOBALS['TL_LANG']['tl_formdata'][$v][0])&&\strlen($GLOBALS['TL_LANG']['tl_formdata'][$v][0])) {
+                } elseif (isset($GLOBALS['TL_LANG']['tl_formdata'][$v][0]) && \strlen($GLOBALS['TL_LANG']['tl_formdata'][$v][0])) {
                     $strName = $GLOBALS['TL_LANG']['tl_formdata'][$v][0];
                 } else {
                     $strName = strtoupper($v);
@@ -1411,7 +1409,7 @@ if ($this->arrDetailFields) {
                         'id' => $arrRows[$i]['id'],
                         'alias' => $arrRows[$i]['alias'],
                         'name' => $k,
-                        'label' => (isset($GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['label'][0])&&\strlen($GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['label'][0])) ? htmlspecialchars($GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['label'][0]) : htmlspecialchars($k),
+                        'label' => (isset($GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['label'][0]) && \strlen($GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['label'][0])) ? htmlspecialchars($GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['label'][0]) : htmlspecialchars($k),
                         'content' => ('' !== $value) ? $value : '&nbsp;',
                         'raw' => $v,
                         'class' => 'field_'.$j.$ff_class.((0 === $j) ? ' field_first' : '').(($j === ($intLastCol - 1)) ? ' field_last' : ''),
@@ -1679,7 +1677,7 @@ if ($this->arrDetailFields) {
                         }
                     }
 
-                    if (isset($strVal)&&\strlen($strVal)) {
+                    if (isset($strVal) && \strlen($strVal)) {
                         $strVal = \StringUtil::decodeEntities($strVal);
                         $strVal = preg_replace(['/<br.*\/*>/si'], ["\n"], $strVal);
 
@@ -1894,7 +1892,7 @@ if ($this->arrDetailFields) {
 
         $strLinkEdit = '';
         if ($blnEditAllowed) {
-            if ((isset($arrRow['alias'])&&\strlen($arrRow['alias'])) && !$GLOBALS['TL_CONFIG']['disableAlias']) {
+            if ((isset($arrRow['alias']) && \strlen($arrRow['alias'])) && !$GLOBALS['TL_CONFIG']['disableAlias']) {
                 $strLinkEdit = $strUrl.'?act=edit'.(\strlen($strUrlParams) ? '&amp;'.$strUrlParams : '');
             } else {
                 $strLinkEdit = $strUrl.'?'.$this->strDetailKey.'='.$this->intRecordId.'&amp;act=edit'.(\strlen($strUrlParams) ? '&amp;'.$strUrlParams : '');
@@ -1903,7 +1901,7 @@ if ($this->arrDetailFields) {
 
         $strLinkDelete = '';
         if ($blnDeleteAllowed) {
-            if ((isset($arrRow['alias'])&&\strlen($arrRow['alias'])) && !$GLOBALS['TL_CONFIG']['disableAlias']) {
+            if ((isset($arrRow['alias']) && \strlen($arrRow['alias'])) && !$GLOBALS['TL_CONFIG']['disableAlias']) {
                 $strLinkDelete = $strUrl.'?act=delete'.(\strlen($strUrlParams) ? '&amp;'.$strUrlParams : '');
             } else {
                 $strLinkDelete = $strUrl.'?'.$this->strDetailKey.'='.$this->intRecordId.'&amp;act=delete'.(\strlen($strUrlParams) ? '&amp;'.$strUrlParams : '');
@@ -1912,7 +1910,7 @@ if ($this->arrDetailFields) {
 
         $strLinkExport = '';
         if ($blnExportAllowed) {
-            if ((isset($arrRow['alias'])&&\strlen($arrRow['alias'])) && !$GLOBALS['TL_CONFIG']['disableAlias']) {
+            if ((isset($arrRow['alias']) && \strlen($arrRow['alias'])) && !$GLOBALS['TL_CONFIG']['disableAlias']) {
                 $strLinkExport = $strUrl.'?act=export'.(\strlen($strUrlParams) ? '&amp;'.$strUrlParams : '');
             } else {
                 $strLinkExport = $strUrl.'?'.$this->strDetailKey.'='.$this->intRecordId.'&amp;act=export'.(\strlen($strUrlParams) ? '&amp;'.$strUrlParams : '');
@@ -1938,21 +1936,21 @@ if ($this->arrDetailFields) {
                 $class .= ' '.$GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['ff_class'];
             }
             if (isset($GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['label'][0])) {
-            $arrFields[$class] = [
-                'label' => (\strlen($label = $GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['label'][0]) ? htmlspecialchars($label) : htmlspecialchars($this->arrFF[$k]['label'])),
-                'content' => $value,
-                'raw' => $v,
-            ];
+                $arrFields[$class] = [
+                    'label' => (\strlen($label = $GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['label'][0]) ? htmlspecialchars($label) : htmlspecialchars($this->arrFF[$k]['label'])),
+                    'content' => $value,
+                    'raw' => $v,
+                ];
             }
 
             if (isset($GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['label'][0])) {
-            $arrItem[$k] = [
-                'name' => $k,
-                'label' => (\strlen($label = $GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['label'][0]) ? htmlspecialchars($label) : htmlspecialchars($this->arrFF[$k]['label'])),
-                'content' => $value,
-                'raw' => $v,
-                'class' => str_replace('row_', 'field_', $class),
-            ];
+                $arrItem[$k] = [
+                    'name' => $k,
+                    'label' => (\strlen($label = $GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['label'][0]) ? htmlspecialchars($label) : htmlspecialchars($this->arrFF[$k]['label'])),
+                    'content' => $value,
+                    'raw' => $v,
+                    'class' => str_replace('row_', 'field_', $class),
+                ];
             }
 
             if ('fileTree' === $GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['inputType']) {
@@ -2289,9 +2287,9 @@ if ($this->arrDetailFields) {
 
                         if ($useFieldNames) {
                             $strName = $v;
-                        } elseif (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['label'][0])&&\strlen($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['label'][0])) {
+                        } elseif (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['label'][0]) && \strlen($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['label'][0])) {
                             $strName = $GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['label'][0];
-                        } elseif (isset($GLOBALS['TL_LANG']['tl_formdata'][$v][0])&&\strlen($GLOBALS['TL_LANG']['tl_formdata'][$v][0])) {
+                        } elseif (isset($GLOBALS['TL_LANG']['tl_formdata'][$v][0]) && \strlen($GLOBALS['TL_LANG']['tl_formdata'][$v][0])) {
                             $strName = $GLOBALS['TL_LANG']['tl_formdata'][$v][0];
                         } else {
                             $strName = strtoupper($v);
@@ -2347,7 +2345,7 @@ if ($this->arrDetailFields) {
                     } elseif ('time' === $GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['eval']['rgxp']) {
                         $strVal = ($row[$v] ? date($GLOBALS['TL_CONFIG']['timeFormat'], $row[$v]) : '');
                     } elseif ('datim' === $GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['eval']['rgxp']) {
-                        $strVal = ($row[$v] ? date($GLOBALS['TL_CONFIG']['datimFormat'],(int) $row[$v]) : '');
+                        $strVal = ($row[$v] ? date($GLOBALS['TL_CONFIG']['datimFormat'], (int) $row[$v]) : '');
                     } elseif ('checkbox' === $GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['inputType']
                         && !$GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['eval']['multiple']) {
                         if (1 === $useFormValues) {
@@ -2428,7 +2426,7 @@ if ($this->arrDetailFields) {
                         }
                     }
 
-                    if (isset($strVal)&&\strlen($strVal)) {
+                    if (isset($strVal) && \strlen($strVal)) {
                         $strVal = \StringUtil::decodeEntities($strVal);
                         $strVal = preg_replace(['/<br.*\/*>/si'], ["\n"], $strVal);
 
@@ -2477,7 +2475,6 @@ if ($this->arrDetailFields) {
      */
     protected function editSingleRecord(): void
     {
-
         /**
          * Prepare URL.
          */
@@ -2542,7 +2539,7 @@ if ($this->arrDetailFields) {
         $intFormId = 0;
 
         // Fallback template
-        if (!isset($this->list_edit_layout)||!\strlen($this->list_edit_layout)) {
+        if (!isset($this->list_edit_layout) || !\strlen($this->list_edit_layout)) {
             $this->list_edit_layout = 'edit_fd_default';
         }
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'list_edit_layout editSingleRecord layout: '.$this->list_edit_layout);
@@ -2560,11 +2557,11 @@ if ($this->arrDetailFields) {
         // Get the ContentElement holding the form
         if (\strlen($strForm)) {
             $objForm = \FormModel::findOneBy('title', $strForm);
-            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'ContentModel::findOneBy("form", ID) not null ID: '.$objForm->id.'  class '.get_class($objForm));
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'ContentModel::findOneBy("form", ID) not null ID: '.$objForm->id.'  class '.\get_class($objForm));
         }
 
         $this->Template = new \FrontendTemplate($this->list_edit_layout);
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'edit Template "' . $this->list_edit_layout.'"');
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'edit Template "'.$this->list_edit_layout.'"');
 
         $arrRecordFields = array_merge($this->arrBaseFields, $this->arrDetailFields);
 
@@ -2593,7 +2590,7 @@ if ($this->arrDetailFields) {
         ;
 
         if ((int) $objRecord->numRows < 1) {
-          // keine Daten vorhanden
+            // keine Daten vorhanden
             return;
         }
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'PBD  objrecord mit aktuellen Daten da');
@@ -2699,7 +2696,7 @@ if ($this->arrDetailFields) {
             } else {
                 $arrListCond = preg_split('/([\s!=><]+)/', $strListCond, -1, PREG_SPLIT_DELIM_CAPTURE);
 
-                if (\in_array($arrListCond[0], $this->arrDetailFields, true)) {
+                if (!empty($this->arrDetailFields)&&\in_array($arrListCond[0], $this->arrDetailFields, true)) {
                     $strCondField = $arrListCond[0];
                     unset($arrListCond[0]);
                     // handle numeric values
@@ -2708,7 +2705,7 @@ if ($this->arrDetailFields) {
                     } else {
                         $arrListWhere[] = '(SELECT value FROM tl_formdata_details WHERE ff_name="'.$strCondField.'" AND pid=f.id) '.implode('', $arrListCond);
                     }
-                } elseif (\in_array($arrListCond[0], $this->arrBaseFields, true)) {
+                } elseif (!empty($this->arrBaseFields)&&\in_array($arrListCond[0], $this->arrBaseFields, true)) {
                     $strCondField = $arrListCond[0];
                     unset($arrListCond[0]);
                     $arrListWhere[] = $strCondField.implode('', $arrListCond);

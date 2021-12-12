@@ -32,6 +32,7 @@ declare(strict_types=1);
  */
 
 namespace PBDKN\Efgco4\Resources\contao\widgets;
+
 use PBDKN\Efgco4\Resources\contao\classes\EfgLog;
 
 /**

@@ -28,7 +28,7 @@ declare(strict_types=1);
  */
 
 /**
- * Namespace
+ * Namespace.
  */
 
 namespace PBDKN\Efgco4\Resources\contao\classes;
@@ -83,7 +83,7 @@ class FormdataProcessor extends \Contao\Frontend
 
         // Get params of related listing formdata
         $intListingId = (int) ($_SESSION['EFP']['LISTING_MOD']['id']);   // wird in ModuleFormdataListing gesetzt
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Module intListingId '.$intListingId );
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Module intListingId '.$intListingId);
         if ($intListingId > 0) {
             $objListing = \Database::getInstance()->prepare('SELECT * FROM tl_module WHERE id=?')   // lies module ein
                 ->execute($intListingId)
@@ -116,7 +116,7 @@ class FormdataProcessor extends \Contao\Frontend
                 }
             }
         }
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'act '.\Input::get('act').' arrListing[efg_fe_edit_access] '.$arrListing['efg_fe_edit_access'] );
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'act '.\Input::get('act').' arrListing[efg_fe_edit_access] '.$arrListing['efg_fe_edit_access']);
 
         if (\in_array($arrListing['efg_fe_edit_access'], ['public', 'groupmembers', 'member'], true)) {
             if ('edit' === \Input::get('act')) {
@@ -228,7 +228,7 @@ class FormdataProcessor extends \Contao\Frontend
                     $arrSet['published'] = $arrOldFormdata['published'];
                 }
             }
-            $implodearrSet=implode(", ",$arrSet);
+            $implodearrSet = implode(', ', $arrSet);
 
             // Store formdata: Update or insert and delete
             if ($blnFEedit && \strlen($arrListing['efg_fe_keep_id'])) {
@@ -309,8 +309,8 @@ class FormdataProcessor extends \Contao\Frontend
                 }
             }
 
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'blnFEedit '.$blnFEedit);
-        // Delete old record after frontend editing
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'blnFEedit '.$blnFEedit);
+            // Delete old record after frontend editing
             if ($blnFEedit) {
                 if (!isset($arrListing['efg_fe_keep_id']) || '1' !== $arrListing['efg_fe_keep_id']) {
                     if ($intNewId > 0 && (int) $intOldId > 0 && (int) $intNewId !== (int) $intOldId) {
@@ -327,7 +327,7 @@ class FormdataProcessor extends \Contao\Frontend
 
             // Auto-generate alias
             $strAlias = $this->Formdata->generateAlias($arrOldFormdata['alias'], $arrForm['title'], $intNewId);
-            if (isset($strAlias)&&\strlen($strAlias)) {
+            if (isset($strAlias) && \strlen($strAlias)) {
                 $arrUpd = ['alias' => $strAlias];
                 \Database::getInstance()->prepare('UPDATE tl_formdata %s WHERE id=?')
                     ->set($arrUpd)
@@ -553,8 +553,8 @@ class FormdataProcessor extends \Contao\Frontend
                             EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Check if we want custom addFormattedMailAttachments file '.$varFile);
 
                             if (null !== $objFileModel) {
-                               EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'objFileModel->path '.$objFileModel->path);
-                               $objFile = new \File($objFileModel->path);
+                                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'objFileModel->path '.$objFileModel->path);
+                                $objFile = new \File($objFileModel->path);
                                 if ($objFile->size) {
                                     $objMailProperties->attachments[\System::getContainer()->getParameter('kernel.project_dir').'/'.$objFile->path] = [
                                         'file' => \System::getContainer()->getParameter('kernel.project_dir').'/'.$objFile->path,
@@ -609,19 +609,16 @@ class FormdataProcessor extends \Contao\Frontend
                 }
 
                 foreach ($objMailProperties->recipients as $recipient) {
-
-
-                  try {
-                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'vor sendTo');
-                    $objMail->sendTo($recipient);
-                    $blnInformationSent = true;
-                  }
-                  //catch exception
-                  catch(Exception $e) {
-                    EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'sendmail ERROR '.$e->getMessage());
-                    $this->log('sendmail ERROR '.$e->getMessage(), __METHOD__, TL_errot);
-                  }
-
+                    try {
+                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'vor sendTo');
+                        $objMail->sendTo($recipient);
+                        $blnInformationSent = true;
+                    }
+                    //catch exception
+                    catch (Exception $e) {
+                        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'sendmail ERROR '.$e->getMessage());
+                        $this->log('sendmail ERROR '.$e->getMessage(), __METHOD__, TL_errot);
+                    }
                 }
             }
         }
@@ -663,7 +660,7 @@ class FormdataProcessor extends \Contao\Frontend
             }
 
             $this->import('Formdata');
-       EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'bearbeite FORM id:  '.$arrForm['id'].' title: '.$arrForm['title']);
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'bearbeite FORM id:  '.$arrForm['id'].' title: '.$arrForm['title']);
 
             $arrFormFields = $this->Formdata->getFormfieldsAsArray((int) ($arrSubmitted['_formId_']));
 

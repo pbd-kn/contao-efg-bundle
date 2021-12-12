@@ -61,10 +61,11 @@ class EfgLog
             $key = 'form';
         }
         if (is_numeric($key)) {
-            self::$myefgdebuglevel=$key;
+            self::$myefgdebuglevel = $key;
             self::$debFormKey = 'form';
             $arrUniqid = StringUtil::trimsplit('.', uniqid('efgc0n7a0', true));
             self::$uniqid = $arrUniqid[1];
+
             return;
         }
         if ('' === self::$debFormKey || $key !== self::$debFormKey) {
@@ -138,55 +139,57 @@ class EfgLog
                 self::$cnt++;
         */
     }
+
     /**
      * Write in stack log file, if debug is enabled.
      *
-     * @param int    $level
+     * @param int $level
      */
     public static function EfgwriteStack($level): void
     {
         if ('' === self::$debFormKey) {
             return;
-        } 
-        if (($level & self::$myefgdebuglevel) === $level) {   
-            $barr=debug_backtrace();
-            foreach ($barr as $k=>$v) { 
-               if (str_contains($v['file'], 'symfony')) {
-                   $str='file: '.$v['file'].' line: '.$v['line'].' function: '.$v['function'];
-               } else {
-                   $str='file: '.$v['file'].' line: '.$v['line'].' function: '.$v['function'];
-                   foreach ($v['args'] as $k1=>$v1)  {
-                       if (is_array($v1)) {
-                           $str.=" isarray[$k1]: [ ";
-                           foreach ($v1 as $k2=>$v2)  {
-                             if (is_string($v2)) {
-                               $str .=" [$k2]:$v2, ";
-                             } else {
-                               if (is_object($v2)) {
-                                 $str .= "value von $k1 ist ein Object class  ".get_class($v2);
-                               } else {
-                                 $str .= "value von $k1 kein string ";
-                               }
-                             }
-                           }
-                           $str.='],  ';
-                       } else {
-                           if (is_string($v1)) {
-                             $str .=" args[$k1]:$v1, ";
-                           } else {
-                             if (is_object($v1)) {
-                               $str .= "value von $k ist ein Object class  ".get_class($v1);
-                             } else {
-                               $str .= "value von $k kein string ";
-                             }
-                           }
-                       } 
-                   }
-               }
-               self::logMessage(sprintf('[%s] [%s] %s', self::$uniqid, $level,'PBD '.$str), 'efg_debug');
+        }
+        if (($level & self::$myefgdebuglevel) === $level) {
+            $barr = debug_backtrace();
+            foreach ($barr as $k => $v) {
+                if (str_contains($v['file'], 'symfony')) {
+                    $str = 'file: '.$v['file'].' line: '.$v['line'].' function: '.$v['function'];
+                } else {
+                    $str = 'file: '.$v['file'].' line: '.$v['line'].' function: '.$v['function'];
+                    foreach ($v['args'] as $k1 => $v1) {
+                        if (\is_array($v1)) {
+                            $str .= " isarray[$k1]: [ ";
+                            foreach ($v1 as $k2 => $v2) {
+                                if (\is_string($v2)) {
+                                    $str .= " [$k2]:$v2, ";
+                                } else {
+                                    if (\is_object($v2)) {
+                                        $str .= "value von $k1 ist ein Object class  ".\get_class($v2);
+                                    } else {
+                                        $str .= "value von $k1 kein string ";
+                                    }
+                                }
+                            }
+                            $str .= '],  ';
+                        } else {
+                            if (\is_string($v1)) {
+                                $str .= " args[$k1]:$v1, ";
+                            } else {
+                                if (\is_object($v1)) {
+                                    $str .= "value von $k ist ein Object class  ".\get_class($v1);
+                                } else {
+                                    $str .= "value von $k kein string ";
+                                }
+                            }
+                        }
+                    }
+                }
+                self::logMessage(sprintf('[%s] [%s] %s', self::$uniqid, $level, 'PBD '.$str), 'efg_debug');
             }
         }
     }
+
     /**
      * Wrapper for old log_message.
      *

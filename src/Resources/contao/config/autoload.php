@@ -27,12 +27,10 @@ declare(strict_types=1);
  *
  */
 
-
 class_alias(PBDKN\Efgco4\Resources\contao\drivers\DC_Formdata::class, 'DC_Formdata');
 class_alias(PBDKN\Efgco4\Resources\contao\classes\Formdata::class, 'Formdata');
 class_alias(PBDKN\Efgco4\Resources\contao\classes\FormdataBackend::class, 'FormdataBackend');
 //class_alias(PBDKN\Efgco4\Resources\contao\widgets\EfgLookupOptionWizard::class, 'EfgLookupOptionWizard');
-
 
 /*
  * Register the templates

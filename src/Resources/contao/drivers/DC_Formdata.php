@@ -1270,20 +1270,14 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                     }
 
                     // Call load_callback
-                    if (is_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['load_callback']))
-                    {
-                        foreach ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['load_callback'] as $callback)
-                        {
-                            if (is_array($callback))
-                            {
+                    if (\is_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['load_callback'])) {
+                        foreach ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['load_callback'] as $callback) {
+                            if (\is_array($callback)) {
                                 $this->import($callback[0]);
                                 $this->varValue = $this->{$callback[0]}->$callback[1]($this->varValue, $this);     //Änderung PBD
-                            }
-                            elseif (is_callable($callback))
-                            {
+                            } elseif (\is_callable($callback)) {
                                 $this->varValue = $callback($this->varValue, $this);
                             }
-
                         }
 
                         $this->objActiveRecord->{$this->strField} = $this->varValue;
@@ -1291,7 +1285,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
                     // prepare values of special fields like radio, select and checkbox
                     $strInputType = $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['inputType'];
-                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strInputType '. $strInputType);
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strInputType '.$strInputType);
 
                     // field types radio, select, multi checkbox
                     if (\in_array($strInputType, ['radio', 'select', 'conditionalselect', 'countryselect'], true)
@@ -1455,7 +1449,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
                     // field type efgLookupSelect
                     elseif ('efgLookupSelect' === $strInputType) {
-EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"['TL_DCA'][".$this->strTable."]['fields'][".$this->strField."]" );
+                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "['TL_DCA'][".$this->strTable."]['fields'][".$this->strField.']');
                         $arrFieldOptions = $this->Formdata->prepareWidgetOptions($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]);
                         $arrNewOptions = [];
 
@@ -1466,30 +1460,32 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"['TL_DCA'][".$this->strTable.
                                 $arrNewOptions[$v['value']] = $v['label'];
                             }
                         }
-foreach ($arrNewOptions as $k=>$v) {EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"gesetzt arrNewOptions[$k]: $v" );}
+                        foreach ($arrNewOptions as $k => $v) {
+                            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "gesetzt arrNewOptions[$k]: $v");
+                        }
                         $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['options'] = $arrNewOptions;
                         // prepare varValue
                         if (!empty($this->varValue)) {
                             if (!\is_array($this->varValue)) {
                                 $strSep = (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['csv'])) ? $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['csv'] : '|';
-EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"varValue kein Array strSep $strSep varValue ".$this->varValue);
+                                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "varValue kein Array strSep $strSep varValue ".$this->varValue);
                                 $this->varValue = explode($strSep, $this->varValue);
                             }
                             foreach ($this->varValue as $k => $v) {
                                 $sNewVal = array_search($v, $arrNewOptions, true);   // suche $v in arrNewOptions der Key wird zurückgeliefert
-                                                                                     // er entspricht dem darzustellenden Wert Nicht dem Optionvalue
-EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupSelect 1 this->varValue[$k]: $v in arrNewOptions ");
+                                // er entspricht dem darzustellenden Wert Nicht dem Optionvalue
+                                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "efgLookupSelect 1 this->varValue[$k]: $v in arrNewOptions ");
                                 if ($sNewVal) {
-                                    //$this->varValue[$v] = $sNewVal;              // PBD  so war es Orig 
-                                                                                   // Warum wird varValue hier mit $v indiziert
-                                                                                   // das gibt doch einen neuen Value mit falschem Index
-EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupSelect 1 this->varValue[$k] alter Wert ".$this->varValue[$k]." neu gesetzt auf $sNewVal ");
+                                    //$this->varValue[$v] = $sNewVal;              // PBD  so war es Orig
+                                    // Warum wird varValue hier mit $v indiziert
+                                    // das gibt doch einen neuen Value mit falschem Index
+                                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "efgLookupSelect 1 this->varValue[$k] alter Wert ".$this->varValue[$k]." neu gesetzt auf $sNewVal ");
                                     $this->varValue[$k] = $sNewVal;
                                 }
                             }
                         }
 
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'render type efgLookupSelect as SelectMenu this->strTable '.$this->strTable.' this->strField '.$this->strField);
+                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'render type efgLookupSelect as SelectMenu this->strTable '.$this->strTable.' this->strField '.$this->strField);
                         // render type efgLookupSelect as SelectMenu
                         $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['inputType'] = 'select';
                     }
@@ -1517,12 +1513,12 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupSelect 1 this->varVa
                             }
                             foreach ($this->varValue as $k => $v) {
                                 $sNewVal = array_search($v, $arrNewOptions, true);
-EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupCheckbox 1 this->varValue[$k]: $v in arrNewOptions ");
+                                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "efgLookupCheckbox 1 this->varValue[$k]: $v in arrNewOptions ");
                                 if ($sNewVal) {
-                                    //$this->varValue[$v] = $sNewVal;              // PBD  so war es Orig 
-                                                                                   // Warum wird varValue hier mit $v indiziert
-                                                                                   // das gibt doch einen neuen Value mit falschem Index
-EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupCheckbox 1 this->varValue[$k] alter Wert ".$this->varValue[$k]." neu gesetzt auf $sNewVal ");
+                                    //$this->varValue[$v] = $sNewVal;              // PBD  so war es Orig
+                                    // Warum wird varValue hier mit $v indiziert
+                                    // das gibt doch einen neuen Value mit falschem Index
+                                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "efgLookupCheckbox 1 this->varValue[$k] alter Wert ".$this->varValue[$k]." neu gesetzt auf $sNewVal ");
                                     $this->varValue[$k] = $sNewVal;
                                 }
                             }
@@ -1555,12 +1551,12 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupCheckbox 1 this->var
                             }
                             foreach ($this->varValue as $k => $v) {
                                 $sNewVal = array_search($v, $arrNewOptions, true);
-EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 1 this->varValue[$k]: $v in arrNewOptions ");
+                                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "efgLookupRadio 1 this->varValue[$k]: $v in arrNewOptions ");
                                 if ($sNewVal) {
-                                    //$this->varValue[$v] = $sNewVal;              // PBD  so war es Orig 
-                                                                                   // Warum wird varValue hier mit $v indiziert
-                                                                                   // das gibt doch einen neuen Value mit falschem Index
-EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 1 this->varValue[$k] alter Wert ".$this->varValue[$k]." neu gesetzt auf $sNewVal ");
+                                    //$this->varValue[$v] = $sNewVal;              // PBD  so war es Orig
+                                    // Warum wird varValue hier mit $v indiziert
+                                    // das gibt doch einen neuen Value mit falschem Index
+                                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "efgLookupRadio 1 this->varValue[$k] alter Wert ".$this->varValue[$k]." neu gesetzt auf $sNewVal ");
                                     $this->varValue[$k] = $sNewVal;
                                 }
                             }
@@ -1594,7 +1590,7 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 1 this->varVal
 
                 $class = 'tl_box';
                 $return .= "\n".'</fieldset>';
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'render result '.$return);
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'render result '.$return);
             }
         }
 
@@ -2063,7 +2059,7 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 1 this->varVal
 
                     // field type efgLookupSelect
                     elseif ('efgLookupSelect' === $strInputType) {
-        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, '657 prepareWidgetOptions strType'.$strInputType.'this->strTable'.$this->strTable.'this->strField'.$this->strField.' val '.$GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]);
+                        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, '657 prepareWidgetOptions strType'.$strInputType.'this->strTable'.$this->strTable.'this->strField'.$this->strField.' val '.$GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]);
                         $arrFieldOptions = $this->Formdata->prepareWidgetOptions($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]);
 
                         // prepare options array and value
@@ -2085,25 +2081,25 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 1 this->varVal
                             }
                             foreach ($this->varValue as $k => $v) {
                                 $sNewVal = array_search($v, $arrNewOptions, true);
-EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupSelect 2 this->varValue[$k]: $v in arrNewOptions ");
+                                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "efgLookupSelect 2 this->varValue[$k]: $v in arrNewOptions ");
                                 if ($sNewVal) {
-                                    //$this->varValue[$v] = $sNewVal;              // PBD  so war es Orig 
-                                                                                   // Warum wird varValue hier mit $v indiziert
-                                                                                   // das gibt doch einen neuen Value mit falschem Index
-EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupSelect 2 this->varValue[$k] alter Wert ".$this->varValue[$k]." neu gesetzt auf $sNewVal ");
+                                    //$this->varValue[$v] = $sNewVal;              // PBD  so war es Orig
+                                    // Warum wird varValue hier mit $v indiziert
+                                    // das gibt doch einen neuen Value mit falschem Index
+                                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "efgLookupSelect 2 this->varValue[$k] alter Wert ".$this->varValue[$k]." neu gesetzt auf $sNewVal ");
                                     $this->varValue[$k] = $sNewVal;
                                 }
                             }
                         }
 
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'render type efgLookupSelect as SelectMenu this->strTable '.$this->strTable.' this->strField '.$this->strField);
+                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'render type efgLookupSelect as SelectMenu this->strTable '.$this->strTable.' this->strField '.$this->strField);
                         // render type efgLookupSelect as SelectMenu
                         $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['inputType'] = 'select';
                     }
 
                     // field type efgLookupCheckbox
                     elseif ('efgLookupCheckbox' === $strInputType) {
-        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, '657 prepareWidgetOptions strType'.$strInputType.'this->strTable'.$this->strTable.'this->strField'.$this->strField.' val '.$GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]);
+                        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, '657 prepareWidgetOptions strType'.$strInputType.'this->strTable'.$this->strTable.'this->strField'.$this->strField.' val '.$GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]);
                         $arrFieldOptions = $this->Formdata->prepareWidgetOptions($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]);
 
                         // prepare options array and value
@@ -2125,12 +2121,12 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupSelect 2 this->varVa
                             }
                             foreach ($this->varValue as $k => $v) {
                                 $sNewVal = array_search($v, $arrNewOptions, true);
-EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupCheckbox 2 this->varValue[$k]: $v in arrNewOptions ");
+                                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "efgLookupCheckbox 2 this->varValue[$k]: $v in arrNewOptions ");
                                 if ($sNewVal) {
-                                    //$this->varValue[$v] = $sNewVal;              // PBD  so war es Orig 
-                                                                                   // Warum wird varValue hier mit $v indiziert
-                                                                                   // das gibt doch einen neuen Value mit falschem Index
-EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupCheckbox 2 this->varValue[$k] alter Wert ".$this->varValue[$k]." neu gesetzt auf $sNewVal ");
+                                    //$this->varValue[$v] = $sNewVal;              // PBD  so war es Orig
+                                    // Warum wird varValue hier mit $v indiziert
+                                    // das gibt doch einen neuen Value mit falschem Index
+                                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "efgLookupCheckbox 2 this->varValue[$k] alter Wert ".$this->varValue[$k]." neu gesetzt auf $sNewVal ");
                                     $this->varValue[$k] = $sNewVal;
                                 }
                             }
@@ -2163,12 +2159,12 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupCheckbox 2 this->var
                             }
                             foreach ($this->varValue as $k => $v) {
                                 $sNewVal = array_search($v, $arrNewOptions, true);
-EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 2 this->varValue[$k]: $v in arrNewOptions ");
+                                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "efgLookupRadio 2 this->varValue[$k]: $v in arrNewOptions ");
                                 if ($sNewVal) {
-                                    //$this->varValue[$v] = $sNewVal;              // PBD  so war es Orig 
-                                                                                   // Warum wird varValue hier mit $v indiziert
-                                                                                   // das gibt doch einen neuen Value mit falschem Index
-EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 2 this->varValue[$k] alter Wert ".$this->varValue[$k]." neu gesetzt auf $sNewVal ");
+                                    //$this->varValue[$v] = $sNewVal;              // PBD  so war es Orig
+                                    // Warum wird varValue hier mit $v indiziert
+                                    // das gibt doch einen neuen Value mit falschem Index
+                                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "efgLookupRadio 2 this->varValue[$k] alter Wert ".$this->varValue[$k]." neu gesetzt auf $sNewVal ");
                                     $this->varValue[$k] = $sNewVal;
                                 }
                             }
@@ -3129,8 +3125,8 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 2 this->varVal
 
     public function export($strMode = 'csv'): void
     {
-       $expmode=\Input::get('expmode');
-        if (isset($expmode)&&\strlen(\Input::get('expmode'))) {
+        $expmode = \Input::get('expmode');
+        if (isset($expmode) && \strlen(\Input::get('expmode'))) {
             $strMode = \Input::get('expmode');
         }
 
@@ -3166,7 +3162,7 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 2 this->varVal
         $orderBy = $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['fields'];
         $firstOrderBy = preg_replace('/\s+.*$/i', '', $orderBy[0]);
 
-        if (\is_array($this->orderBy) && (isset($this->orderBy[0])&&\strlen($this->orderBy[0]))) {
+        if (\is_array($this->orderBy) && (isset($this->orderBy[0]) && \strlen($this->orderBy[0]))) {
             $orderBy = $this->orderBy;
             $firstOrderBy = $this->firstOrderBy;
         }
@@ -3182,7 +3178,7 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 2 this->varVal
 
         // Set search value from session
         $strSessionKey = (4 === $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode']) ? $this->strTable.'_'.CURRENT_ID : (\strlen($this->strFormKey)) ? $this->strFormKey : $this->strTable;
-        if (isset($session['search'][$strSessionKey]['value'])&&\strlen($session['search'][$strSessionKey]['value'])) {
+        if (isset($session['search'][$strSessionKey]['value']) && \strlen($session['search'][$strSessionKey]['value'])) {
             $sqlSearchField = $session['search'][$strSessionKey]['field'];
             if (\in_array($sqlSearchField, $this->arrDetailFields, true)) {
                 $sqlSearchField = '(SELECT value FROM tl_formdata_details WHERE ff_name=\''.$session['search'][$strSessionKey]['field'].'\' AND pid=f.id)';
@@ -3364,9 +3360,9 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 2 this->varVal
 
                         if ($useFieldNames) {
                             $strName = $v;
-                        } elseif (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['label'][0])&&\strlen($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['label'][0])) {
+                        } elseif (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['label'][0]) && \strlen($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['label'][0])) {
                             $strName = $GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['label'][0];
-                        } elseif (isset($GLOBALS['TL_LANG']['tl_formdata'][$v][0])&&\strlen($GLOBALS['TL_LANG']['tl_formdata'][$v][0])) {
+                        } elseif (isset($GLOBALS['TL_LANG']['tl_formdata'][$v][0]) && \strlen($GLOBALS['TL_LANG']['tl_formdata'][$v][0])) {
                             $strName = $GLOBALS['TL_LANG']['tl_formdata'][$v][0];
                         } else {
                             $strName = strtoupper($v);
@@ -3425,8 +3421,11 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 2 this->varVal
                         && \in_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['flag'], [5, 6, 7, 8, 9, 10], true)) {
                         $strVal = ($row[$v] ? date($GLOBALS['TL_CONFIG']['datimFormat'], $row[$v]) : '');
                     } elseif (\in_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['flag'], [5, 6, 7, 8, 9, 10], true)) {
-                        if (null !== [$GLOBALS['TL_CONFIG']['datimFormat']]) $strVal = ($row[$v] ? date($GLOBALS['TL_CONFIG']['datimFormat'],(int) $row[$v]) : '');
-                        else $strval='';
+                        if (null !== [$GLOBALS['TL_CONFIG']['datimFormat']]) {
+                            $strVal = ($row[$v] ? date($GLOBALS['TL_CONFIG']['datimFormat'], (int) $row[$v]) : '');
+                        } else {
+                            $strval = '';
+                        }
                     } elseif ('checkbox' === $GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['inputType']
                         && !$GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['eval']['multiple']) {
                         if (\is_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['options']) && \count($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['options']) > 0) {
@@ -3530,7 +3529,7 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 2 this->varVal
                         }
                     }
 
-                    if (isset($strVal)&&\strlen($strVal)) {
+                    if (isset($strVal) && \strlen($strVal)) {
                         $strVal = \StringUtil::decodeEntities($strVal);
                         $strVal = preg_replace(['/<br.*\/*>/si'], ["\n"], $strVal);
 
@@ -3653,10 +3652,10 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 2 this->varVal
 
         if (!\in_array($this->strField, $this->arrOwnerFields, true) && !\in_array($this->strField, $this->arrBaseFields, true)) {
             // Convert checkbox, radio, select, conditionalselect to store the values instead of keys
-            EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "Abfrage true");
+            EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'Abfrage true');
             if (('checkbox' === $arrField['inputType'] && $arrField['eval']['multiple'])
                 || \in_array($arrField['inputType'], ['radio', 'select', 'conditionalselect'], true)) {
-                EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "checkbox ....");
+                EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'checkbox ....');
                 $arrOpts = $arrField['options'];
                 // OptGroups can not be saved so flatten grouped options array
                 $arrNewOpts = [];
@@ -3674,39 +3673,49 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 2 this->varVal
                 }
                 $arrOpts = $arrNewOpts;
                 unset($arrNewOpts);
-                EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__,'arroptss neu gesetzt');
+                EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'arroptss neu gesetzt');
 
                 $arrSel = deserialize($varValue, true);
                 if (\is_array($arrSel) && !empty($arrSel)) {
-                    EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__,'arrSel is array');
-                    foreach ($arrSel as $k=>$v) {EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__,"arrSel[$k]: $v");} 
+                    EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'arrSel is array');
+                    foreach ($arrSel as $k => $v) {
+                        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "arrSel[$k]: $v");
+                    }
                     $arrSel = array_flip($arrSel);             // vertauscht key and Value
-                    foreach ($arrSel as $k=>$v) {EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__,"flip arrSel[$k]: $v");} 
+                    foreach ($arrSel as $k => $v) {
+                        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "flip arrSel[$k]: $v");
+                    }
                     // use options value or options labels
-                    foreach (array_intersect_key($arrOpts, $arrSel) as $k=>$v) {EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__,"intersect[$k]: $v");} 
-                    EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__,'efgStoreValues "'.$arrField['eval']['efgStoreValues'].'"');
+                    foreach (array_intersect_key($arrOpts, $arrSel) as $k => $v) {
+                        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "intersect[$k]: $v");
+                    }
+                    EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'efgStoreValues "'.$arrField['eval']['efgStoreValues'].'"');
                     if ($arrField['eval']['efgStoreValues']) {
-                        $arrVals = array_keys(array_intersect_key($arrOpts, $arrSel)); 
+                        $arrVals = array_keys(array_intersect_key($arrOpts, $arrSel));
                         //$arrVals = array_values(array_intersect_key($arrOpts, $arrSel));
-                        foreach ($arrVals as $k=>$v) {EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__,"Keys arrVals[$k]: $v");}  
+                        foreach ($arrVals as $k => $v) {
+                            EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "Keys arrVals[$k]: $v");
+                        }
                     } else {
                         $arrVals = array_values(array_intersect_key($arrOpts, $arrSel));    // PBD das ist doh eigentlich anders
                         //$arrVals = array_keys(array_intersect_key($arrOpts, $arrSel));
-                        foreach ($arrVals as $k=>$v) {EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__,"Values arrVals[$k]: $v");} 
+                        foreach ($arrVals as $k => $v) {
+                            EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "Values arrVals[$k]: $v");
+                        }
                     }
                 }
 
                 if (\is_array($arrVals) && !$arrField['eval']['multiple']) {
                     $varValue = $arrVals[0];
-        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'varValue neu '.$varValue);
+                    EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'varValue neu '.$varValue);
                 } else {
                     $varValue = (\is_array($arrVals) && !empty($arrVals)) ? $arrVals : '';
-        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'varValue neu '.$varValue);
+                    EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'varValue neu '.$varValue);
                 }
             }
 
             if ('checkbox' === $arrField['inputType'] && !$arrField['eval']['multiple']) {
-        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'is a checkbox '.$varValue);
+                EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'is a checkbox '.$varValue);
                 if (\is_array($arrField['options'])) {
                     $arrVals = ($arrField['eval']['efgStoreValues'] ? array_keys($arrField['options']) : array_values($arrField['options']));
                 } else {
@@ -3870,11 +3879,11 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 2 this->varVal
         /** @var AttributeBagInterface $objSessionBag */
         $objSessionBag = \System::getContainer()->get('session')->getBag('contao_backend');
 
-   // Fix warnings and search panel in formdata driver #4 Fritz Michael Gschwantner
-/*
-        $new_records = $objSessionBag->get('new_records');
-        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'in session new_records this->strTable '.$this->strTable.' len new_records '.\count($new_records[$this->strTable]));
-*/
+        // Fix warnings and search panel in formdata driver #4 Fritz Michael Gschwantner
+        /*
+                $new_records = $objSessionBag->get('new_records');
+                EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'in session new_records this->strTable '.$this->strTable.' len new_records '.\count($new_records[$this->strTable]));
+        */
         $new_records = $objSessionBag->get('new_records') ?: [];
 
         if (isset($new_records[$this->strTable])) {
@@ -4223,7 +4232,7 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 2 this->varVal
                             $args_k = [];
 
                             foreach ($row_v as $option) {
-                                if(isset($GLOBALS['TL_DCA'][$table]['fields'][$v]['reference'][$option])) {
+                                if (isset($GLOBALS['TL_DCA'][$table]['fields'][$v]['reference'][$option])) {
                                     $args_k[] = \strlen($GLOBALS['TL_DCA'][$table]['fields'][$v]['reference'][$option]) ? $GLOBALS['TL_DCA'][$table]['fields'][$v]['reference'][$option] : $option;
                                 }
                             }
@@ -4631,11 +4640,11 @@ EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"efgLookupRadio 2 this->varVal
      */
     protected function limitMenu($blnOptional = false)
     {
-    // Fix warnings and search panel in formdata driver #4 Fritz Michael Gschwantner
-/*
-        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'this->procedure len '.\count($this->procedure).' this->value len '.\count($this->value));
-        if (\count($this->value) < 2) {
-*/
+        // Fix warnings and search panel in formdata driver #4 Fritz Michael Gschwantner
+        /*
+                EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'this->procedure len '.\count($this->procedure).' this->value len '.\count($this->value));
+                if (\count($this->value) < 2) {
+        */
         EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'this->procedure len '.\count($this->procedure).' this->value len '.\count($this->values));
         if (\count($this->values) < 2) {
             return false;

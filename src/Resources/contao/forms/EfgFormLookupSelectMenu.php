@@ -32,6 +32,7 @@ declare(strict_types=1);
  */
 
 namespace PBDKN\Efgco4\Resources\contao\forms;
+
 use PBDKN\Efgco4\Resources\contao\classes\EfgLog;
 
 /**
@@ -138,10 +139,10 @@ class EfgFormLookupSelectMenu extends \Widget
         $strClass = 'select';
         $strReferer = $this->getReferer();
         $arrLookupOptions = deserialize($this->arrConfiguration['efgLookupOptions']);
-        $strLookupTable='';
+        $strLookupTable = '';
         if (isset($arrLookupOptions['lookup_field'])) {
-           $strLookupTable = substr($arrLookupOptions['lookup_field'], 0, strpos($arrLookupOptions['lookup_field'], '.'));
-        } 
+            $strLookupTable = substr($arrLookupOptions['lookup_field'], 0, strpos($arrLookupOptions['lookup_field'], '.'));
+        }
         $blnSingleEvent = false;
 
         // if used as lookup on table tl_calendar_events and placed on events detail page
@@ -202,21 +203,21 @@ class EfgFormLookupSelectMenu extends \Widget
                     $strOptions).$this->addSubmit();
             }
         }
-/*
-$val=sprintf('<select name="%s" id="ctrl_%s" class="%s%s"%s>%s</select>',
-            $this->strName,
-            $this->strId,
-            $strClass,
-            (isset($this->strClass)&&\strlen($this->strClass) ? ' '.$this->strClass : ''),
-            $this->getAttributes(),
-            $strOptions).$this->addSubmit();
-EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'return val '.$val);
-*/            
+        /*
+        $val=sprintf('<select name="%s" id="ctrl_%s" class="%s%s"%s>%s</select>',
+                    $this->strName,
+                    $this->strId,
+                    $strClass,
+                    (isset($this->strClass)&&\strlen($this->strClass) ? ' '.$this->strClass : ''),
+                    $this->getAttributes(),
+                    $strOptions).$this->addSubmit();
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'return val '.$val);
+        */
         return sprintf('<select name="%s" id="ctrl_%s" class="%s%s"%s>%s</select>',
             $this->strName,
             $this->strId,
             $strClass,
-            (isset($this->strClass)&&\strlen($this->strClass) ? ' '.$this->strClass : ''),
+            (isset($this->strClass) && \strlen($this->strClass) ? ' '.$this->strClass : ''),
             $this->getAttributes(),
             $strOptions).$this->addSubmit();    // in strOptions sind die Option des Selects
     }

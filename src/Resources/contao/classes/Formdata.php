@@ -731,7 +731,6 @@ class Formdata extends \Contao\Frontend
                     break;
 
                 case 'efgImageSelect':
-
                     $strVal = '';
                     if (\is_array($varSubmitted)) {
                         $strVal = implode(($arrField['eval']['csv'] ?? '|'), $varSubmitted);
@@ -842,7 +841,6 @@ class Formdata extends \Contao\Frontend
                 case 'countryselect':
                 case 'fp_preSelectMenu':
                 case 'select':
-
                     if ($arrField['eval']['multiple']) {
                         $arrSel = [];
                         if (\strlen($varValue)) {
@@ -873,7 +871,6 @@ class Formdata extends \Contao\Frontend
                 case 'fileTree':
                 case 'upload':
                 case 'efgImageSelect':
-
                     $strVal = '';
                     if ($arrField['eval']['multiple']) {
                         $arrSel = [];
@@ -1042,7 +1039,6 @@ class Formdata extends \Contao\Frontend
                     break;
 
                 case 'efgImageSelect':
-
                     $strVal = '';
                     if (\is_string($varSubmitted) && \strlen($varSubmitted)) {
                         $strVal = $varSubmitted;
@@ -1265,7 +1261,6 @@ class Formdata extends \Contao\Frontend
      */
     public function prepareDatabaseValueForWidget($varValue = '', $arrField = false, $varFile = false)
     {
-
         if (!\is_array($arrField)) {
             return false;
         }
@@ -1351,7 +1346,6 @@ class Formdata extends \Contao\Frontend
                                 if (null !== $objFileModel) {
                                     $varVal[$key] = (TL_MODE === 'FE' ? $objFileModel->path : $objFileModel->uuid);
                                 }
-
                             }
                         } elseif (\is_string($varVal)) {
                             $objFileModel = null;
@@ -1365,7 +1359,6 @@ class Formdata extends \Contao\Frontend
                             if (null !== $objFileModel) {
                                 $varVal = (TL_MODE === 'FE' ? $objFileModel->path : $objFileModel->uuid);
                             }
-
                         }
                     }
                     break;
@@ -1452,7 +1445,7 @@ class Formdata extends \Contao\Frontend
         } elseif (TL_MODE === 'BE' && !empty($arrField['inputType'])) {
             $strType = $arrField['inputType'];
         }
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'TL_MODE '.TL_MODE. ' formfieldType '.$arrField['formfieldType'].' type '.$arrField['type'].' strType '.$strType);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'TL_MODE '.TL_MODE.' formfieldType '.$arrField['formfieldType'].' type '.$arrField['type'].' strType '.$strType);
 
         $arrOptions = [];
 
@@ -1462,9 +1455,11 @@ class Formdata extends \Contao\Frontend
             case 'efgLookupSelect':
                 // Get efgLookupOptions: array('lookup_field' => TABLENAME.FIELDNAME, 'lookup_val_field' => TABLENAME.FIELDNAME, 'lookup_where' => CONDITION, 'lookup_sort' => ORDER BY)
                 $arrLookupOptions = deserialize($arrField['efgLookupOptions']);
-                foreach ($arrLookupOptions as $k=>$v) {EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "arrLookupOptions[$k]: $v");}
+                foreach ($arrLookupOptions as $k => $v) {
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "arrLookupOptions[$k]: $v");
+                }
                 $strLookupField = $arrLookupOptions['lookup_field'];
-                $strLookupValField = ((isset($arrLookupOptions['lookup_val_field'])&&\strlen($arrLookupOptions['lookup_val_field']))) ? $arrLookupOptions['lookup_val_field'] : null;
+                $strLookupValField = ((isset($arrLookupOptions['lookup_val_field']) && \strlen($arrLookupOptions['lookup_val_field']))) ? $arrLookupOptions['lookup_val_field'] : null;
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strLookupValField '.$strLookupValField);
 
                 $strLookupWhere = \StringUtil::decodeEntities($arrLookupOptions['lookup_where']);
@@ -1475,7 +1470,7 @@ class Formdata extends \Contao\Frontend
                 $arrLookupField = explode('.', $strLookupField);
                 $sqlLookupTable = $arrLookupField[0];
                 $sqlLookupField = $arrLookupField[1];
-                $sqlLookupValField = (isset($strLookupValField)&&\strlen($strLookupValField)) ? substr($strLookupValField, strpos($strLookupValField, '.') + 1) : null;
+                $sqlLookupValField = (isset($strLookupValField) && \strlen($strLookupValField)) ? substr($strLookupValField, strpos($strLookupValField, '.') + 1) : null;
 
                 $sqlLookupIdField = 'id';
                 $sqlLookupWhere = (!empty($strLookupWhere) ? ' WHERE '.$strLookupWhere : '');
@@ -1816,16 +1811,16 @@ class Formdata extends \Contao\Frontend
 
         // Decode 'special chars', encoded by \Input::encodeSpecialChars (for example labels of checkbox options containing '(')
         $arrOptions = $this->decodeSpecialChars($arrOptions);
-/*
-        foreach ($arrOptions as $k=>$v) {
-            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"arrOptions[$k]: $v" );
-            if (is_array($v)) {
-                foreach ($v as $k1=>$v1) {
-                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"    v[$k1]: $v1" );
+        /*
+                foreach ($arrOptions as $k=>$v) {
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"arrOptions[$k]: $v" );
+                    if (is_array($v)) {
+                        foreach ($v as $k1=>$v1) {
+                            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"    v[$k1]: $v1" );
+                        }
+                    }
                 }
-            }
-        }
-*/
+        */
         return $arrOptions;
     }
 
@@ -2112,7 +2107,6 @@ class Formdata extends \Contao\Frontend
         $objMailProperties->messageHtmlTmpl = $messageHtmlTmpl;
         $objMailProperties->messageHtml = $messageHtml;
         $objMailProperties->attachments = $attachments;
-
 
         return $objMailProperties;
     }

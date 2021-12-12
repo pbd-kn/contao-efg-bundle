@@ -32,6 +32,7 @@ declare(strict_types=1);
  */
 
 namespace PBDKN\Efgco4\Resources\contao\forms;
+
 use PBDKN\Efgco4\Resources\contao\classes\EfgLog;
 
 /**
@@ -125,7 +126,9 @@ class EfgFormLookupCheckbox extends \Widget
         $mandatory = $this->mandatory;
         $options = $this->getPost($this->strName);
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'this->strName '.$this->strName.' options '.$options);
-        foreach($options as $k=>$v) {EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,"options[$k]: $v"); }
+        foreach ($options as $k => $v) {
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "options[$k]: $v");
+        }
         // Check if there is at least one value
         if ($mandatory && \is_array($options)) {
             foreach ($options as $option) {
@@ -187,24 +190,26 @@ class EfgFormLookupCheckbox extends \Widget
         foreach ($this->arrOptions as $i => $arrOption) {
             $checked = '';
             EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "this->arrOptions[$i]: $arrOption");
-            if(is_array($arrOption)){
-              foreach($arrOption as $k=>$v){EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "arrOption[$k]: $v");}
+            if (\is_array($arrOption)) {
+                foreach ($arrOption as $k => $v) {
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "arrOption[$k]: $v");
+                }
             }
 
-            if ((\is_array($this->varValue) && \in_array($arrOption['value'], $this->varValue, true) || $this->varValue === $arrOption['value']  || $this->varValue === $arrOption['label'])) {
+            if ((\is_array($this->varValue) && \in_array($arrOption['value'], $this->varValue, true) || $this->varValue === $arrOption['value'] || $this->varValue === $arrOption['label'])) {
                 $checked = ' checked="checked"';
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'checked set');
-      }
-/*  meiner Ansicht nach muss als Option das label genommen werden
-            $strOptions .= sprintf('<span><input type="checkbox" name="%s" id="opt_%s" class="checkbox" value="%s"%s%s <label for="opt_%s">%s</label></span>',
-                $this->strName.((\count($this->arrOptions) > 1) ? '[]' : ''),
-                $this->strId.'_'.$i,
-                $arrOption['value'],
-                $checked,
-                $this->strTagEnding,
-                $this->strId.'_'.$i,
-                $arrOption['label']);
-*/
+            }
+            /*  meiner Ansicht nach muss als Option das label genommen werden
+                        $strOptions .= sprintf('<span><input type="checkbox" name="%s" id="opt_%s" class="checkbox" value="%s"%s%s <label for="opt_%s">%s</label></span>',
+                            $this->strName.((\count($this->arrOptions) > 1) ? '[]' : ''),
+                            $this->strId.'_'.$i,
+                            $arrOption['value'],
+                            $checked,
+                            $this->strTagEnding,
+                            $this->strId.'_'.$i,
+                            $arrOption['label']);
+            */
             $strOptions .= sprintf('<span><input type="checkbox" name="%s" id="opt_%s" class="checkbox" value="%s"%s%s <label for="opt_%s">%s</label></span>',
                 $this->strName.((\count($this->arrOptions) > 1) ? '[]' : ''),
                 $this->strId.'_'.$i,
@@ -213,7 +218,6 @@ class EfgFormLookupCheckbox extends \Widget
                 $this->strTagEnding,
                 $this->strId.'_'.$i,
                 $arrOption['label']);
-
 
             // render as checked radio if used as lookup on tl_calendar_events and only one event available
             if ('tl_calendar_events' === $strLookupTable && $blnSingleEvent) {
@@ -230,7 +234,7 @@ class EfgFormLookupCheckbox extends \Widget
 
         return sprintf('<div id="ctrl_%s" class="checkbox_container%s">%s</div>',
             $this->strId,
-            (isset($this->strClass)&&\strlen($this->strClass) ? ' '.$this->strClass : ''),
+            (isset($this->strClass) && \strlen($this->strClass) ? ' '.$this->strClass : ''),
             $strOptions).$this->addSubmit();
     }
 }
