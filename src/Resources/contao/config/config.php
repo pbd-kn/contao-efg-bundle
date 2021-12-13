@@ -23,7 +23,9 @@ declare(strict_types=1);
  *  @copyright Peter Broghammer 2021-
  *
  *  Thomas Kuhn's Efg package has been completely converted to contao 4.9
+ *
  *  extended by insert_tag  {{efg_insert::formalias::aliasvalue::column(::format)}}
+ *  extended using sendto by selection for sending Mail to additional receipients
  *
  */
 
@@ -116,8 +118,8 @@ $GLOBALS['TL_HOOKS']['executePostActions'][] = ['PBDKN\Efgco4\Resources\contao\c
 $GLOBALS['TL_HOOKS']['replaceInsertTags'][] = ['PBDKN\Efgco4\Resources\contao\classes\EfgInsertTag', 'Efg_InsertTags'];
 
 // Hooks zum bearbeiten der Mails
-//$GLOBALS['TL_HOOKS']['processFormData'][] = array('PBDKN\Efgco4\Resources\contao\classes\efgMailHooks', 'processFormData');   // nur zum Test
-//$GLOBALS['TL_HOOKS']['compileFormFields'][] = array('PBDKN\Efgco4\Resources\contao\classes\efgMailHooks', 'compileFormFields');
-$GLOBALS['TL_HOOKS']['prepareFormData'][] = ['PBDKN\Efgco4\Resources\contao\classes\efgMailHooks', 'prepareFormData'];
+//$GLOBALS['TL_HOOKS']['processFormData'][] = array('PBDKN\Efgco4\Resources\contao\classes\EfgMailHooks', 'processFormData');   // nur zum Test
+//$GLOBALS['TL_HOOKS']['compileFormFields'][] = array('PBDKN\Efgco4\Resources\contao\classes\EfgMailHooks', 'compileFormFields');
+$GLOBALS['TL_HOOKS']['prepareFormData'][] = ['PBDKN\Efgco4\Resources\contao\classes\EfgMailHooks', 'prepareFormData'];
 
 // end config efg

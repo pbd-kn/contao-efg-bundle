@@ -23,7 +23,9 @@ declare(strict_types=1);
  *  @copyright Peter Broghammer 2021-
  *
  *  Thomas Kuhn's Efg package has been completely converted to contao 4.9
+ *
  *  extended by insert_tag  {{efg_insert::formalias::aliasvalue::column(::format)}}
+ *  extended using sendto by selection for sending Mail to additional receipients
  *
  */
 

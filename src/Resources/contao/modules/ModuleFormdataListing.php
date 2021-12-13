@@ -23,7 +23,9 @@ declare(strict_types=1);
  *  @copyright Peter Broghammer 2021-
  *
  *  Thomas Kuhn's Efg package has been completely converted to contao 4.9
+ *
  *  extended by insert_tag  {{efg_insert::formalias::aliasvalue::column(::format)}}
+ *  extended using sendto by selection for sending Mail to additional receipients
  *
  */
 
@@ -2696,7 +2698,7 @@ class ModuleFormdataListing extends \Module
             } else {
                 $arrListCond = preg_split('/([\s!=><]+)/', $strListCond, -1, PREG_SPLIT_DELIM_CAPTURE);
 
-                if (isset($this->arrDetailFields)&&\in_array($arrListCond[0], $this->arrDetailFields, true)) {
+                if (isset($this->arrDetailFields) && \in_array($arrListCond[0], $this->arrDetailFields, true)) {
                     $strCondField = $arrListCond[0];
                     unset($arrListCond[0]);
                     // handle numeric values
@@ -2705,7 +2707,7 @@ class ModuleFormdataListing extends \Module
                     } else {
                         $arrListWhere[] = '(SELECT value FROM tl_formdata_details WHERE ff_name="'.$strCondField.'" AND pid=f.id) '.implode('', $arrListCond);
                     }
-                } elseif (isset($this->arrBaseFields)&&\in_array($arrListCond[0], $this->arrBaseFields, true)) {
+                } elseif (isset($this->arrBaseFields) && \in_array($arrListCond[0], $this->arrBaseFields, true)) {
                     $strCondField = $arrListCond[0];
                     unset($arrListCond[0]);
                     $arrListWhere[] = $strCondField.implode('', $arrListCond);
