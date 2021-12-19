@@ -1549,7 +1549,8 @@ class Formdata extends \Contao\Frontend
                     $strReferer = $this->getReferer();
 
                     // If form is placed on an events detail page, automatically add restriction to event(s)
-                    if (\strlen(\Input::get('events'))) {
+                    $ev = \Input::get('events');
+                    if (isset($ev) && \strlen(\Input::get('events'))) {
                         if (is_numeric(\Input::get('events'))) {
                             $sqlLookupWhere .= (!empty($sqlLookupWhere) ? ' AND ' : '').' tl_calendar_events.id='.(int) (\Input::get('events')).' ';
                         } elseif (\is_string(\Input::get('events'))) {
@@ -1579,25 +1580,29 @@ class Formdata extends \Contao\Frontend
                     $arrEvents = [];
 
                     if ($objEvents->numRows) {
+                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'anz Events '.$objEvents->numRows);
+
                         while ($arrEvent = $objEvents->fetchAssoc()) {
                             $intDate = $arrEvent['startDate'];
                             $intStart = time();
                             $intEnd = time() + 60 * 60 * 24 * 178; // max. half year
                             $span = \Calendar::calculateSpan($arrEvent['startTime'], $arrEvent['endTime']);
                             $strTime = '';
-                            $strTime .= date($GLOBALS['TL_CONFIG']['dateFormat'], $arrEvent['startDate']);
+                            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "event datFormat ".$GLOBALS['TL_CONFIG']['dateFormat'].' startTime ' .$arrEvent['startDate']);
+
+                            $strTime .= date($GLOBALS['TL_CONFIG']['dateFormat'], (int)$arrEvent['startDate']);
 
                             if ($arrEvent['addTime']) {
                                 if ($span > 0) {
-                                    $strTime .= ' '.date($GLOBALS['TL_CONFIG']['timeFormat'], $arrEvent['startTime']).' - '.date($GLOBALS['TL_CONFIG']['dateFormat'], $arrEvent['endTime']).' '.date($GLOBALS['TL_CONFIG']['timeFormat'], $arrEvent['endTime']);
+                                    $strTime .= ' '.date($GLOBALS['TL_CONFIG']['timeFormat'], (int)$arrEvent['startTime']).' - '.date($GLOBALS['TL_CONFIG']['dateFormat'], (int)$arrEvent['endTime']).' '.date($GLOBALS['TL_CONFIG']['timeFormat'], (int)$arrEvent['endTime']);
                                 } elseif ($arrEvent['startTime'] === $arrEvent['endTime']) {
-                                    $strTime .= ' '.date($GLOBALS['TL_CONFIG']['timeFormat'], $arrEvent['startTime']);
+                                    $strTime .= ' '.date($GLOBALS['TL_CONFIG']['timeFormat'], (int)$arrEvent['startTime']);
                                 } else {
-                                    $strTime .= ' '.date($GLOBALS['TL_CONFIG']['timeFormat'], $arrEvent['startTime']).' - '.date($GLOBALS['TL_CONFIG']['timeFormat'], $arrEvent['endTime']);
+                                    $strTime .= ' '.date($GLOBALS['TL_CONFIG']['timeFormat'], (int)$arrEvent['startTime']).' - '.date($GLOBALS['TL_CONFIG']['timeFormat'], (int)$arrEvent['endTime']);
                                 }
                             } else {
                                 if ($span > 1) {
-                                    $strTime .= ' - '.date($GLOBALS['TL_CONFIG']['dateFormat'], $arrEvent['endTime']);
+                                    $strTime .= ' - '.date($GLOBALS['TL_CONFIG']['dateFormat'], (int)$arrEvent['endTime']);
                                 }
                             }
 
@@ -1633,7 +1638,7 @@ class Formdata extends \Contao\Frontend
                             if ($arrEvent['recurring']) {
                                 $count = 0;
                                 $arrRepeat = deserialize($arrEvent['repeatEach']);
-                                $blnSummer = date('I', $arrEvent['startTime']);
+                                $blnSummer = date('I', (int)$arrEvent['startTime']);
                                 $intEnd = time() + 60 * 60 * 24 * 178; // max. 1/2 Year
 
                                 while ($arrEvent['endTime'] < $intEnd) {
@@ -1655,15 +1660,15 @@ class Formdata extends \Contao\Frontend
 
                                     if ($arrEvent['startTime'] >= $intStart || $arrEvent['endTime'] <= $intEnd) {
                                         $strTime = '';
-                                        $strTime .= date($GLOBALS['TL_CONFIG']['dateFormat'], $arrEvent['startTime']);
+                                        $strTime .= date($GLOBALS['TL_CONFIG']['dateFormat'], (int)$arrEvent['startTime']);
 
                                         if ($arrEvent['addTime']) {
                                             if ($span > 0) {
-                                                $strTime .= ' '.date($GLOBALS['TL_CONFIG']['timeFormat'], $arrEvent['startTime']).' - '.date($GLOBALS['TL_CONFIG']['dateFormat'], $arrEvent['endTime']).' '.date($GLOBALS['TL_CONFIG']['timeFormat'], $arrEvent['endTime']);
+                                                $strTime .= ' '.date($GLOBALS['TL_CONFIG']['timeFormat'], (int)$arrEvent['startTime']).' - '.date($GLOBALS['TL_CONFIG']['dateFormat'], (int)$arrEvent['endTime']).' '.date($GLOBALS['TL_CONFIG']['timeFormat'], (int)$arrEvent['endTime']);
                                             } elseif ($arrEvent['startTime'] === $arrEvent['endTime']) {
-                                                $strTime .= ' '.date($GLOBALS['TL_CONFIG']['timeFormat'], $arrEvent['startTime']);
+                                                $strTime .= ' '.date($GLOBALS['TL_CONFIG']['timeFormat'], (int)$arrEvent['startTime']);
                                             } else {
-                                                $strTime .= ' '.date($GLOBALS['TL_CONFIG']['timeFormat'], $arrEvent['startTime']).' - '.date($GLOBALS['TL_CONFIG']['timeFormat'], $arrEvent['endTime']);
+                                                $strTime .= ' '.date($GLOBALS['TL_CONFIG']['timeFormat'], (int)$arrEvent['startTime']).' - '.date($GLOBALS['TL_CONFIG']['timeFormat'], (int)$arrEvent['endTime']);
                                             }
                                         }
 

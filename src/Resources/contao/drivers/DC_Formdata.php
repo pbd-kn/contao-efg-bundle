@@ -3731,6 +3731,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                 }
             }
         }
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'vor convertFiletree ');
 
         // Convert fileTree IDs or UUIDs to file paths
         if ('fileTree' === $arrField['inputType']) {
@@ -3760,6 +3761,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         }
 
         if ('cm_alternative' === $arrField['inputType']) {
+            EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'cm_alternative ');
             if (\is_array($arrField['options']) && isset($arrField['options'][$varValue])) {
                 $varValue = $arrField['options'][$varValue];
             }
@@ -3787,6 +3789,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         if ($arrField['eval']['multiple'] && isset($arrField['eval']['csv'])) {
             $varValue = implode($arrField['eval']['csv'], deserialize($varValue, true));
         }
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'vor trigger save callback ');
 
         // Trigger the save_callback
         if (\is_array($arrField['save_callback'])) {
@@ -3803,6 +3806,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         // Save the value if there was no error
         if (('' !== $varValue || !$arrField['eval']['doNotSaveEmpty']) && ($this->varValue !== $varValue || $arrField['eval']['alwaysSave'])) {
             // Set the correct empty value (see #6284, #6373)
+            EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'vor save the value ');
             if ('' === $varValue) {
                 $varValue = \Widget::getEmptyValueByFieldType($GLOBALS['TL_DCA'][$this->strTable]['fields'][$strTargetField]['sql']);
             }
@@ -3818,15 +3822,18 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                 foreach ($arrProcedures as $kP => $kV) {
                     if ('id=?' === $kV) {
                         $arrProcedures[$kP] = 'pid=?';
+                        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'arrProcedures['.$kp.']');
                     } elseif ('form=?' === $kV) {
                         $arrProcedures[$kP] = 'ff_name=?';
                         $arrValues[$kP] = $strTargetField;
+                        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'arrProcedures['.$kp.']:'. $arrValues[$kP]);
                     }
                 }
             }
             array_unshift($arrValues, $varValue);
 
             $sqlUpd = 'UPDATE '.$strTargetTable.' SET '.$strTargetField.'=? WHERE '.implode(' AND ', $arrProcedures);
+            //EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, '1. sqlUpd '.$sqlUpd);
             if ($blnDetailField) {
                 // if record does not exist insert an empty record
                 $objExist = \Database::getInstance()->prepare('SELECT id FROM tl_formdata_details WHERE pid=? AND ff_name=?')
@@ -3848,7 +3855,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
                 $sqlUpd = 'UPDATE '.$strTargetTable.' SET value=? WHERE '.implode(' AND ', $arrProcedures);
             }
-
+            EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, '2. sqlUpd '.$sqlUpd);
+            foreach ($arrValues as $k=>$v) {EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, "arrValues[$k]:$v");}
             $objUpdateStmt = \Database::getInstance()->prepare($sqlUpd)
                 ->execute($arrValues)
             ;

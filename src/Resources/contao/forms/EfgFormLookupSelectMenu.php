@@ -86,7 +86,7 @@ class EfgFormLookupSelectMenu extends \Widget
             case 'efgLookupOptions':
                 $this->import('Formdata');
                 $this->arrConfiguration['efgLookupOptions'] = $varValue;
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'prepareWidgetOptions strKey '.$strKey.' varValue '.$varValue);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'set strKey '.$strKey.' varValue '.$varValue);
                 $arrOptions = $this->Formdata->prepareWidgetOptions($this->arrConfiguration);
                 $this->arrOptions = $arrOptions;
                 break;
@@ -148,7 +148,8 @@ class EfgFormLookupSelectMenu extends \Widget
         $blnSingleEvent = false;
 
         // if used as lookup on table tl_calendar_events and placed on events detail page
-        if ('tl_calendar_events' === $strLookupTable && \strlen(\Input::get('events'))) {
+        $ev = \Input::get('events');
+        if ('tl_calendar_events' === $strLookupTable && isset($ev) && \strlen(\Input::get('events'))) {
             if (1 === \count($this->arrOptions)) {
                 $this->varValue = [$this->arrOptions[0]['value']];
                 $blnSingleEvent = true;
