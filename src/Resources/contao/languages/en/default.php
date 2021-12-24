@@ -33,3 +33,7 @@ declare(strict_types=1);
  * Miscellaneous
  */
 $GLOBALS['TL_LANG']['MSC']['efgTotalNumberOfItems'] = 'Number of items: %s';
+$GLOBALS['TL_LANG']['MSC']['efg']['feError']['date'] = 'Error date Plaese %s';
+$GLOBALS['TL_LANG']['MSC']['efg']['feError']['time'] = 'Error time Plaese %s';
+$GLOBALS['TL_LANG']['MSC']['efg']['feError']['datim'] = 'Error date/timedate Plaese %s';
+

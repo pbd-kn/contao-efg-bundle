@@ -462,7 +462,10 @@ class ModuleFormdataListing extends \Module
         $objHasteForm->addFieldsFromFormGenerator($objForm->id, function (&$strField, &$arrDca) {
             if (isset($this->objEditRecord->$strField)) {   // Wert für Feld vorhanden
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Wert in Form übernehmen strField '.$strField.' val '.$this->objEditRecord->$strField);
-                $arrDca['value'] = $this->objEditRecord->$strField;
+                $x=$this->formatValue($strField, $this->objEditRecord->$strField);
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'formatValue '.$x);
+                //$arrDca['value'] = $this->objEditRecord->$strField;
+                $arrDca['value'] = $x;
             }
 
             return true; // you must return true otherwise the field will be skipped
@@ -477,7 +480,7 @@ class ModuleFormdataListing extends \Module
 //              foreach ($v as $k1=>$v1) {EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "$k v[$k1]: $v1");}
                   $val = $v[0];
               }
-
+              $val=$this->reFormatValue($k, $val);
               $resUp = \Database::getInstance()->prepare('UPDATE tl_formdata_details SET `value`=? where `ff_name`=? AND pid =?')->execute($val, $k, $this->intRecordId);
               EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'query '.'UPDATE tl_formdata_details SET `value`=? where `ff_name`=? AND pid =?'.$val.','.$k.','.$this->intRecordId.' resUp affectedRows '.$resUp->affectedRows);
           }
@@ -491,6 +494,59 @@ class ModuleFormdataListing extends \Module
         return $formResult;
     }
 
+    /**
+     * Format a value.
+     *
+     * @param mixed
+     */
+    public function reFormatValue($k, $value)
+    {
+        global $objPage;
+        $res = $value;
+        $rgxp = '';
+        if ($GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['eval']['rgxp']) {
+            $rgxp = $GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['eval']['rgxp'];
+        } else {
+            $rgxp = $this->arrFF[$k]['rgxp'];
+        }
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,'rgxp '.$rgxp.' k '.$k.' value '.$value);
+        if ($value && 'date' === $rgxp) {
+            $format = !empty($GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['eval']['dateFormat']) ? $GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['eval']['dateFormat'] : $objPage->dateFormat;
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,'format '.$format);
+            $date = \DateTime::createFromFormat($format, $value);
+            if (false === $date) { 
+                throw new \Exception(sprintf($GLOBALS['TL_LANG']['MSC']['efg']['feError']['date'], $format));
+            } else {
+                $res= $date->getTimestamp();
+            }
+        }
+
+        // Time
+        elseif ($value && 'time' === $rgxp) {
+            $format = $objPage->timeFormat;
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,'format '.$format);
+            $time = \DateTime::createFromFormat($format, $value);
+            if (false === $time) {
+                throw new \Exception(sprintf($GLOBALS['TL_LANG']['MSC']['efg']['feError']['time'], $format));
+            } else {
+                $res= $time->getTimestamp();
+            }
+        }
+
+        // Date and time
+        elseif ($value && 'datim' === $rgxp) {
+            $format = $objPage->datimFormat;
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,'format '.$format);
+            $date = \DateTime::createFromFormat($format, $value);
+            if (false === $date) {
+                throw new \Exception(sprintf($GLOBALS['TL_LANG']['MSC']['efg']['feError']['datim'], $format));
+            } else {
+                $res= $date->getTimestamp();
+            }
+        }
+        return $res;
+
+    }
     /**
      * Format a value.
      *

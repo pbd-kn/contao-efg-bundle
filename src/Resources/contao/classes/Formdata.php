@@ -1588,9 +1588,9 @@ class Formdata extends \Contao\Frontend
                             $intEnd = time() + 60 * 60 * 24 * 178; // max. half year
                             $span = \Calendar::calculateSpan($arrEvent['startTime'], $arrEvent['endTime']);
                             $strTime = '';
-                            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "event datFormat ".$GLOBALS['TL_CONFIG']['dateFormat'].' startTime ' .$arrEvent['startDate']);
 
                             $strTime .= date($GLOBALS['TL_CONFIG']['dateFormat'], (int)$arrEvent['startDate']);
+                            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'event datFormat '.$GLOBALS['TL_CONFIG']['dateFormat'].' startTime '.$arrEvent['startDate']);
 
                             if ($arrEvent['addTime']) {
                                 if ($span > 0) {
@@ -1605,9 +1605,11 @@ class Formdata extends \Contao\Frontend
                                     $strTime .= ' - '.date($GLOBALS['TL_CONFIG']['dateFormat'], (int)$arrEvent['endTime']);
                                 }
                             }
+                            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strime '.$strTime);
 
                             if ($sqlLookupValField) {
                                 // $arrEvents[$arrEvent[$sqlLookupValField].'@'.$strTime] = $arrEvent[$arrLookupField[1]] . (strlen($strTime) ? ', ' . $strTime : '');
+                                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'sqlLookupValfield count'.\count($arrSortKeys));
                                 if (\count($arrSortKeys) >= 2) {
                                     $arrEvents[$arrEvent[$arrSortKeys[0]['field']]][$arrEvent[$arrSortKeys[1]['field']]][] = [
                                         'value' => $arrEvent[$sqlLookupValField].'@'.$strTime,
@@ -1621,6 +1623,7 @@ class Formdata extends \Contao\Frontend
                                 }
                             } else {
                                 // $arrEvents[$arrEvent['id'].'@'.$strTime] = $arrEvent[$arrLookupField[1]] . (strlen($strTime) ? ', ' . $strTime : '');
+                                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'NO sqlLookupValfield count'.\count($arrSortKeys));
                                 if (\count($arrSortKeys) >= 2) {
                                     $arrEvents[$arrEvent[$arrSortKeys[0]['field']]][$arrEvent[$arrSortKeys[1]['field']]][] = [
                                         'value' => $arrEvent[$sqlLookupValField].'@'.$strTime,
@@ -1705,12 +1708,14 @@ class Formdata extends \Contao\Frontend
                         } else {
                             ksort($arrEvents);
                         }
+                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'set arrOptions');
 
                         // Set options
                         foreach ($arrEvents as $k1 => $arr1) {
                             foreach ($arr1 as $k2 => $arr2) {
                                 foreach ($arr2 as $k3 => $arr3) {
                                     $arrOptions[] = $arr3;
+                                    foreach ($arr3 as $k1=>$v1) {EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "setting arr3[$k1]:$v1");}
                                 }
                             }
                         }
@@ -1726,7 +1731,10 @@ class Formdata extends \Contao\Frontend
                             }
                         }
                     }
-
+                    foreach ($arrOptions as $k=>$v) {
+                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "arrOptions[$k]");
+                        foreach ($v as $k1=>$v1) {EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "  arr[$k1]:$v1");}
+                    }
                     return $arrOptions;
                 }
 

@@ -33,3 +33,6 @@ declare(strict_types=1);
  * Miscellaneous
  */
 $GLOBALS['TL_LANG']['MSC']['efgTotalNumberOfItems'] = 'Anzahl Einträge: %s';
+$GLOBALS['TL_LANG']['MSC']['efg']['feError']['date'] = 'Datum fehlerhaft. Bitte eingeben %s';
+$GLOBALS['TL_LANG']['MSC']['efg']['feError']['time'] = 'Uhrzeit fehlerhaft. Bitte eingeben %s';
+$GLOBALS['TL_LANG']['MSC']['efg']['feError']['datim'] = 'Datum/Uhrzeit fehlerhaft. Bitte eingeben %s';

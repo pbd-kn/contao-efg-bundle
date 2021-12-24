@@ -26,7 +26,7 @@
 
 
 // This file is created when saving a form in form generator
-// last created on 2021-12-19 15:52:16
+// last created on 2021-12-23 17:21:20
 
 define('debsmall',1);
 define('debmedium',2+debsmall);
@@ -70,6 +70,12 @@ $GLOBALS['BE_MOD']['formdata']['feedback'] = array
 
 // following are used for the form dependent modules
 $GLOBALS['BE_MOD']['formdata']['fd_selctdb'] = array
+(
+	'tables'     => array('tl_formdata', 'tl_formdata_details'),
+	'import'     => array('FormdataBackend', 'importCsv'),
+	'icon'       => 'bundles/contaoefgco4/icons/formdata_all.gif',
+    'stylesheet' => 'bundles/contaoefgco4/css/style.css');
+$GLOBALS['BE_MOD']['formdata']['fd_date-and-time'] = array
 (
 	'tables'     => array('tl_formdata', 'tl_formdata_details'),
 	'import'     => array('FormdataBackend', 'importCsv'),

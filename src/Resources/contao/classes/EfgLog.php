@@ -57,7 +57,7 @@ class EfgLog
                         '00001'=>'emailmedium' = 16 (24)
                         '000001'=>'emailfull' =32 (56)
     */
-    public static function setefgDebugmode($key): void
+    public static function setEfgDebugmode($key): void
     {
         if (!isset($key)) {
             $key = 'form';
