@@ -59,6 +59,7 @@ class EfgLog
     */
     public static function setEfgDebugmode($key): void
     {
+//\System::log("PBD EfgwriteLog key '" . $key."'", __METHOD__, TL_GENERAL);
         if (!isset($key)) {
             $key = 'form';
         }

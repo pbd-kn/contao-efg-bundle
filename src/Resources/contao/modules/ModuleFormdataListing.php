@@ -451,13 +451,21 @@ class ModuleFormdataListing extends \Module
      */
     public function generateEditForm($objForm, $objRecord)
     {
+        global $objPage;
+        EfgLog::setEfgDebugmode('form');
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, ' ');
+
         if (TL_MODE === 'BE') {
             return '';
         }
+
         $this->objEditRecord = $objRecord;            // zugehöriger Datensatz class Contao\Database\Result für haste callbacks
         $objHasteForm = new \Haste\Form\Form('efg-bundle', 'POST', function ($objHaste) {
             return \Input::post('FORM_SUBMIT') === $objHaste->getFormId();
         });
+        //
+        $objHasteForm->setFormActionFromPageId($objPage->id);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'page id '.$objPage->id);
         // Callback zum darstellen der aktuellen Werte
         $objHasteForm->addFieldsFromFormGenerator($objForm->id, function (&$strField, &$arrDca) {
             if (isset($this->objEditRecord->$strField)) {   // Wert für Feld vorhanden
@@ -495,8 +503,8 @@ class ModuleFormdataListing extends \Module
     }
 
     /**
-     * Format a value.
-     *
+     * reFormat a value.
+     * actuel date and time
      * @param mixed
      */
     public function reFormatValue($k, $value)
@@ -545,7 +553,6 @@ class ModuleFormdataListing extends \Module
             }
         }
         return $res;
-
     }
     /**
      * Format a value.
@@ -2834,3 +2841,4 @@ class ModuleFormdataListing extends \Module
         return $arrRet;
     }
 }
+
