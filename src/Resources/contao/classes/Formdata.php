@@ -2447,18 +2447,18 @@ class Formdata extends \Contao\Frontend
 
                 $varValue = \Input::post('value');
                 $strKey = 'fileTree';
-//                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "reloadEfgImportSource intId $intId strField $strField varValue $varValue");
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "reloadEfgImportSource intId $intId strField $strField varValue $varValue");
 
                 // Convert the selected values
                 if ('' !== $varValue) {
                     $varValue = explode("\t", $varValue);
-//                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "reloadEfgImportSource nach trim varValue $varValue");
 
                     // Automatically add resources to the DBAFS
                     if ('fileTree' === $strKey) {
                         foreach ($varValue as $k => $v) {
+                            $v=urldecode($v);
+                            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "urldecode $v");
                             $varValue[$k] = \Dbafs::addResource($v)->uuid;
-//                            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "reloadEfgImportSource nach set uuid von $v uuid ".$varValue[$k]->uuid);
                         }
                     }
 
