@@ -1875,9 +1875,10 @@ class Formdata extends \Contao\Frontend
                 $messageHtml = $fileTemplate->getContent();
             }
         }
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Prepare insert tags to handle separate from condition tags');
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Prepare insert tags to handle separate from condition tags ');
 
         // Prepare insert tags to handle separate from 'condition tags'
+        // aus {{form::name}}  wird __BRCL__form::name__BRCR__ 
         if (!empty($messageText)) {
             $messageText = preg_replace(['/\{\{/', '/\}\}/'], ['__BRCL__', '__BRCR__'], $messageText);
         }
@@ -2064,7 +2065,10 @@ class Formdata extends \Contao\Frontend
         }
 
         // Replace standard insert tags and eval condition tags
+        // aus __BRCL__form::name__BRCR__ wird wieder __BRCL__form::name__BRCR__ 
+        
         if (!empty($messageText)) {
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'messageText da');
             $messageText = preg_replace(['/__BRCL__/', '/__BRCR__/'], ['{{', '}}'], $messageText);
             $messageText = $this->replaceInsertTags($messageText, false);
             if ($blnEvalMessageText) {
@@ -2074,6 +2078,7 @@ class Formdata extends \Contao\Frontend
             $messageText = html_entity_decode($messageText, ENT_QUOTES, $GLOBALS['TL_CONFIG']['characterSet']);
         }
         if (!empty($messageHtml)) {
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'messageHtml da');
             $messageHtml = preg_replace(['/__BRCL__/', '/__BRCR__/'], ['{{', '}}'], $messageHtml);
             $messageHtml = $this->replaceInsertTags($messageHtml, false);
             if ($blnEvalMessageHtml) {
@@ -2240,15 +2245,20 @@ class Formdata extends \Contao\Frontend
         if (!\strlen($strBuffer)) {
             return;
         }
-
+        $strBuffer=$this->decodeSpecialChars($strBuffer);        // Sonderzeichen wie &#34; 
         $strReturn = str_replace('?><br />', '?>', $strBuffer);
 
         // Eval the code
         ob_start();
-        $blnEval = eval('?>'.$strReturn);
+        try {                             // irgendwie funktioniert das nicht eval fuehrt direkt zur exception 
+        $blnEval = @eval('?>'.$strReturn);
         $strReturn = ob_get_contents();
+        }
+        catch(Exception $e) {
+           echo 'Message: ' .$e->getMessage();
+            throw new \Exception("!!! Error eval() in Formdata::evalConditionTags ($strReturn)");
+        }
         ob_end_clean();
-
         // Throw an exception if there is an eval() error
         if (false === $blnEval) {
             throw new \Exception("Error eval() in Formdata::evalConditionTags ($strReturn)");
@@ -2499,9 +2509,9 @@ class Formdata extends \Contao\Frontend
 
             return $varValue;
         }
-
-        $arrSearch = ['&#35;', '&#60;', '&#62;', '&#40;', '&#41;', '&#92;', '&#61;'];
-        $arrReplace = ['#', '<', '>', '(', ')', '\\', '='];
+        // ', ", = hinzugefuegt
+        $arrSearch = ['&#35;', '&#60;', '&#62;', '&#40;', '&#41;', '&#92;', '&#61;','&#39;','&#34;'];
+        $arrReplace = ['#', '<', '>', '(', ')', '\\', '=','\'','"'];
 
         return str_replace($arrSearch, $arrReplace, $varValue);
     }

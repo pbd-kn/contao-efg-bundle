@@ -671,6 +671,7 @@ class FormdataProcessor extends \Contao\Frontend
             if (!empty($arrMatch)) {
                 for ($m = 0; $m < \count($arrMatch); ++$m) {
                     $strTemp = $arrMatch[$m];
+                    // aus {{form::name}}  wird __BRCL__form::name__BRCR__ 
                     $strTemp = preg_replace(['/\{\{/', '/\}\}/'], ['__BRCL__', '__BRCR__'], $strTemp);
                     $blnEval = $this->Formdata->replaceConditionTags($strTemp);
 
