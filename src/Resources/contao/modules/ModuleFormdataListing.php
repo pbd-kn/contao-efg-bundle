@@ -464,8 +464,6 @@ class ModuleFormdataListing extends \Module
             return \Input::post('FORM_SUBMIT') === $objHaste->getFormId();
         });
         //
-        $objHasteForm->setFormActionFromPageId($objPage->id);
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'page id '.$objPage->id);
         // Callback zum darstellen der aktuellen Werte
         $objHasteForm->addFieldsFromFormGenerator($objForm->id, function (&$strField, &$arrDca) {
             if (isset($this->objEditRecord->$strField)) {   // Wert für Feld vorhanden
@@ -480,6 +478,7 @@ class ModuleFormdataListing extends \Module
         });
         if ($objHasteForm->validate()) {   // validate() also checks whether the form has been submitted
           $resData = $objHasteForm->fetchAll(); // Get all the submitted and parsed data (only works with POST):
+          EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'validate resData len '.count($resData));
           foreach ($resData as $k => $v) {
               $val = $v;
 
