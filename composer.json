@@ -4,6 +4,7 @@
     "description": "Portierung EFG nach Contao 4",
     "homepage": "https://contao.org",
     "license": "LGPL-3.0-or-later",
+    "readme": "./README.md",
     "authors": [
         {
             "name": "Leo Feyer",
