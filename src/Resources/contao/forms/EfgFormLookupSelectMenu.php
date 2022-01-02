@@ -86,7 +86,7 @@ class EfgFormLookupSelectMenu extends \Widget
             case 'efgLookupOptions':
                 $this->import('Formdata');
                 $this->arrConfiguration['efgLookupOptions'] = $varValue;
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'set strKey '.$strKey.' varValue '.$varValue);
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'set strKey '.$strKey.' varValue '.$varValue,' len arrConfigurtion ',count($this->arrConfiguration));
                 $arrOptions = $this->Formdata->prepareWidgetOptions($this->arrConfiguration);
                 $this->arrOptions = $arrOptions;
                 break;

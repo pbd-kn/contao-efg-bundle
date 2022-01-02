@@ -645,6 +645,7 @@ class Formdata extends \Contao\Frontend
         $strVal = '';
 
         if (\in_array($strType, $this->arrFFstorable, true)) {
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strType '.$strType);
             switch ($strType) {
                 case 'efgLookupCheckbox':
                 case 'checkbox':
@@ -802,10 +803,10 @@ class Formdata extends \Contao\Frontend
             } else {
                 $strVal = \StringUtil::decodeEntities($strVal);
             }
-
+            
             return $strVal;
         }
-
+        
         return \is_array($varSubmitted) ? serialize($varSubmitted) : $varSubmitted;
     }
 

@@ -278,6 +278,7 @@ class FormdataProcessor extends \Contao\Frontend
                     }
 
                     $strVal = $this->Formdata->preparePostValueForDatabase($arrSubmitted[$k], $arrField, $arrFiles[$k]);
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strVal '.$strVal);
 
                     // Special treatment for type upload
                     // Keep old file on frontend editing, if no new file has been uploaded

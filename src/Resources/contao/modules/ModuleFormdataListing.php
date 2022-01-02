@@ -1185,6 +1185,7 @@ class ModuleFormdataListing extends \Module
         }
 
         $objDataStmt = \Database::getInstance()->prepare($strQuery);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strQuery '.$strQuery);
 
         // Limit
         if (!$blnExport) {
@@ -1242,6 +1243,7 @@ class ModuleFormdataListing extends \Module
         ++$intRowCounter;
 
         $ignoreFields = ['id', 'pid'];
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Prepare Data arrays blnExport '.$blnExport);
 
         // THEAD
         if (!$blnExport) {
@@ -1254,6 +1256,7 @@ class ModuleFormdataListing extends \Module
                 $class = '';
                 $sort = 'asc';
                 $strField = (isset($GLOBALS['TL_DCA'][$this->list_table]['fields'][$arrFields[$i]]['label'][0]) && \strlen($label = $GLOBALS['TL_DCA'][$this->list_table]['fields'][$arrFields[$i]]['label'][0])) ? $label : $arrFields[$i];
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strField '.$strField);
 
                 if (\Input::get('order_by') === $arrFields[$i]) {
                     $sort = ('asc' === \Input::get('sort')) ? 'desc' : 'asc';
@@ -1357,6 +1360,7 @@ class ModuleFormdataListing extends \Module
             // TBODY
             for ($i = 0; $i < \count($arrRows); ++$i) {
                 $class = 'row_'.$i.((0 === $i) ? ' row_first' : '').((($i + 1) === \count($arrRows)) ? ' row_last' : '').((($i % 2) === 0) ? ' even' : ' odd');
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'set class '.$class);
 
                 // check edit access
                 $blnEditAllowed = false;
@@ -1408,6 +1412,7 @@ class ModuleFormdataListing extends \Module
                     if (\in_array($k, $ignoreFields, true) || 'password' === $GLOBALS['TL_DCA'][$this->list_table]['fields'][$k]['inputType']) {
                         continue;
                     }
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "arrListFields[$intKey]: $strVal v: $v");
 
                     $strLinkDetails = '';
                     if (\strlen($arrRows[$i]['alias']) && !$GLOBALS['TL_CONFIG']['disableAlias']) {
