@@ -1,4 +1,4 @@
-<?php if (!$this->tableless): ?>
+<?php if (null !== $this->tableless&&!$this->tableless): ?>
   <tr class="<?= $this->rowClass ?>">
     <td class="col_0 col_first"><?= $this->generateLabel() ?></td>
     <td class="col_1 col_last"><?= $this->generateWithError() ?></td>

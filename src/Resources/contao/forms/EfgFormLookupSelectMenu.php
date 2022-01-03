@@ -179,7 +179,7 @@ class EfgFormLookupSelectMenu extends \Widget
 
             if ((\is_array($this->varValue) && \in_array($arrOption['value'], $this->varValue, true) || $this->varValue === $arrOption['value'] || $this->varValue === $arrOption['label'])) {
                 $selected = ' selected="selected"';
-//            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'selected set');
+//                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'selected set');
             }
 
             $strOptions .= sprintf('<option value="%s"%s>%s</option>',
@@ -225,3 +225,5 @@ class EfgFormLookupSelectMenu extends \Widget
             $strOptions).$this->addSubmit();    // in strOptions sind die Option des Selects
     }
 }
+
+class_alias(EfgFormLookupSelectMenu::class, 'EfgFormLookupSelectMenu');
