@@ -3179,7 +3179,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         $sqlWhere = '';
 
         // Set search value from session
-        $strSessionKey = (4 === $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode']) ? $this->strTable.'_'.CURRENT_ID : (\strlen($this->strFormKey)) ? $this->strFormKey : $this->strTable;
+        // PBD invalid in php8 $strSessionKey = (4 === $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode']) ? $this->strTable.'_'.CURRENT_ID : (\strlen($this->strFormKey)) ? $this->strFormKey : $this->strTable;
+        $strSessionKey = ((4 === $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode']) ? $this->strTable.'_'.CURRENT_ID : (\strlen($this->strFormKey)) ) ? $this->strFormKey : $this->strTable;
         if (isset($session['search'][$strSessionKey]['value']) && \strlen($session['search'][$strSessionKey]['value'])) {
             $sqlSearchField = $session['search'][$strSessionKey]['field'];
             if (\in_array($sqlSearchField, $this->arrDetailFields, true)) {
@@ -4495,7 +4496,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
             return '';
         }
 
-        $strSessionKey = (4 === $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode']) ? $this->strTable.'_'.CURRENT_ID : (\strlen($this->strFormKey)) ? $this->strFormKey : $this->strTable;
+        // PBD invalid in php8 $strSessionKey = (4 === $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode']) ? $this->strTable.'_'.CURRENT_ID : (\strlen($this->strFormKey)) ? $this->strFormKey : $this->strTable;
+        $strSessionKey = ((4 === $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode']) ? $this->strTable.'_'.CURRENT_ID : (\strlen($this->strFormKey)) ) ? $this->strFormKey : $this->strTable;
 
         // Store search value in the current session
         if ('tl_filters' === \Input::post('FORM_SUBMIT')) {
@@ -4591,7 +4593,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         $orderBy = $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['fields'];
         $firstOrderBy = preg_replace('/\s+.*$/', '', $orderBy[0]);
 
-        $strSessionKey = (4 === $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode']) ? $this->strTable.'_'.CURRENT_ID : (\strlen($this->strFormKey)) ? $this->strFormKey : $this->strTable;
+        // PBD invalid in php8 $strSessionKey = (4 === $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode']) ? $this->strTable.'_'.CURRENT_ID : (\strlen($this->strFormKey)) ? $this->strFormKey : $this->strTable;
+        $strSessionKey = ((4 === $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode']) ? $this->strTable.'_'.CURRENT_ID : (\strlen($this->strFormKey)) ) ? $this->strFormKey : $this->strTable;
 
         // Add PID to order fields
         if (3 === $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] && \Database::getInstance()->fieldExists('pid', $this->strTable)) {
@@ -4660,7 +4663,9 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
             return false;
         }
         $session = $this->Session->getData();
-        $filter = (4 === $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode']) ? $this->strTable.'_'.CURRENT_ID : (\strlen($this->strFormKey)) ? $this->strFormKey : $this->strTable;
+        // PBD invalid in php8 $filter = (4 === $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode']) ? $this->strTable.'_'.CURRENT_ID : (\strlen($this->strFormKey)) ? $this->strFormKey : $this->strTable;
+        $filter = ((4 === $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode']) ? $this->strTable.'_'.CURRENT_ID : (\strlen($this->strFormKey)) ) ? $this->strFormKey : $this->strTable;
+
         $fields = '';
 
         if (\is_array($this->procedure)) {
@@ -4787,7 +4792,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         $this->bid = 'tl_buttons_a';
         $sortingFields = [];
         $session = $this->Session->getData();
-        $filter = (4 === $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode']) ? $this->strTable.'_'.CURRENT_ID : (\strlen($this->strFormKey)) ? $this->strFormKey : $this->strTable;
+        // PBD invalid in php8 $filter = (4 === $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode']) ? $this->strTable.'_'.CURRENT_ID : (\strlen($this->strFormKey)) ? $this->strFormKey : $this->strTable;
+        $filter = ((4 === $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode']) ? $this->strTable.'_'.CURRENT_ID : (\strlen($this->strFormKey)) ) ? $this->strFormKey : $this->strTable;
 
         // Get the sorting fields
         foreach ($GLOBALS['TL_DCA'][$this->strTable]['fields'] as $k => $v) {
