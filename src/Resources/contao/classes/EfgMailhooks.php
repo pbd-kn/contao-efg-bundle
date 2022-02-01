@@ -60,6 +60,7 @@ class EfgMailhooks // Make sure this class name matches the first item in the ab
         $sendFormattedMail = $objForm->__get('sendFormattedMail');
         $sendViaEmail = $objForm->__get('sendViaEmail');
         $useSendto = $objForm->__get('useSendto');
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'useSendto: '.$useSendto);
         $defaultrecipient = '';
         if ($sendViaEmail) {
             $defaultrecipient = $objForm->__get('recipient');
