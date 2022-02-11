@@ -1150,10 +1150,10 @@ class ModuleFormdataListing extends \Module
                     if ($this->arrDetailFields) {
                         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'arrDetailFields da len arrDetailFields '.\count($this->arrDetailFields));
                     } else {
-                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Keine arrDetailFields '.\count($this->arrDetailFields).' evtl. muss Formular neu gespeichert werden');
+                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Keine arrDetailFields '.' evtl. muss Formular neu gespeichert werden');
                     }
                     if (!\in_array($arrMatch[1][0], $arrListFields, true)) {
-                        if (\in_array($arrMatch[1][0], $this->arrDetailFields, true)) {
+                        if ($this->arrDetailFields && \in_array($arrMatch[1][0], $this->arrDetailFields, true)) {
                             if (\in_array($GLOBALS['TL_DCA']['tl_formdata']['fields'][$arrMatch[1][0]]['eval']['rgxp'], $arrSortSigned, true)) {
                                 $arrSort[] = preg_replace('/\b'.$arrMatch[1][0].'\b/i', 'CAST((SELECT value FROM tl_formdata_details WHERE ff_name="'.$arrMatch[1][0].'" AND pid=f.id) AS DECIMAL(20,5))', $strSort);
                             } else {
