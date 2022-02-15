@@ -26,7 +26,7 @@
 
 
 // This file is created when saving a form in form generator
-// last created on 2022-01-02 19:05:00
+// last created on 2022-02-13 16:42:37
 
 define('debsmall',1);
 define('debmedium',2+debsmall);
@@ -127,6 +127,7 @@ $GLOBALS['TL_HOOKS']['listComments'][] = array('PBDKN\Efgco4\Resources\classes\c
 $GLOBALS['TL_HOOKS']['getSearchablePages'][] = array('PBDKN\Efgco4\Resources\contao\classes\Formdata', 'getSearchablePages');
 $GLOBALS['TL_HOOKS']['executePostActions'][] = array('PBDKN\Efgco4\Resources\contao\classes\Formdata', 'executePostActions');
 $GLOBALS['TL_HOOKS']['replaceInsertTags'][] = array('PBDKN\Efgco4\Resources\contao\classes\EfgInsertTag', 'Efg_InsertTags');
+$GLOBALS['TL_HOOKS']['prepareFormData'][] = array('PBDKN\Efgco4\Resources\contao\classes\EfgMailhooks', 'prepareFormData');
 
 
 // end config efg
