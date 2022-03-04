@@ -188,7 +188,7 @@ if (\is_array($GLOBALS['TL_DCA']['tl_form_field']['palettes'])) {
 }
 
 // Add field types to type options
-if (\is_array($GLOBALS['TL_DCA']['tl_form_field']['fields']['type']['options'])) {
+if (isset($GLOBALS['TL_DCA']['tl_form_field']['fields']['type']['options'])&&\is_array($GLOBALS['TL_DCA']['tl_form_field']['fields']['type']['options'])) {
     // Field type efgLookupSelect
     array_insert($GLOBALS['TL_DCA']['tl_form_field']['fields']['type']['options'], (array_search('select', $GLOBALS['TL_DCA']['tl_form_field']['fields']['type']['options'], true) + 1),
         'efgLookupSelect'
