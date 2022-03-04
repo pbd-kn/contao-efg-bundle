@@ -4628,7 +4628,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                 $options_label = $options_label[0];
             }
 
-            $options_sorter[$options_label] = '  <option value="'.specialchars($field).'"'.((isset($session['sorting'][$strSessionKey]) && !\strlen($session['sorting'][$strSessionKey]) && $field === $firstOrderBy || $field === str_replace(' DESC', '', $session['sorting'][$strSessionKey])) ? ' selected="selected"' : '').'>'.$options_label.'</option>';
+            $options_sorter[$options_label] = '  <option value="'.specialchars($field).'"'.((isset($session['sorting'][$strSessionKey]) && !\strlen($session['sorting'][$strSessionKey]) && $field === $firstOrderBy || $field === str_replace(' DESC', '',(string) $session['sorting'][$strSessionKey])) ? ' selected="selected"' : '').'>'.$options_label.'</option>';
         }
 
         // Sort by option values
