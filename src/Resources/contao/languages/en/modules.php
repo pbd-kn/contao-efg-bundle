@@ -24,7 +24,7 @@
 
 
 // This file is created when saving a form in form generator
-// last created on 2022-03-01 13:49:39
+// last created on 2022-03-04 16:48:05
 
 
 /**
@@ -37,6 +37,7 @@ $GLOBALS['TL_LANG']['MOD']['feedback'] = array('All results', 'Stored data from 
 $GLOBALS['TL_LANG']['MOD']['fd_selctdb'] = array('selctDB', 'Stored data from form "selctDB".');
 $GLOBALS['TL_LANG']['MOD']['fd_date-and-time'] = array('Date and Time', 'Stored data from form "Date and Time".');
 $GLOBALS['TL_LANG']['MOD']['fd_selectnormal'] = array('selectNormal', 'Stored data from form "selectNormal".');
+$GLOBALS['TL_LANG']['MOD']['fd_undefined-array-key-fehlersuche'] = array('Undefined array key fehlersuche', 'Stored data from form "Undefined array key fehlersuche".');
 
 /**
  * Front end modules

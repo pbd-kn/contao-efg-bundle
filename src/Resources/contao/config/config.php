@@ -26,7 +26,7 @@
 
 
 // This file is created when saving a form in form generator
-// last created on 2022-03-01 13:49:39
+// last created on 2022-03-04 16:48:05
 
 define('debsmall',1);
 define('debmedium',2+debsmall);
@@ -82,6 +82,12 @@ $GLOBALS['BE_MOD']['formdata']['fd_date-and-time'] = array
 	'icon'       => 'bundles/contaoefgco4/icons/formdata_all.gif',
     'stylesheet' => 'bundles/contaoefgco4/css/style.css');
 $GLOBALS['BE_MOD']['formdata']['fd_selectnormal'] = array
+(
+	'tables'     => array('tl_formdata', 'tl_formdata_details'),
+	'import'     => array('FormdataBackend', 'importCsv'),
+	'icon'       => 'bundles/contaoefgco4/icons/formdata_all.gif',
+    'stylesheet' => 'bundles/contaoefgco4/css/style.css');
+$GLOBALS['BE_MOD']['formdata']['fd_undefined-array-key-fehlersuche'] = array
 (
 	'tables'     => array('tl_formdata', 'tl_formdata_details'),
 	'import'     => array('FormdataBackend', 'importCsv'),

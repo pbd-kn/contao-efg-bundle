@@ -44,7 +44,7 @@ class EfgLog
     protected static $cnt = 0;
     protected static $debFormKey = '';                    // Formularkey fuer den Aktuellen Debug
     protected static $uniqid = 0;
-    protected static $myefgdebuglevel = 0;
+    protected static int $myefgdebuglevel = 0;
 
     /* setzt den debugmode global unabhängig vom Formular
      */
@@ -90,7 +90,7 @@ class EfgLog
                 }
                 $strFormKey = (!empty($objForms->alias)) ? $objForms->alias : str_replace('-', '_', standardize($objForms->title));
                 if ($strFormKey === substr($key, 3)) {
-                    self::$myefgdebuglevel = $objForms->efgDebugMode;
+                    self::$myefgdebuglevel = (int)$objForms->efgDebugMode;
                     self::$debFormKey = $key;
                     $arrUniqid = StringUtil::trimsplit('.', uniqid('efgc0n7a0', true));
                     self::$uniqid = $arrUniqid[1];
@@ -128,7 +128,7 @@ class EfgLog
         if (\is_array($value)) {
             $value = print_r($value, true);
         }
-        if (($level & self::$myefgdebuglevel) === $level) {
+        if (((int)$level & self::$myefgdebuglevel) === $level) {
             self::logMessage(sprintf('[%s] [%s] [%s:%s] %s', self::$uniqid, $level, $vclass, $line, 'PBD '.$value), 'efg_debug');
         }
         /*
