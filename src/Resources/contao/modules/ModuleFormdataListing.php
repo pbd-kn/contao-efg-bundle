@@ -195,10 +195,10 @@ class ModuleFormdataListing extends \Module
 
         // remove download and export from referer
         $session = $this->Session->getData();
-        $session['referer']['last'] = preg_replace('@(\?|&amp;|&)download=.*?(&amp;|&|$)@si', '', $session['referer']['last']);
-        $session['referer']['current'] = preg_replace('@(\?|&amp;|&)download=.*?(&amp;|&|$)@si', '', $session['referer']['current']);
-        $session['referer']['last'] = preg_replace('@(\?|&amp;|&)act=export(&amp;|&|$)@si', '', $session['referer']['last']);
-        $session['referer']['current'] = preg_replace('@(\?|&amp;|&)act=export(&amp;|&|$)@si', '', $session['referer']['current']);
+        $session['referer']['last'] = preg_replace('@(\?|&amp;|&)download=.*?(&amp;|&|$)@si', '', (string) $session['referer']['last']);
+        $session['referer']['current'] = preg_replace('@(\?|&amp;|&)download=.*?(&amp;|&|$)@si', '', (string) $session['referer']['current']);
+        $session['referer']['last'] = preg_replace('@(\?|&amp;|&)act=export(&amp;|&|$)@si', '', (string) $session['referer']['last']);
+        $session['referer']['current'] = preg_replace('@(\?|&amp;|&)act=export(&amp;|&|$)@si', '', (string) $session['referer']['current']);
         $this->Session->setData($session);
 
         if (\Input::get($this->strDetailKey) && !\strlen($this->list_info) && !\strlen(\Input::get('act'))) {
