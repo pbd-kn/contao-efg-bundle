@@ -636,17 +636,17 @@ class FormdataProcessor extends \Contao\Frontend
         }
     }
 
-    /*
+    /* 
      * Callback function to display submitted data on confirmation page
      */
     public function processConfirmationContent($strContent)
     {
-        $arrSubmitted = $_SESSION['EFP']['FORMDATA'];
+        $arrSubmitted = @$_SESSION['EFP']['FORMDATA'];   // ??? PBD
 
         // fix: after submission of normal single page form array $_SESSION['EFP']['FORMDATA'] is empty
         if (null === $arrSubmitted || (1 === \count($arrSubmitted) && array_keys($arrSubmitted) === ['_formId_'])) {
-            $arrSubmitted = $_SESSION['FORM_DATA'];
-            $arrSubmitted['_formId_'] = $_SESSION['EFP']['FORMDATA'];
+            $arrSubmitted = @$_SESSION['FORM_DATA'];          // ??? PBD
+            $arrSubmitted['_formId_'] = @$_SESSION['EFP']['FORMDATA'];  // ??? PBD
         }
 
         $blnProcess = false;

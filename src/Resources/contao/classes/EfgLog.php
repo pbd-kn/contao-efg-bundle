@@ -81,7 +81,7 @@ class EfgLog
                 if ('form' === $key || 'feedback' === $key) {    // bei neuer form ist der key form nimm den höchsten wert
 //\System::log("PBD EfgwriteLog for form myefgdebuglevel '" . self::$myefgdebuglevel . "' title '" . $objForms->title .  "' efgDebugMode '" . $objForms->efgDebugMode . "'", __METHOD__, TL_GENERAL);
                   if ($objForms->efgDebugMode > self::$myefgdebuglevel) {
-                      self::$myefgdebuglevel = $objForms->efgDebugMode;
+                      self::$myefgdebuglevel = (int)  $objForms->efgDebugMode;
                       self::$debFormKey = $key;
                       $arrUniqid = StringUtil::trimsplit('.', uniqid('efgc0n7a0', true));
                       self::$uniqid = $arrUniqid[1];

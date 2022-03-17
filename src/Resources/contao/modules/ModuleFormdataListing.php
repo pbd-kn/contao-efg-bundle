@@ -1160,8 +1160,12 @@ class ModuleFormdataListing extends \Module
                                 $arrSort[] = preg_replace('/\b'.$arrMatch[1][0].'\b/i', '(SELECT value FROM tl_formdata_details WHERE ff_name="'.$arrMatch[1][0].'" AND pid=f.id)', $strSort);
                             }
                         } else {
+                            if(isset($GLOBALS['TL_DCA']['tl_formdata']['fields'][$arrMatch[1][0]]['eval']['rgxp'])) {
                             if (\in_array($GLOBALS['TL_DCA']['tl_formdata']['fields'][$arrMatch[1][0]]['eval']['rgxp'], $arrSortSigned, true)) {
                                 $arrSort[] = preg_replace('/\b'.$arrMatch[1][0].'\b/i', 'CAST(`'.$arrMatch[1][0].'` AS DECIMAL(20,5))', $strSort);
+                            } else {
+                                $arrSort[] = $strSort;
+                            }
                             } else {
                                 $arrSort[] = $strSort;
                             }
@@ -1415,7 +1419,7 @@ class ModuleFormdataListing extends \Module
                     EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "arrListFields[$intKey]: $strVal v: $v");
 
                     $strLinkDetails = '';
-                    if (\strlen($arrRows[$i]['alias']) && !$GLOBALS['TL_CONFIG']['disableAlias']) {
+                    if (\strlen($arrRows[$i]['alias']) && isset($GLOBALS['TL_CONFIG']['disableAlias'])&&!$GLOBALS['TL_CONFIG']['disableAlias']) {
                         $strLinkDetails = str_replace($strUrlSuffix, '', $strUrl).(\strlen($strUrl) ? '/' : '').$this->strDetailKey.'/'.$arrRows[$i]['alias'].$strUrlSuffix.(\strlen($strUrlParams) ? '?'.$strUrlParams : '');
                     } else {
                         $strLinkDetails = $strUrl.'?'.$this->strDetailKey.'='.$arrRows[$i]['id'].(\strlen($strUrlParams) ? '&amp;'.$strUrlParams : '');
@@ -1423,7 +1427,7 @@ class ModuleFormdataListing extends \Module
 
                     $strLinkEdit = '';
                     if ($arrEditAllowed[$arrRows[$i]['id']]) {
-                        if (\strlen($arrRows[$i]['alias']) && !$GLOBALS['TL_CONFIG']['disableAlias']) {
+                        if (\strlen($arrRows[$i]['alias']) && isset($GLOBALS['TL_CONFIG']['disableAlias'])&&!$GLOBALS['TL_CONFIG']['disableAlias']) {
                             $strLinkEdit = str_replace($strUrlSuffix, '', $strUrl).(\strlen($strUrl) ? '/' : '').$this->strDetailKey.'/'.$arrRows[$i]['alias'].$strUrlSuffix.'?act=edit'.(\strlen($strUrlParams) ? '&amp;'.$strUrlParams : '');
                         } else {
                             $strLinkEdit = $strUrl.'?'.$this->strDetailKey.'='.$arrRows[$i]['id'].'&amp;act=edit'.(\strlen($strUrlParams) ? '&amp;'.$strUrlParams : '');
@@ -1432,7 +1436,7 @@ class ModuleFormdataListing extends \Module
 
                     $strLinkDelete = '';
                     if ($arrDeleteAllowed[$arrRows[$i]['id']]) {
-                        if (\strlen($arrRows[$i]['alias']) && !$GLOBALS['TL_CONFIG']['disableAlias']) {
+                        if (\strlen($arrRows[$i]['alias']) && isset($GLOBALS['TL_CONFIG']['disableAlias'])&&!$GLOBALS['TL_CONFIG']['disableAlias']) {
                             $strLinkDelete = str_replace($strUrlSuffix, '', $strUrl).(\strlen($strUrl) ? '/' : '').$this->strDetailKey.'/'.$arrRows[$i]['alias'].$strUrlSuffix.'?act=delete'.(\strlen($strUrlParams) ? '&amp;'.$strUrlParams : '');
                         } else {
                             $strLinkDelete = $strUrl.'?'.$this->strDetailKey.'='.$arrRows[$i]['id'].'&amp;act=delete'.(\strlen($strUrlParams) ? '&amp;'.$strUrlParams : '');

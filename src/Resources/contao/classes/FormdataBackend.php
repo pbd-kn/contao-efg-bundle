@@ -212,7 +212,7 @@ class FormdataBackend extends \Backend
         //$files = \System::getContainer()->get('contao.resource_locator')->locate('src/Resources/contao/dca/*', null, false);
         //EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "len dca files ". count($files));
 
-        foreach ($arrFiles as $strFile) {
+        foreach ($arrFiles as $strFile) { 
             if ('fd_' === substr($strFile, 0, 3)) {
                 if (empty($arrStoringForms) || !\in_array(str_replace('.php', '', substr($strFile, 3)), array_keys($arrStoringForms), true)) {
                     $objFile = new \File($this->vendorPath.'src/Resources/contao/dca/'.$strFile);

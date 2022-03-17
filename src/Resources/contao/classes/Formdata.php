@@ -1445,10 +1445,11 @@ class Formdata extends \Contao\Frontend
         $strType = $arrField['type'];
         if (TL_MODE === 'FE' && !empty($arrField['formfieldType'])) {
             $strType = $arrField['formfieldType'];
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'TL_MODE '.TL_MODE.' formfieldType '.$arrField['formfieldType']);
         } elseif (TL_MODE === 'BE' && !empty($arrField['inputType'])) {
             $strType = $arrField['inputType'];
         }
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'TL_MODE '.TL_MODE.' formfieldType '.$arrField['formfieldType'].' type '.$arrField['type'].' strType '.$strType);
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'TL_MODE '.TL_MODE.' type '.$arrField['type'].' strType '.$strType);
 
         $arrOptions = [];
 
@@ -1541,13 +1542,14 @@ class Formdata extends \Contao\Frontend
                         $arrSortKeys = [];
                         foreach ($arrSortOn as $strSort) {
                             $arrSortParam = explode(' ', $strSort);
+                            if (!isset($arrSortParam[1])) $arrSortParam[1] = 'ASC';        // default 
                             $arrSortKeys[] = ['field' => $arrSortParam[0], 'order' => ('DESC' === strtoupper($arrSortParam[1]) ? 'DESC' : 'ASC')];
                         }
                     }
 
                     $sqlLookupWhere = (!empty($strLookupWhere) ? '('.$strLookupWhere.')' : '');
 
-                    $strReferer = $this->getReferer();
+                    $strReferer = @$this->getReferer();            // ??? PBD 
 
                     // If form is placed on an events detail page, automatically add restriction to event(s)
                     $ev = \Input::get('events');
@@ -1698,8 +1700,12 @@ class Formdata extends \Contao\Frontend
 
                         // Sort events
                         foreach ($arrEvents as $k => $arr) {
+                            if (isset($arrSortKeys[1]['order'])) {
                             if ('DESC' === $arrSortKeys[1]['order']) {
                                 krsort($arrEvents[$k]);
+                            } else {
+                                ksort($arrEvents[$k]);
+                            }
                             } else {
                                 ksort($arrEvents[$k]);
                             }
@@ -1727,7 +1733,7 @@ class Formdata extends \Contao\Frontend
 
                         // Include blank option
                         if ('efgLookupSelect' === $strType) {
-                            if (!$blnDoNotAddEmptyOption) {
+                            if (isset($blnDoNotAddEmptyOption)&&!$blnDoNotAddEmptyOption) {
                                 array_unshift($arrOptions, ['value' => '', 'label' => '-']);
                             }
                         }

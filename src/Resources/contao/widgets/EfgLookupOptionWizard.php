@@ -186,7 +186,6 @@ class EfgLookupOptionWizard extends \Contao\Widget
 
         $return = '';
 
-        EfgLog::EfgwriteLog(debsfull, __METHOD__, __LINE__, 'Begin table strSelectedTable '.$strSelectedTable);
         // Begin table
 
         // table field used as option label

@@ -139,7 +139,7 @@ class EfgFormLookupSelectMenu extends \Widget
     {
         $strOptions = '';
         $strClass = 'select';
-        $strReferer = $this->getReferer();
+        $strReferer = @$this->getReferer();             // ??? PBD 
         $arrLookupOptions = deserialize($this->arrConfiguration['efgLookupOptions']);
         $strLookupTable = '';
         if (isset($arrLookupOptions['lookup_field'])) {
