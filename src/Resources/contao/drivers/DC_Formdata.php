@@ -4086,7 +4086,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
         $objRowStmt = \Database::getInstance()->prepare($query);
 
-        if ('' !== $this->limit) {
+        if (!isemty($this->limit)&&'' !== $this->limit) {
             $arrLimit = explode(',', $this->limit);
             $objRowStmt->limit($arrLimit[1], $arrLimit[0]);
         }
