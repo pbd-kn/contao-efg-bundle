@@ -786,6 +786,7 @@ class ModuleFormdataListing extends \Module
                     $this->Template->editable = true;
                 }
             }
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'edit template this->id '.$this->id.' this->efg_fe_edit_access '.$this->efg_fe_edit_access.' this->Template->editable '.$this->Template->editable);
 
             $this->Template->deletable = false;
             if (\strlen($this->efg_fe_delete_access)) {
@@ -841,7 +842,9 @@ class ModuleFormdataListing extends \Module
 
             if (1 === $objCheck->numRows) {
                 $this->intRecordId = (int) ($objCheck->id);
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'numrows == 1 ');
             } else {
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'numrows != 1 ');
                 $strUrl = preg_replace('/\?.*$/', '', urldecode(\Environment::get('request')));
                 $strUrlParams = '';
                 $strUrlSuffix = $GLOBALS['TL_CONFIG']['urlSuffix'];
@@ -859,6 +862,7 @@ class ModuleFormdataListing extends \Module
                 $strRed = preg_replace(['/\/'.$this->strDetailKey.'\/'.\Input::get($this->strDetailKey).'/i', '/'.$this->strDetailKey.'='.\Input::get($this->strDetailKey).'/i'], ['', ''], $strUrl).(\strlen($strUrlParams) ? '?'.$strUrlParams : '');
                 \Controller::redirect($strRed);
             }
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'vor edit record input '.\Input::get('act').' id '.$this->intRecordId);
 
             if ('edit' === \Input::get('act') && (int) ($this->intRecordId) > 0) {
                 $this->editSingleRecord();
@@ -2555,6 +2559,7 @@ class ModuleFormdataListing extends \Module
         $strUrl = preg_replace('/\?.*$/', '', urldecode(\Environment::get('request')));
         $strUrlParams = '';
         $blnQuery = false;
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,'this->id '.$this->id.' page_get '.$page_get.' strUrl '.$strUrl);
 
         foreach (preg_split('/&(amp;)?/', $_SERVER['QUERY_STRING']) as $fragment) {
             if (\strlen($fragment)) {
@@ -2566,6 +2571,7 @@ class ModuleFormdataListing extends \Module
         }
 
         // Check record
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Check record '.$this->intRecordId);
         if (null === $this->intRecordId || (int) ($this->intRecordId) < 1) {
             unset($_GET[$this->strDetailKey], $_GET['act']);
 
@@ -2573,6 +2579,7 @@ class ModuleFormdataListing extends \Module
             \Controller::redirect($strRed);
         }
         // Check Owner and Alias
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Check Owner and Alias '.'SELECT fd_member,alias FROM tl_formdata WHERE id='.$this->intRecordId);
         $objOwner = \Database::getInstance()->prepare('SELECT fd_member,alias FROM tl_formdata WHERE id=?')
             ->execute($this->intRecordId)
         ;
@@ -2589,6 +2596,7 @@ class ModuleFormdataListing extends \Module
 
         // Check edit access
         $blnEditAllowed = false;
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'this-modulid '.$this->id.' this->efg_fe_edit_access '.$this->efg_fe_edit_access);
         if ('none' === $this->efg_fe_edit_access) {
             $blnEditAllowed = false;
         } elseif ('public' === $this->efg_fe_edit_access) {
@@ -2599,6 +2607,7 @@ class ModuleFormdataListing extends \Module
             }
         }
         if (false === $blnEditAllowed) {
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'edit nicht erlaubt ');
             $strRed = preg_replace(['/\/'.$this->strDetailKey.'\/'.\Input::get($this->strDetailKey).'/i', '/'.$this->strDetailKey.'='.\Input::get($this->strDetailKey).'/i', '/act=edit/i'], ['', '', ''], $strUrl).(\strlen($strUrlParams) ? '?'.$strUrlParams : '');
             \Controller::redirect($strRed);
         }

@@ -1915,7 +1915,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                             }
                         } else {
                             // foreignKey fields
-                            if ('select' === $strInputType && \strlen($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['foreignKey'])) {
+                            if ('select' === $strInputType && isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['foreignKey'])&&\strlen($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['foreignKey'])) {
                                 // include blank Option
                                 $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['includeBlankOption'] = true;
 
@@ -2310,7 +2310,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
             // Show all non-excluded fields
             foreach ($fields as $field) {
-                if ('pid' === $field || 'sorting' === $field || (!$GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['exclude'] && !$GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['eval']['doNotShow'] && (\strlen($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['inputType']) || \is_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['input_field_callback'])))) {
+                if ('pid' === $field || 'sorting' === $field || (!$GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['exclude'] && !$GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['eval']['doNotShow'] && ((isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['inputType'])&&\strlen($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['inputType'])) || \is_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['input_field_callback'])))) {
                     $options .= '
   <input type="checkbox" name="all_fields[]" id="all_'.$field.'" class="tl_checkbox" value="'.specialchars($field).'"> <label for="all_'.$field.'" class="tl_checkbox_label">'.($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['label'][0] ?: $GLOBALS['TL_LANG']['MSC'][$field][0]).'</label><br>';
                 }
@@ -4086,7 +4086,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
         $objRowStmt = \Database::getInstance()->prepare($query);
 
-        if (!isset($this->limit)&&'' !== $this->limit) {
+        if ( !empty($this->limit)&& !isset($this->limit)&&'' !== trim($this->limit)) {
             $arrLimit = explode(',', $this->limit);
             $objRowStmt->limit($arrLimit[1], $arrLimit[0]);
         }
