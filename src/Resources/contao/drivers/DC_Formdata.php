@@ -1202,7 +1202,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
             $blnIsFirst = true;
 
             // Render boxes
-            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Render boxes');
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Render boxes len '.count($boxes));
             foreach ($boxes as $k => $v) {
                 $strAjax = '';
                 $blnAjax = false;
@@ -1451,8 +1451,9 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
                     // field type efgLookupSelect
                     elseif ('efgLookupSelect' === $strInputType) {
-                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "['TL_DCA'][".$this->strTable."]['fields'][".$this->strField.']');
+                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "efgLookupSelect ['TL_DCA'][".$this->strTable."]['fields'][".$this->strField.']');
                         $arrFieldOptions = $this->Formdata->prepareWidgetOptions($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]);
+                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'arrFieldOptions len '.count($arrFieldOptions));
                         $arrNewOptions = [];
 
                         // prepare options array and value

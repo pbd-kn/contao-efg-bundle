@@ -334,7 +334,7 @@ class FormdataBackend extends \Backend
                 if (!empty($arrFormFields)) {
                     EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'Formfields gelesen und vorhanden FORM id:  '.$arrForm['id'].' title: '.$arrForm['title'].' Anzahl '.\count($arrFormFields));
                     foreach ($arrFormFields as $strFieldKey => $arrField) {
-                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'name '.$arrField['name'].' type '.$arrField['type']);
+                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,'strFieldKey '.$strFieldKey.' name '.$arrField['name'].' type '.$arrField['type']);
                         // Ignore not storable fields and some special fields like checkbox CC, fields of type password ...
                         if (!\in_array($arrField['type'], $this->arrFFstorable, true)
                             || ('checkbox' === $arrField['type'] && 'cc' === $strFieldKey)) {
@@ -346,6 +346,8 @@ class FormdataBackend extends \Backend
                         if (('condition' === $arrField['formfieldType'] && 'start' === $arrField['conditionType'])
                             || ('cm_alternative' === $arrField['formfieldType'] && 'cm_start' === $arrField['cm_alternativeType'])
                             || ('cm_alternative' === $arrField['formfieldType'] && 'cm_else' === $arrField['cm_alternativeType'])) {
+                            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'set to current Palette '.$arrField['formfieldType'].' conditionType '.$arrField['conditionType']);
+
                             $arrSelectors[] = $arrField['name'];
 
                             if ('cm_alternative' === $arrField['formfieldType'] && 'cm_start' === $arrField['cm_alternativeType']) {
@@ -361,6 +363,7 @@ class FormdataBackend extends \Backend
                                 if ('' !== $strPreviousPalette) {
                                     $arrPalettes[$strPreviousPalette][] = $arrField['name'];
                                 }
+                                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,'cm_start add current Palette '.$arrField['name'].'_0');
                             } elseif ('cm_alternative' === $arrField['formfieldType'] && 'cm_else' === $arrField['cm_alternativeType']) {
                                 if ('' !== $strCurrentPalette) {
                                     if ($arrField['name'].'_0' !== $strCurrentPalette) {
@@ -368,6 +371,7 @@ class FormdataBackend extends \Backend
                                     }
                                 }
                                 $strCurrentPalette = $arrField['name'].'_1';
+                                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,'cm_else add current'.$arrField['name'].'_1');
                             } else {
                                 if ('' !== $strCurrentPalette) {
                                     $strPreviousPalette = $strCurrentPalette;
@@ -377,6 +381,7 @@ class FormdataBackend extends \Backend
                                 if ('' !== $strPreviousPalette) {
                                     $arrPalettes[$strPreviousPalette][] = $arrField['name'];
                                 }
+                                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,'else add current'.$arrField['name']);
                             }
                         }
                         // Ignore conditionalforms conditionType 'stop' and cm_alternativeforms cm_alternativeType 'cm_stop', reset palette name
@@ -401,6 +406,7 @@ class FormdataBackend extends \Backend
                             if (!('condition' === $arrField['formfieldType'] && 'start' === $arrField['conditionType'])
                                 && !('cm_alternative' === $arrField['formfieldType'] && \in_array($arrField['cm_alternativeType'], ['cm_start', 'cm_else', 'cm_stop'], true))) {
                                 $arrPalettes[$strCurrentPalette][] = $arrField['name'];
+                                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__,'adding ?? '.$arrField['name']);
                             }
                         }
                     }
@@ -458,13 +464,13 @@ class FormdataBackend extends \Backend
                 if (!empty($arrFormFields)) {
                     EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'b) arrFormFields da FORM id:  '.$arrForm['id'].' title: '.$arrForm['title']);
                     foreach ($arrFormFields as $strFieldKey => $arrField) {
-                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "b) arrFormFields da $strFieldKey type ".$arrField['formfieldType']);
+                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "b) arrFormFields da strFieldKey '.$strFieldKey.' type ".$arrField['formfieldType']);
                         // Ignore not storable fields and some special fields like checkbox CC, fields of type password ...
                         if (!\in_array($arrField['formfieldType'], $this->arrFFstorable, true)
                         || ('checkbox' === $arrField['formfieldType'] && 'cc' === $strFieldKey)
                         || ('condition' === $arrField['formfieldType'] && 'stop' === $arrField['conditionType'])
                         || ('cm_alternative' === $arrField['formfieldType'] && \in_array($arrField['cm_alternativeType'], ['cm_else', 'cm_stop'], true))) {
-                            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "b) arrFormFields da $strFieldKey type ignored".$arrField['formfieldType']);
+                            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "b) arrFormFields da $strFieldKey type ignored ".$arrField['formfieldType']);
                             continue;
                         }
                         $arrAllFields[$strFieldKey] = $arrField;

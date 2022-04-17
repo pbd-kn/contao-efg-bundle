@@ -1458,7 +1458,12 @@ class Formdata extends \Contao\Frontend
             case 'efgLookupRadio':
             case 'efgLookupSelect':
                 // Get efgLookupOptions: array('lookup_field' => TABLENAME.FIELDNAME, 'lookup_val_field' => TABLENAME.FIELDNAME, 'lookup_where' => CONDITION, 'lookup_sort' => ORDER BY)
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'len arrfield '.count($arrField));
+                foreach ($arrField as $k => $v) {
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "arrField[$k]: $v");
+                }
                 $arrLookupOptions = deserialize($arrField['efgLookupOptions']);
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'len arrLookupOptions '.count($arrLookupOptions));
                 foreach ($arrLookupOptions as $k => $v) {
                     EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "arrLookupOptions[$k]: $v");
                 }
@@ -1470,10 +1475,15 @@ class Formdata extends \Contao\Frontend
                 if (!empty($strLookupWhere)) {
                     $strLookupWhere = $this->replaceInsertTags($strLookupWhere, false);
                 }
-
-                $arrLookupField = explode('.', $strLookupField);
-                $sqlLookupTable = $arrLookupField[0];
-                $sqlLookupField = $arrLookupField[1];
+                if (isset($strLookupField)) {
+                  EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strLookupField '.$strLookupField);
+                  $arrLookupField = explode('.', $strLookupField);
+                  $sqlLookupTable = $arrLookupField[0];
+                  $sqlLookupField = $arrLookupField[1];
+                } else {
+                  EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strLookupField not set ');
+                  // so nicht continue;
+                }
                 $sqlLookupValField = (isset($strLookupValField) && \strlen($strLookupValField)) ? substr($strLookupValField, strpos($strLookupValField, '.') + 1) : null;
 
                 $sqlLookupIdField = 'id';
