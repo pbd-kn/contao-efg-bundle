@@ -4183,6 +4183,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
             $remoteCur = false;
             $groupclass = 'tl_folder_tlist';
             $eoCount = -1;
+            EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'list records len result '.count($result));      # PBD leycom
 
             foreach ($result as $row) {
                 $rowFormatted = [];
@@ -4195,7 +4196,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                     if (\in_array($v, $this->arrDetailFields, true)
                         && \in_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['inputType'], ['radio', 'efgLookupRadio', 'select', 'efgLookupSelect', 'checkbox', 'efgLookupCheckbox', 'efgImageSelect', 'fileTree'], true)) {
                         $strSep = (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['eval']['csv'])) ? $GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['eval']['csv'] : '|';
-                        $row[$v] = str_replace($strSep, ', ', $row[$v]);
+                        $row[$v] = str_replace($strSep, ', ', (string) $row[$v]);     # PBD leycom
                     }
 
                     if (\in_array($v, $this->arrDetailFields, true) && $GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['eval']['multiple']) {
@@ -4268,8 +4269,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
                 // Shorten the label it if it is too long
                 $label = vsprintf(((isset($GLOBALS['TL_DCA'][$this->strTable]['list']['label']['format']) && \strlen($GLOBALS['TL_DCA'][$this->strTable]['list']['label']['format'])) ? $GLOBALS['TL_DCA'][$this->strTable]['list']['label']['format'] : '%s'), $args);
-                EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'sortlabel $label');
-
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'sortlabel '.$label);           # PBD leycom
                 if ($GLOBALS['TL_DCA'][$this->strTable]['list']['label']['maxCharacters'] > 0 && $GLOBALS['TL_DCA'][$this->strTable]['list']['label']['maxCharacters'] < \strlen(strip_tags($label))) {
                     $label = trim(\StringUtil::substrHtml($label, $GLOBALS['TL_DCA'][$this->strTable]['list']['label']['maxCharacters'])).' …';
                 }
@@ -4343,7 +4343,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 </table>
 
 </div>';
-
+            EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'list records len return string '.strlen($return));      # PBD leycom
             // Close the form
             if ('select' === \Input::get('act')) {
                 $callbacks = '';
@@ -4666,7 +4666,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         $session = $this->Session->getData();
         // PBD invalid in php8 $filter = (4 === $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode']) ? $this->strTable.'_'.CURRENT_ID : (\strlen($this->strFormKey)) ? $this->strFormKey : $this->strTable;
         $filter = ((4 === $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode']) ? $this->strTable.'_'.CURRENT_ID : (\strlen($this->strFormKey)) ) ? $this->strFormKey : $this->strTable;
-
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'limitMenu filter '.$filter);      # PBD leycom
         $fields = '';
 
         if (\is_array($this->procedure)) {
@@ -4675,7 +4675,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         if (\is_array($this->values)) {
             $this->values = array_unique($this->values);
         }
-
+        EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'limitMenu tl_filters '.\Input::post('FORM_SUBMIT').' tl_filters_limit '.\Input::post('FORM_SUBMIT') );      # PBD 
         // Set limit from user input
         if ('tl_filters' === \Input::post('FORM_SUBMIT') || 'tl_filters_limit' === \Input::post('FORM_SUBMIT')) {
             if ('tl_limit' !== \Input::post('tl_limit')) {
@@ -4802,7 +4802,6 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                 $sortingFields[] = $k;
             }
         }
-
         // Return if there are no sorting fields
         if (empty($sortingFields)) {
             return '';
@@ -5168,11 +5167,10 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         } elseif (\in_array($mode, [5, 6], true)) {
             $remoteNew = ('' !== $value) ? \Date::parse($GLOBALS['TL_CONFIG']['dateFormat'], $value) : '-';
         } elseif (\in_array($mode, [7, 8], true)) {
-            $remoteNew = ('' !== $value) ? date('Y-m', $value) : '-';
-            $intMonth = ('' !== $value) ? (date('m', $value) - 1) : '-';
-
+            $remoteNew = ('' !== $value) ? date('Y-m',(int) $value) : '-';                # PBD leycom        
+            $intMonth = ('' !== $value) ? (date('m',(int) $value) - 1) : '-';             # PBD leycom
             if (isset($GLOBALS['TL_LANG']['MONTHS'][$intMonth])) {
-                $remoteNew = ('' !== $value) ? $GLOBALS['TL_LANG']['MONTHS'][$intMonth].' '.date('Y', $value) : '-';
+               $remoteNew = ('' !== $value) ? $GLOBALS['TL_LANG']['MONTHS'][$intMonth].' '.date('Y', (int)$value) : '-';   # PBD leycom            
             }
         } elseif (\in_array($mode, [9, 10], true)) {
             $remoteNew = ('' !== $value) ? date('Y', $value) : '-';

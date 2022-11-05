@@ -340,7 +340,7 @@ class FormdataBackend extends \Backend
                             || ('checkbox' === $arrField['type'] && 'cc' === $strFieldKey)) {
                             continue;
                         }
-                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'formfieldType '.$arrField['formfieldType'].' conditionType '.$arrField['conditionType']);
+                        //EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'formfieldType '.$arrField['formfieldType'].' conditionType '.$arrField['conditionType']);
 
                         // Set current palette name (for 'conditionalforms' and 'cm_alternativeforms')
                         if (('condition' === $arrField['formfieldType'] && 'start' === $arrField['conditionType'])

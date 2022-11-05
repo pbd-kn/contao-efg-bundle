@@ -1275,11 +1275,14 @@ class ModuleFormdataListing extends \Module
                 if (isset($GLOBALS['TL_DCA'][$this->list_table]['fields'][$arrFields[$i]]['ff_class']) && \strlen($GLOBALS['TL_DCA'][$this->list_table]['fields'][$arrFields[$i]]['ff_class'])) {
                     $class .= ' '.$GLOBALS['TL_DCA'][$this->list_table]['fields'][$arrFields[$i]]['ff_class'];
                 }
-
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'GLOBALS '.$GLOBALS['TL_LANG']['MSC']['list_orderBy']);
+                
+                if ($GLOBALS['TL_LANG']['MSC']['list_orderBy']) $str_title = $GLOBALS['TL_LANG']['MSC']['list_orderBy'];
+                else { $str_title='Sortiere nach %s';}
                 $arrTh[] = [
                     'link' => htmlspecialchars($strField),
                     'href' => $strUrl.(\strlen($strUrlParams) ? '?'.$strUrlParams.'&amp;' : '?').'order_by='.$arrFields[$i].'&amp;sort='.$sort,
-                    'title' => htmlspecialchars(sprintf($GLOBALS['TL_LANG']['MSC']['list_orderBy'], $strField)),
+                    'title' => htmlspecialchars(sprintf($str_title, $strField)),
                     'class' => $class.((0 === $i) ? ' col_first' : ''),
                 ];
             }
@@ -1594,10 +1597,12 @@ class ModuleFormdataListing extends \Module
             }
 
             $strTotalNumberOfItems = number_format((int) $intTotalcount, 0, $GLOBALS['TL_LANG']['MSC']['decimalSeparator'], $GLOBALS['TL_LANG']['MSC']['thousandsSeparator']);
+            if ($GLOBALS['TL_LANG']['MSC']['efgTotalNumberOfItems']) $str = $GLOBALS['TL_LANG']['MSC']['efgTotalNumberOfItems'];
+            else { $str='Anzahl Einträge: %s';}
             $this->Template->totalNumberOfItems = [
                 'raw' => (int) $intTotalcount,
                 'formatted' => $strTotalNumberOfItems,
-                'content' => sprintf($GLOBALS['TL_LANG']['MSC']['efgTotalNumberOfItems'], $strTotalNumberOfItems),
+                'content' => sprintf($str, $strTotalNumberOfItems),
             ];
 
             $this->Template->thead = $arrTh;
