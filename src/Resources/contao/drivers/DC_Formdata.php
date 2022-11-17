@@ -36,7 +36,7 @@ declare(strict_types=1);
 namespace PBDKN\Efgco4\Resources\contao\drivers;
 
 use PBDKN\Efgco4\Resources\contao\classes\EfgLog;
-
+define('ENCODE_AMPERSANDS', true);    #PBD leycom
 class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 {
     /**
@@ -523,7 +523,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
 <div class="tl_panel_bottom">
 
-<div class="tl_submit_panel tl_subpanel">
+<div class="tl_submit_panel tl_subpanel anton">
 <input type="image" name="btfilter" id="btfilter" src="'.TL_FILES_URL.'system/themes/'.\Backend::getTheme().'/images/reload.gif" class="tl_img_submit" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['applyTitle']).'" alt="'.specialchars($GLOBALS['TL_LANG']['MSC']['apply']).'">
 </div>'.$strLimit.'
 
@@ -1388,7 +1388,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
                             if (!\is_array($this->varValue)) {
                                 $strSep = (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['csv'])) ? $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['csv'] : '|';
-                                $arrValues = explode($strSep, $this->varValue);
+                                $arrValues = explode($strSep, (string)$this->varValue);    # PBD leycom
                             } else {
                                 $arrValues = $this->varValue;
                             }
@@ -2522,7 +2522,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
     {
         $blnSend = false;
 
-        if (\strlen(\Input::get('token')) && \Input::get('token') === $this->Session->get('fd_mail_send')) {
+        if (\strlen((string)\Input::get('token')) && \Input::get('token') === $this->Session->get('fd_mail_send')) {          # PBD leycom
             $blnSend = true;
         }
 
@@ -2721,7 +2721,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         }
 
         // Send Mail
-        if (\strlen(\Input::get('token')) && \Input::get('token') === $this->Session->get('fd_mail_send')) {
+        if (\strlen((string)\Input::get('token')) && \Input::get('token') === $this->Session->get('fd_mail_send')) {   # PBD leycom
             $this->Session->set('fd_mail_send', null);
             $blnSend = true;
 
@@ -4449,7 +4449,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
             if ($i === $intLast) {
                 $submit = '
 
-<div class="tl_submit_panel tl_subpanel">
+<div class="tl_submit_panel tl_subpanel berta">
 <input type="image" name="filter" id="filter" src="'.TL_FILES_URL.'system/themes/'.\Backend::getTheme().'/images/reload.gif" class="tl_img_submit" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['applyTitle']).'" alt="'.specialchars($GLOBALS['TL_LANG']['MSC']['apply']).'">
 </div>';
             }
@@ -5173,7 +5173,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                $remoteNew = ('' !== $value) ? $GLOBALS['TL_LANG']['MONTHS'][$intMonth].' '.date('Y', (int)$value) : '-';   # PBD leycom            
             }
         } elseif (\in_array($mode, [9, 10], true)) {
-            $remoteNew = ('' !== $value) ? date('Y', $value) : '-';
+            $remoteNew = ('' !== $value) ? date('Y',(int) $value) : '-';
         } else {
             if ('checkbox' === $GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['inputType'] && !$GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['eval']['multiple']) {
                 $remoteNew = ('' !== $value) ? $field : '';
