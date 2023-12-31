@@ -97,7 +97,7 @@ class EfgMailhooks // Make sure this class name matches the first item in the ab
             }
         }
         // Test ob confirmationMail (Bestätigungsmail) gesendet werden soll
-        if ('ja' === $arrSubmitted['kopie']) {
+        if (isset($arrSubmitted['kopie']) && 'ja' === $arrSubmitted['kopie']) {
             $objForm->__set('sendConfirmationMail', '1');
         } else {
             $objForm->__set('sendConfirmationMail', '');
