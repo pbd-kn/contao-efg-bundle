@@ -270,8 +270,8 @@ class tl_formdata extends \Backend
 
         // TODO: remove this fix if xdependentcalendarfield is available for Contao 3 and config is fixed
         // Fix config for xdependentcalendarfields
-        // xdependentcalendarfields/config/config.php registers 'FormTextField', which is a front end widget)
-        if ('FormTextField' === $GLOBALS['BE_FFL']['xdependentcalendarfields']) {
+        // xdependentcalendarfields/config/config.php registers 'FormTextField', which is a front end widget)        
+        if (isset($GLOBALS['BE_FFL']['xdependentcalendarfields']) && 'FormTextField' === $GLOBALS['BE_FFL']['xdependentcalendarfields']) {    // PBD
             $GLOBALS['BE_FFL']['xdependentcalendarfields'] = 'TextField';
         }
 
@@ -323,7 +323,7 @@ class tl_formdata extends \Backend
                     include_once $strFile;
 
                     // Replace standard dca tl_formdata by form-dependent dca
-                    if (\is_array($GLOBALS['TL_DCA'][$strName]) && \count($GLOBALS['TL_DCA'][$strName]) > 0) {
+                    if (isset ($GLOBALS['TL_DCA'][$strName]) && \is_array($GLOBALS['TL_DCA'][$strName]) && \count($GLOBALS['TL_DCA'][$strName]) > 0) {  //PBD
                         $GLOBALS['TL_DCA']['tl_formdata'] = $GLOBALS['TL_DCA'][$strName];
                         unset($GLOBALS['TL_DCA'][$strName]);
                     }
@@ -358,7 +358,7 @@ class tl_formdata extends \Backend
         $arrFields = array_keys($GLOBALS['TL_DCA']['tl_formdata']['fields']);
         // check/set restrictions
         foreach ($arrFields as $strField) {
-            if (true === $GLOBALS['TL_DCA']['tl_formdata']['fields'][$strField]['exclude']) {
+            if (isset($GLOBALS['TL_DCA']['tl_formdata']['fields'][$strField]['exclude']) && true === $GLOBALS['TL_DCA']['tl_formdata']['fields'][$strField]['exclude']) {        //PBD
                 if ($this->User->isAdmin || true === $this->User->hasAccess('tl_formdata::'.$strField, 'alexf')) {
                     $GLOBALS['TL_DCA']['tl_formdata']['fields'][$strField]['exclude'] = false;
                 }

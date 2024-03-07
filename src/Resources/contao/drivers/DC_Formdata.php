@@ -339,7 +339,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         }
 
         $this->strTable = $strTable;
-        $this->ptable = $GLOBALS['TL_DCA'][$this->strTable]['config']['ptable'];
+        if (isset($GLOBALS['TL_DCA'][$this->strTable]['config']['ptable']))  $this->ptable = $GLOBALS['TL_DCA'][$this->strTable]['config']['ptable']; //PBD
+        else $this->ptable=null;
         $this->ctable = $GLOBALS['TL_DCA'][$this->strTable]['config']['ctable'];
         $this->treeView = false;
         $this->root = null;
@@ -3132,6 +3133,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         if (isset($expmode) && \strlen(\Input::get('expmode'))) {
             $strMode = \Input::get('expmode');
         }
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "strMode $strMode");
 
         $return = '';
 
@@ -3287,6 +3289,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         if (1 === $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] && ($GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['flag'] % 2) === 0) {
             $query .= ' DESC';
         }
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "query $query");
 
         $objRowStmt = \Database::getInstance()->prepare($query);
         $objRow = $objRowStmt->execute($this->values);
@@ -3359,6 +3362,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                         if (\in_array($v, $ignoreFields, true)) {
                             continue;
                         }
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "showFields[$k]: $v");
 
                         ++$intColCounter;
 
@@ -3417,6 +3421,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
                     $strVal = '';
                     $strVal = $row[$v];
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "row[$k]: $v");
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "inputType ".$GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['inputType']);
 
                     if ('date' === $GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['inputType']
                         && \in_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['flag'], [5, 6, 7, 8, 9, 10], true)) {
@@ -3496,16 +3502,22 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                                 }
                             }
                         } else {
-                            $strVal = \strlen($row[$v]) ? str_replace($strSep, ",\n", $row[$v]) : '';
+                            $strVal = \strlen((string)$row[$v]) ? str_replace($strSep, ",\n", (string)$row[$v]) : ''; //PBD
                         }
                     } else {
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "v $v row ".$row[$v]);
+
                         $row_v = deserialize($row[$v]);
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "row_v $row_v");
+                        if (!isset($row_v))$row[$v]="";             //PBD                         
 
                         if (!empty($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['eval']['csv'])) {
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "csv ".$GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['eval']['csv']);
                             $row_v = explode($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['eval']['csv'], $row[$v]);
                         }
 
                         if (\is_array($row_v)) {
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "row_v is array");
                             $args_k = [];
 
                             foreach ($row_v as $option) {
@@ -3518,7 +3530,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                         } else {
                             $args[$k] = $row[$v];
                         }
-                        $strVal = null === $args[$k] ? $args[$k] : vsprintf('%s', $args[$k]);
+                        $strVal = isset($args[$k]) ? (string)$args[$k] : vsprintf('%s', $args[$k]);        //PBD
+        EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "strVal $strVal");
                     }
 
                     if (\in_array($v, $this->arrBaseFields, true) || \in_array($v, $this->arrOwnerFields, true)) {
@@ -3603,8 +3616,9 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         if ($from === $to) {
             return $strString;
         }
-
-        if (USE_MBSTRING) {
+//define("USE_MBSTRING", "!");
+        if (defined("USE_MBSTRING")) {        
+            //if (USE_MBSTRING) {
             @mb_substitute_character('none');
 
             return @mb_convert_encoding($strString, $to, $from);
@@ -3886,7 +3900,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
     {
         EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'revisetabel '.$this->strTable);
         $reload = false;
-        $ptable = $GLOBALS['TL_DCA'][$this->strTable]['config']['ptable'];
+        if (isset($GLOBALS['TL_DCA'][$this->strTable]['config']['ptable'])) $ptable = $GLOBALS['TL_DCA'][$this->strTable]['config']['ptable'];
+        else  $ptable=null;
         $ctable = $GLOBALS['TL_DCA'][$this->strTable]['config']['ctable'];
         /** @var AttributeBagInterface $objSessionBag */
         $objSessionBag = \System::getContainer()->get('session')->getBag('contao_backend');
@@ -3900,6 +3915,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
         if (isset($new_records[$this->strTable])) {
             EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'in session new_records this->strTable '.$this->strTable.' len new_records '.\count($new_records[$this->strTable]));
+        } else {
+            $new_records[$this->strTable]=null;                  // PBD
         }
         // HOOK: add custom logic
         if (isset($GLOBALS['TL_HOOKS']['reviseTable']) && \is_array($GLOBALS['TL_HOOKS']['reviseTable'])) {
@@ -3909,7 +3926,11 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
                 if (\is_array($callback)) {
                     $this->import($callback[0]);
-                    $status = $this->{$callback[0]}->{$callback[1]}($this->strTable, $new_records[$this->strTable], $ptable, $ctable);      //Änderung PBD
+                    $status = $this->{$callback[0]}->{$callback[1]}
+                    ($this->strTable, 
+                    $new_records[$this->strTable], 
+                    $ptable, 
+                    $ctable);      //Änderung PBD
                 } elseif (\is_callable($callback)) {
                     $status = $callback($this->strTable, $new_records[$this->strTable], $ptable, $ctable);
                 }
@@ -3998,7 +4019,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                     $this->loadDataContainer($v);
                     EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "geladen loadDataContainer  $v");
 
-                    if ($GLOBALS['TL_DCA'][$v]['config']['dynamicPtable']) {
+                    if (isset($GLOBALS['TL_DCA'][$v]['config']['dynamicPtable']) && $GLOBALS['TL_DCA'][$v]['config']['dynamicPtable']) {
                         $objIds = $this->Database->execute('SELECT c.id FROM '.$v.' c LEFT JOIN '.$this->strTable." p ON c.pid=p.id WHERE c.ptable='".$this->strTable."' AND p.id IS NULL");
                     } else {
                         $objIds = $this->Database->execute('SELECT c.id FROM '.$v.' c LEFT JOIN '.$this->strTable.' p ON c.pid=p.id WHERE p.id IS NULL');
@@ -4487,7 +4508,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
         // Get search fields
         foreach ($GLOBALS['TL_DCA'][$this->strTable]['fields'] as $k => $v) {
-            if ($v['search']) {
+            if (isset($v['search'])&&    //PBD
+                $v['search']) {
                 $searchFields[] = $k;
             }
         }
@@ -4798,7 +4820,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
         // Get the sorting fields
         foreach ($GLOBALS['TL_DCA'][$this->strTable]['fields'] as $k => $v) {
-            if ((int) ($v['filter']) === $intFilterPanel) {
+            if (isset($v['filter'])&&(int) ($v['filter']) === $intFilterPanel) {            // PBD
                 $sortingFields[] = $k;
             }
         }
@@ -4941,7 +4963,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                 $options = $objFields->fetchEach($field);
 
                 // Sort by day
-                if (\in_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['flag'], [5, 6], true)) {
+                if (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['flag'])&&    //PBD
+                  \in_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['flag'], [5, 6], true)) {
                     (6 === $GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['flag']) ? rsort($options) : sort($options);
 
                     foreach ($options as $k => $v) {
@@ -4956,7 +4979,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                 }
 
                 // Sort by month
-                elseif (\in_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['flag'], [7, 8], true)) {
+                elseif (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['flag'])&&    //PBD
+                  \in_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['flag'], [7, 8], true)) {
                     (8 === $GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['flag']) ? rsort($options) : sort($options);
 
                     foreach ($options as $k => $v) {
@@ -4978,7 +5002,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                 }
 
                 // Sort by year
-                elseif (\in_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['flag'], [9, 10], true)) {
+                elseif (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['flag'])&&    //PBD
+                  \in_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['flag'], [9, 10], true)) {
                     (10 === $GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['flag']) ? rsort($options) : sort($options);
 
                     foreach ($options as $k => $v) {
@@ -4993,7 +5018,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                 }
 
                 // Manual filter
-                if ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['eval']['multiple']) {
+                if (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['eval']['multiple'])&&       //PBD
+                  $GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['eval']['multiple']) {               
                     $moptions = [];
 
                     foreach ($options as $option) {
@@ -5016,7 +5042,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                 $options_callback = [];
 
                 // Call the options_callback
-                if ((\is_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['options_callback']) || \is_callable($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['options_callback'])) && !$GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['reference']) {
+                if (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['options_callback'])&&           //PBD
+                   (\is_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['options_callback']) || \is_callable($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['options_callback'])) && !$GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['reference']) {
                     if (\is_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['options_callback'])) {
                         $strClass = $GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['options_callback'][0];
                         $strMethod = $GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['options_callback'][1];
@@ -5032,7 +5059,9 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                 }
 
                 $options_sorter = [];
-                $blnDate = \in_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['flag'], [5, 6, 7, 8, 9, 10], true);
+                if (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['flag']))    //PBD
+                  $blnDate = \in_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['flag'], [5, 6, 7, 8, 9, 10], true);
+                else $blnDate=null;    //PBD
 
                 // Options
                 foreach ($options as $kk => $vv) {
@@ -5053,7 +5082,12 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                     }
 
                     // Replace boolean checkbox value with "yes" and "no"
-                    elseif ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['eval']['isBoolean'] || ('checkbox' === $GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['inputType'] && !$GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['eval']['multiple'])) {
+                    elseif (                    //PBD
+                        ((isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['eval']['isBoolean'])&&$GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['eval']['isBoolean']) ||
+                        (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['inputType'])&&'checkbox' === $GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['inputType'] )) && 
+                        (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['eval']['multiple'])&&!$GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['eval']['multiple'])
+                        
+                    ) {
                         $vv = ('' !== $vv) ? $GLOBALS['TL_LANG']['MSC']['yes'] : $GLOBALS['TL_LANG']['MSC']['no'];
                     }
 
@@ -5089,7 +5123,12 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                     }
 
                     // Associative array
-                    elseif ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['eval']['isAssociative'] || array_is_assoc($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['options'])) {
+                    elseif        //PBD
+                      (
+                        (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['eval']['isAssociative'])&&$GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['eval']['isAssociative']) || 
+                        (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['options'])&&array_is_assoc($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['options']))
+                        )
+                      ) {
                         $option_label = $GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['options'][$vv];
                     }
 
@@ -5105,7 +5144,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                 if (!$blnDate) {
                     natcasesort($options_sorter);
 
-                    if (\in_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['flag'], [2, 4, 12], true)) {
+                    if (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['flag'])&&
+                      \in_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['flag'], [2, 4, 12], true)) {
                         $options_sorter = array_reverse($options_sorter, true);
                     }
                 }
