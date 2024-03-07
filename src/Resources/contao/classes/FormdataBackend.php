@@ -481,7 +481,9 @@ class FormdataBackend extends \Backend
 
             $strFormKey = 'feedback';
             $tplDca = $this->newTemplate('efg_internal_dca_formdata');
-            $tplDca->arrForm = ['key' => 'feedback', 'title' => $this->arrForm['title']];
+            $titel = "no Titel";
+            if (isset($this->arrForm['title'])) $titel = $this->arrForm['title'];
+            $tplDca->arrForm = ['key' => 'feedback', 'title' => $titel];
             $tplDca->arrStoringForms = $arrStoringForms;
             $tplDca->arrFields = $arrAllFields;   // alle Felder von allen Formularen
             $tplDca->arrFieldNamesById = $arrFieldNamesById;

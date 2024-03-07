@@ -214,6 +214,11 @@ $GLOBALS['TL_DCA']['tl_formdata'] = [
             'eval' => ['tl_class' => 'w50', 'rgxp' => 'datim'],
             'sql' => "varchar(10) NOT NULL default ''",
         ],
+        'sendto' => [
+            'label' => array('sendto', '[sendto] '),
+            'inputType' => 'text',
+            'formfieldType' => 'hidden',
+        ],        
         'be_notes' => [
             'label' => &$GLOBALS['TL_LANG']['tl_formdata']['be_notes'],
             'inputType' => 'textarea',
@@ -271,7 +276,7 @@ class tl_formdata extends \Backend
         // TODO: remove this fix if xdependentcalendarfield is available for Contao 3 and config is fixed
         // Fix config for xdependentcalendarfields
         // xdependentcalendarfields/config/config.php registers 'FormTextField', which is a front end widget)        
-        if (isset($GLOBALS['BE_FFL']['xdependentcalendarfields']) && 'FormTextField' === $GLOBALS['BE_FFL']['xdependentcalendarfields']) {    // PBD
+        if (isset($GLOBALS['BE_FFL']['xdependentcalendarfields']) && 'FormTextField' === $GLOBALS['BE_FFL']['xdependentcalendarfields']) {    // PBD debug OK
             $GLOBALS['BE_FFL']['xdependentcalendarfields'] = 'TextField';
         }
 
@@ -323,7 +328,7 @@ class tl_formdata extends \Backend
                     include_once $strFile;
 
                     // Replace standard dca tl_formdata by form-dependent dca
-                    if (isset ($GLOBALS['TL_DCA'][$strName]) && \is_array($GLOBALS['TL_DCA'][$strName]) && \count($GLOBALS['TL_DCA'][$strName]) > 0) {  //PBD
+                    if (isset ($GLOBALS['TL_DCA'][$strName]) && \is_array($GLOBALS['TL_DCA'][$strName]) && \count($GLOBALS['TL_DCA'][$strName]) > 0) {  // PBD  debug OK
                         $GLOBALS['TL_DCA']['tl_formdata'] = $GLOBALS['TL_DCA'][$strName];
                         unset($GLOBALS['TL_DCA'][$strName]);
                     }
@@ -358,7 +363,7 @@ class tl_formdata extends \Backend
         $arrFields = array_keys($GLOBALS['TL_DCA']['tl_formdata']['fields']);
         // check/set restrictions
         foreach ($arrFields as $strField) {
-            if (isset($GLOBALS['TL_DCA']['tl_formdata']['fields'][$strField]['exclude']) && true === $GLOBALS['TL_DCA']['tl_formdata']['fields'][$strField]['exclude']) {        //PBD
+            if (isset($GLOBALS['TL_DCA']['tl_formdata']['fields'][$strField]['exclude']) && true === $GLOBALS['TL_DCA']['tl_formdata']['fields'][$strField]['exclude']) {        // PBD  debug OK
                 if ($this->User->isAdmin || true === $this->User->hasAccess('tl_formdata::'.$strField, 'alexf')) {
                     $GLOBALS['TL_DCA']['tl_formdata']['fields'][$strField]['exclude'] = false;
                 }

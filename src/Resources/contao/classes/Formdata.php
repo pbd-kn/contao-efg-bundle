@@ -804,6 +804,7 @@ class Formdata extends \Contao\Frontend
                 $strVal = \StringUtil::decodeEntities($strVal);
             }
             
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strValstrType '.$strVal);
             return $strVal;
         }
         
@@ -1878,7 +1879,7 @@ class Formdata extends \Contao\Frontend
         $attachments = $objMailProperties->attachments;
 
         $blnSkipEmptyFields = $objMailProperties->skipEmptyFields;
-//        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "prepareMailData sender $sender subject $subject messageHtmlTmpl $messageHtmlTmpl");
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "prepareMailData sender $sender subject $subject messageHtmlTmpl $messageHtmlTmpl len arrRecipients ".count($arrRecipients));
 
         if (\Validator::isUuid($messageHtmlTmpl) || (is_numeric($messageHtmlTmpl) && $messageHtmlTmpl > 0)) {
             $objFileModel = \FilesModel::findById($messageHtmlTmpl);

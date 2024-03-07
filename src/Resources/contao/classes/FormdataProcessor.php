@@ -84,6 +84,10 @@ class FormdataProcessor extends \Contao\Frontend
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'this->Formdata->FdDcaKey '.$this->Formdata->FdDcaKey);
 
         // Get params of related listing formdata
+        if (!isset ($_SESSION['EFP']['LISTING_MOD']['id'])) {
+          EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Fehler in der Sessionverwaltung ');
+          return;      // Fehler in der Sessionverwaltung
+        }
         $intListingId = (int) ($_SESSION['EFP']['LISTING_MOD']['id']);   // wird in ModuleFormdataListing gesetzt
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Module intListingId '.$intListingId);
         if ($intListingId > 0) {
@@ -256,6 +260,7 @@ class FormdataProcessor extends \Contao\Frontend
             // Store details data
             foreach ($arrFormFields as $k => $arrField) {
                 $strType = $arrField['formfieldType'];
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "store Details Data $k type $strType");
                 $strVal = '';
 
                 if (\in_array($strType, $arrFFstorable, true)) {
@@ -278,7 +283,7 @@ class FormdataProcessor extends \Contao\Frontend
                     }
 
                     $strVal = $this->Formdata->preparePostValueForDatabase($arrSubmitted[$k], $arrField, $arrFiles[$k]);
-                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'strVal '.$strVal);
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "$k strVal $strVal");
 
                     // Special treatment for type upload
                     // Keep old file on frontend editing, if no new file has been uploaded
@@ -308,6 +313,7 @@ class FormdataProcessor extends \Contao\Frontend
                             ->set($arrFieldSet)
                             ->execute()
                         ;
+                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "store Data in tl_formdata_detailsData value $strVal ");
                     }
                 }
             }
@@ -389,6 +395,8 @@ class FormdataProcessor extends \Contao\Frontend
 
             // Set recipient(s)
             $recipientFieldName = $arrForm['confirmationMailRecipientField'];
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'confirmationMailRecipientField Name '.$confirmationMailRecipientField);
+
             $varRecipient = $arrSubmitted[$recipientFieldName];
 
             if (\is_array($varRecipient)) {
@@ -443,6 +451,7 @@ class FormdataProcessor extends \Contao\Frontend
             // Replace Insert tags and conditional tags
             $objMailProperties = $this->Formdata->prepareMailData($objMailProperties, $arrSubmitted, $arrFiles, $arrForm, $arrFormFields);
             // Send Mail
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'len objMailProperties->recipients '.count($objMailProperties->recipients));
             $blnConfirmationSent = false;
 
             if (!empty($objMailProperties->recipients)) {
@@ -477,6 +486,7 @@ class FormdataProcessor extends \Contao\Frontend
                 }
 
                 foreach ($objMailProperties->recipients as $recipient) {
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'vor sendTo to formular sender Recipient '.$recipient);
                     $objMail->sendTo($recipient);
                     $blnConfirmationSent = true;
                 }
@@ -530,11 +540,15 @@ class FormdataProcessor extends \Contao\Frontend
             // Set recipient(s)
             $varRecipient = $arrForm['formattedMailRecipient'];
             if (\is_array($varRecipient)) {
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'len varRecipient  '.count($varRecipient));
                 $arrRecipient = $varRecipient;
             } else {
                 $arrRecipient = trimsplit(',', $varRecipient);
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'len varRecipient  '.$varRecipient);
             }
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'len arrRecipient vor filter '.count($arrRecipient));
             $arrRecipient = array_filter(array_unique($arrRecipient));
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'len arrRecipient nach filter '.count($arrRecipient));
 
             if (!empty($arrRecipient)) {
                 foreach ($arrRecipient as $kR => $recipient) {
@@ -542,6 +556,7 @@ class FormdataProcessor extends \Contao\Frontend
                     $arrRecipient[$kR] = (\strlen($recipientName) ? $recipientName.' <'.$recipient.'>' : $recipient);
                 }
             }
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'len arrRecipient nach schleife '.count($arrRecipient));
             $objMailProperties->recipients = $arrRecipient;
 
             // Check if we want custom attachments... (Thanks to Torben Schwellnus)
@@ -578,7 +593,6 @@ class FormdataProcessor extends \Contao\Frontend
             EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Replace Insert tags and conditional tags');
             // Replace Insert tags and conditional tags
             $objMailProperties = $this->Formdata->prepareMailData($objMailProperties, $arrSubmitted, $arrFiles, $arrForm, $arrFormFields);
-            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'vor SendMail');
 
             // Send Mail
             $blnInformationSent = false;
@@ -613,7 +627,7 @@ class FormdataProcessor extends \Contao\Frontend
 
                 foreach ($objMailProperties->recipients as $recipient) {
                     try {
-                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'vor sendTo');
+                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'vor sendTo Recipient '.$recipient);
                         $objMail->sendTo($recipient);
                         $blnInformationSent = true;
                     }
@@ -663,9 +677,10 @@ class FormdataProcessor extends \Contao\Frontend
             }
 
             $this->import('Formdata');
-            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'bearbeite FORM id:  '.$arrForm['id'].' title: '.$arrForm['title']);
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'bearbeite FORM id:  '.$arrSubmitted['_formId_']);
 
             $arrFormFields = $this->Formdata->getFormfieldsAsArray((int) ($arrSubmitted['_formId_']));
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'bearbeite FORM len FormFields :  '.count($arrFormFields));
 
             preg_match('/<body[^>]*?>.*?<\/body>/si', $strContent, $arrMatch);
 
@@ -709,15 +724,15 @@ class FormdataProcessor extends \Contao\Frontend
                                     $strVal = implode(', ', $strVal);
                                 }
 
-                                if (!empty($strVal) && \strlen($strVal)) {
+                                if (isset($strVal) && \strlen($strVal)) {
                                     $strVal = nl2br($strVal);
                                 }
 
-                                if ($arrTagParams['attachment']) {
+                                if (!isset($arrTagParams['attachment'])) {
                                     $strVal = '';
                                 }
 
-                                if (!empty($strVal) && !\strlen($strVal) && $blnSkipEmptyFields) {
+                                if (isset($strVal) && !\strlen($strVal) && $blnSkipEmptyFields) {
                                     $strLabel = '';
                                 }
 
@@ -737,6 +752,7 @@ class FormdataProcessor extends \Contao\Frontend
                 }
             }
         }
+        //EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'bearbeite FORM return :  '.$strContent);
 
         return $strContent;
     }
