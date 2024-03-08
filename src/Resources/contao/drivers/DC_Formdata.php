@@ -5127,7 +5127,6 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                       (
                         (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['eval']['isAssociative'])&&$GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['eval']['isAssociative']) || 
                         (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['options'])&&array_is_assoc($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['options']))
-                        )
                       ) {
                         $option_label = $GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['options'][$vv];
                     }
