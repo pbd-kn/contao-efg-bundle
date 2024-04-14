@@ -35,8 +35,6 @@ use Contao\CoreBundle\ContaoCoreBundle;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
-use Oveleon\ContaoCookiebar\ContaoCookiebar;
-use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
 use Symfony\Component\Config\Loader\LoaderResolverInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Pbdkn\Efgco4\PbdknContaoEfgco4Bundle;
@@ -49,12 +47,5 @@ class Plugin implements BundlePluginInterface
             BundleConfig::create(PbdknContaoEfgco4Bundle::class)
                 ->setLoadAfter([ContaoCoreBundle::class])
                 ->setReplace(['efg']),        ];
-    }
-    public function getRouteCollection(LoaderResolverInterface $resolver, KernelInterface $kernel)
-    {
-        return $resolver
-            ->resolve(__DIR__.'/../../config/routes.yaml')
-            ->load(__DIR__.'/../../config/routes.yaml')
-            ;
     }
 }
