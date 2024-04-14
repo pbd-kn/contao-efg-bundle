@@ -26,7 +26,7 @@
 
 
 // This file is created when saving a form in form generator
-// last created on 2024-03-03 16:03:08
+// last created on 2024-03-18 14:31:15
 
 define('debsmall',1);
 define('debmedium',2+debsmall);
@@ -48,8 +48,8 @@ if (TL_MODE == 'BE')
 /**
  * Use class ExtendedForm
  */
-//$GLOBALS['FE_MOD']['application']['form'] = 'PBDKN\Efgco4\Resources\contao\forms\ExtendedForm';
-//$GLOBALS['TL_CTE']['includes']['form'] = 'PBDKN\Efgco4\Resources\contao\forms\ExtendedForm';
+//$GLOBALS['FE_MOD']['application']['form'] = 'Pbdkn\Efgco4\Resources\contao\forms\ExtendedForm';
+//$GLOBALS['TL_CTE']['includes']['form'] = 'Pbdkn\Efgco4\Resources\contao\forms\ExtendedForm';
 
 
 /**
@@ -69,7 +69,31 @@ $GLOBALS['BE_MOD']['formdata']['feedback'] = array
 );
 
 // following are used for the form dependent modules
-$GLOBALS['BE_MOD']['formdata']['fd_kurstage'] = array
+$GLOBALS['BE_MOD']['formdata']['fd_artikelliste'] = array
+(
+	'tables'     => array('tl_formdata', 'tl_formdata_details'),
+	'import'     => array('FormdataBackend', 'importCsv'),
+	'icon'       => 'bundles/contaoefgco4/icons/formdata_all.gif',
+    'stylesheet' => 'bundles/contaoefgco4/css/style.css');
+$GLOBALS['BE_MOD']['formdata']['fd_galerieliste'] = array
+(
+	'tables'     => array('tl_formdata', 'tl_formdata_details'),
+	'import'     => array('FormdataBackend', 'importCsv'),
+	'icon'       => 'bundles/contaoefgco4/icons/formdata_all.gif',
+    'stylesheet' => 'bundles/contaoefgco4/css/style.css');
+$GLOBALS['BE_MOD']['formdata']['fd_ausstellungen'] = array
+(
+	'tables'     => array('tl_formdata', 'tl_formdata_details'),
+	'import'     => array('FormdataBackend', 'importCsv'),
+	'icon'       => 'bundles/contaoefgco4/icons/formdata_all.gif',
+    'stylesheet' => 'bundles/contaoefgco4/css/style.css');
+$GLOBALS['BE_MOD']['formdata']['fd_presse'] = array
+(
+	'tables'     => array('tl_formdata', 'tl_formdata_details'),
+	'import'     => array('FormdataBackend', 'importCsv'),
+	'icon'       => 'bundles/contaoefgco4/icons/formdata_all.gif',
+    'stylesheet' => 'bundles/contaoefgco4/css/style.css');
+$GLOBALS['BE_MOD']['formdata']['fd_popup-artikel'] = array
 (
 	'tables'     => array('tl_formdata', 'tl_formdata_details'),
 	'import'     => array('FormdataBackend', 'importCsv'),
@@ -85,23 +109,23 @@ $GLOBALS['BE_MOD']['formdata']['fd_kurstage'] = array
 
 array_insert($GLOBALS['FE_MOD']['application'], count($GLOBALS['FE_MOD']['application']), array
 (
-	'formdatalisting' => 'PBDKN\Efgco4\Resources\contao\modules\ModuleFormdataListing'
+	'formdatalisting' => 'Pbdkn\Efgco4\Resources\contao\modules\ModuleFormdataListing'
 ));
 
 
 // Add backend form fields
-$GLOBALS['BE_FFL']['efgLookupOptionWizard'] = 'PBDKN\Efgco4\Resources\contao\widgets\EfgLookupOptionWizard';
-$GLOBALS['BE_FFL']['efgLookupSelect'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormLookupSelectMenu';
-$GLOBALS['BE_FFL']['efgLookupCheckbox'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormLookupCheckbox';
-$GLOBALS['BE_FFL']['efgLookupRadio'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormLookupRadio';
-$GLOBALS['BE_FFL']['efgFormPaginator'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormPaginator';
+$GLOBALS['BE_FFL']['efgLookupOptionWizard'] = 'Pbdkn\Efgco4\Resources\contao\widgets\EfgLookupOptionWizard';
+$GLOBALS['BE_FFL']['efgLookupSelect'] = 'Pbdkn\Efgco4\Resources\contao\forms\EfgFormLookupSelectMenu';
+$GLOBALS['BE_FFL']['efgLookupCheckbox'] = 'Pbdkn\Efgco4\Resources\contao\forms\EfgFormLookupCheckbox';
+$GLOBALS['BE_FFL']['efgLookupRadio'] = 'Pbdkn\Efgco4\Resources\contao\forms\EfgFormLookupRadio';
+$GLOBALS['BE_FFL']['efgFormPaginator'] = 'Pbdkn\Efgco4\Resources\contao\forms\EfgFormPaginator';
 
 // Add front end form fields
-$GLOBALS['TL_FFL']['efgLookupSelect'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormLookupSelectMenu';
-$GLOBALS['TL_FFL']['efgLookupCheckbox'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormLookupCheckbox';
-$GLOBALS['TL_FFL']['efgLookupRadio'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormLookupRadio';
-$GLOBALS['TL_FFL']['efgImageSelect'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormImageSelect';
-$GLOBALS['TL_FFL']['efgFormPaginator'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormPaginator';
+$GLOBALS['TL_FFL']['efgLookupSelect'] = 'Pbdkn\Efgco4\Resources\contao\forms\EfgFormLookupSelectMenu';
+$GLOBALS['TL_FFL']['efgLookupCheckbox'] = 'Pbdkn\Efgco4\Resources\contao\forms\EfgFormLookupCheckbox';
+$GLOBALS['TL_FFL']['efgLookupRadio'] = 'Pbdkn\Efgco4\Resources\contao\forms\EfgFormLookupRadio';
+$GLOBALS['TL_FFL']['efgImageSelect'] = 'Pbdkn\Efgco4\Resources\contao\forms\EfgFormImageSelect';
+$GLOBALS['TL_FFL']['efgFormPaginator'] = 'Pbdkn\Efgco4\Resources\contao\forms\EfgFormPaginator';
 
 /**
  * -------------------------------------------------------------------------
@@ -109,13 +133,13 @@ $GLOBALS['TL_FFL']['efgFormPaginator'] = 'PBDKN\Efgco4\Resources\contao\forms\Ef
  * -------------------------------------------------------------------------
  */
 
-$GLOBALS['TL_HOOKS']['processFormData'][] = array('PBDKN\Efgco4\Resources\contao\classes\FormdataProcessor', 'processSubmittedData');
-$GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array('PBDKN\Efgco4\Resources\contao\classes\FormdataProcessor', 'processConfirmationContent');
-$GLOBALS['TL_HOOKS']['listComments'][] = array('PBDKN\Efgco4\Resources\classes\contao\FormdataComments', 'listComments');
-$GLOBALS['TL_HOOKS']['getSearchablePages'][] = array('PBDKN\Efgco4\Resources\contao\classes\Formdata', 'getSearchablePages');
-$GLOBALS['TL_HOOKS']['executePostActions'][] = array('PBDKN\Efgco4\Resources\contao\classes\Formdata', 'executePostActions');
-$GLOBALS['TL_HOOKS']['replaceInsertTags'][] = array('PBDKN\Efgco4\Resources\contao\classes\EfgInsertTag', 'Efg_InsertTags');
-$GLOBALS['TL_HOOKS']['prepareFormData'][] = array('PBDKN\Efgco4\Resources\contao\classes\EfgMailhooks', 'prepareFormData');
+$GLOBALS['TL_HOOKS']['processFormData'][] = array('Pbdkn\Efgco4\Resources\contao\classes\FormdataProcessor', 'processSubmittedData');
+$GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array('Pbdkn\Efgco4\Resources\contao\classes\FormdataProcessor', 'processConfirmationContent');
+$GLOBALS['TL_HOOKS']['listComments'][] = array('Pbdkn\Efgco4\Resources\classes\contao\FormdataComments', 'listComments');
+$GLOBALS['TL_HOOKS']['getSearchablePages'][] = array('Pbdkn\Efgco4\Resources\contao\classes\Formdata', 'getSearchablePages');
+//$GLOBALS['TL_HOOKS']['executePostActions'][] = array('Pbdkn\Efgco4\Resources\contao\classes\Formdata', 'executePostActions');
+$GLOBALS['TL_HOOKS']['replaceInsertTags'][] = array('Pbdkn\Efgco4\Resources\contao\classes\EfgInsertTag', 'Efg_InsertTags');
+$GLOBALS['TL_HOOKS']['prepareFormData'][] = array('Pbdkn\Efgco4\Resources\contao\classes\EfgMailhooks', 'prepareFormData');
 
 
 // end config efg

@@ -29,7 +29,7 @@ declare(strict_types=1);
  *
  */
 
-namespace PBDKN\Efgco4\EventListener;
+namespace Pbdkn\Efgco4\EventListener;
 
 use Contao\BackendTemplate;
 use Contao\Config;

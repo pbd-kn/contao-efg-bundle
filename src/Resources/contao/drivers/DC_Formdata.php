@@ -33,9 +33,9 @@ declare(strict_types=1);
  * Namespace.
  */
 
-namespace PBDKN\Efgco4\Resources\contao\drivers;
+namespace Pbdkn\Efgco4\Resources\contao\drivers;
 
-use PBDKN\Efgco4\Resources\contao\classes\EfgLog;
+use Pbdkn\Efgco4\Resources\contao\classes\EfgLog;
 define('ENCODE_AMPERSANDS', true);    #PBD leycom
 class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 {
@@ -223,6 +223,9 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
     // Target charset when converting from UTF8 on CSV-/XLS-Export
     // This can be changed by configuration setting: $GLOBALS['efg_co4']['exportConvertToCharset'] = 'TARGET_CHARSET'
     protected $strExportConvertToCharset = 'CP1252';
+    
+    protected Object $objSessionBag;
+    
 
     /**
      * Initialize the object.
@@ -235,10 +238,14 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         parent::__construct();
         EfgLog::setEfgDebugmode('form');
         EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "do '".\Input::get('do')."' strTable '$strTable' id '".\Input::get('id')."'");
+        $this->objSessionBag = \System::getContainer()->get('session')->getBag('contao_backend');  //PBD Session
+        if (!isset($this->objSessionBag))
+                  EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "!!!!!!!!!!!!!!!!!!!! no session Bag");
         // Check the request token (see #4007)
         if (isset($_GET['act'])) {
             if (!isset($_GET['rt']) || !\RequestToken::validate(\Input::get('rt'))) {
-                $this->Session->set('INVALID_TOKEN_URL', \Environment::get('request'));
+                $this->objSessionBag->set('INVALID_TOKEN_URL', \Environment::get('request'));  //PBD Session
+                //$this->Session->set('INVALID_TOKEN_URL', \Environment::get('request'));
                 \Controller::redirect('contao/confirm.php');
             }
         }
@@ -247,7 +254,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
         // Clear the clipboard
         if (isset($_GET['clipboard'])) {
-            $this->Session->set('CLIPBOARD', []);
+            //$this->Session->set('CLIPBOARD', []);
+            $this->objSessionBag->set('CLIPBOARD', []);  //PBD Session
             \Controller::redirect($this->getReferer());
         }
 
@@ -314,9 +322,11 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                 \Controller::reload();
             }
 
-            $session = $this->Session->getData();
+            $session = $this->objSessionBag->all();  //PBD Session            
+            //$session = $this->Session->getData();
             $session['CURRENT']['IDS'] = \Input::post('IDS');
-            $this->Session->setData($session);
+            //$this->Session->setData($session);
+            $this->objSessionBag->replace($session);
 
             if (isset($_POST['edit'])) {
                 \Controller::redirect(str_replace('act=select', 'act=editAll', \Environment::get('request')));
@@ -326,14 +336,16 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                 \Controller::redirect(str_replace('act=select', 'act=overrideAll', \Environment::get('request')));
             } elseif (isset($_POST['cut']) || isset($_POST['copy'])) {
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "strTable $strTable Post cut '".$_POST['cut']."'");
-                $arrClipboard = $this->Session->get('CLIPBOARD');
+                //$arrClipboard = $this->Session->get('CLIPBOARD');
+                $arrClipboard=$this->objSessionBag->get('CLIPBOARD');  //PBD Session
 
                 $arrClipboard[$strTable] = [
                     'id' => $ids,
                     'mode' => (isset($_POST['cut']) ? 'cutAll' : 'copyAll'),
                 ];
 
-                $this->Session->set('CLIPBOARD', $arrClipboard);
+                //$this->Session->set('CLIPBOARD', $arrClipboard);
+                $arrClipboard=$this->objSessionBag->set('CLIPBOARD',$arrClipboard);  //PBD Session
                 \Controller::redirect($this->getReferer());
             }
         }
@@ -413,9 +425,12 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
         // Store the current referer
         if (!empty($this->ctable) && !\Input::get('act') && !\Input::get('key') && !\Input::get('token') && 'contao/main.php' === \Environment::get('script') && !\Environment::get('isAjaxRequest')) {
-            $session = $this->Session->get('referer');
-            $session[TL_REFERER_ID][$this->strTable] = substr(\Environment::get('requestUri'), \strlen(TL_PATH) + 1);
-            $this->Session->set('referer', $session);
+            $referer=$this->objSessionBag->get('referer');   //PBD Session
+            $referer[TL_REFERER_ID][$this->strTable] = substr(\Environment::get('requestUri'), \strlen(TL_PATH) + 1);  //PBD Session
+            $referer=$this->objSessionBag->set('referer',$referer);  //PBD Session
+            //$session = $this->Session->get('referer');
+            //$session[TL_REFERER_ID][$this->strTable] = substr(\Environment::get('requestUri'), \strlen(TL_PATH) + 1);
+            //$this->Session->set('referer', $session);
         }
         EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "end do '".\Input::get('do')."' strTable '$strTable' id '".\Input::get('id')."'");
     }
@@ -485,7 +500,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
         // Add to clipboard
         if ('paste' === \Input::get('act')) {
-            $arrClipboard = $this->Session->get('CLIPBOARD');
+            //$arrClipboard = $this->Session->get('CLIPBOARD');
+            $arrClipboard=$this->objSessionBag->get('CLIPBOARD');  //PBD Session
 
             $arrClipboard[$this->strTable] = [
                 'id' => \Input::get('id'),
@@ -493,7 +509,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                 'mode' => \Input::get('mode'),
             ];
 
-            $this->Session->set('CLIPBOARD', $arrClipboard);
+            //$this->Session->set('CLIPBOARD', $arrClipboard);
+            $this->objSessionBag->set('CLIPBOARD',$arrClipboard);  //PBD Session
         }
 
         // Custom filter
@@ -538,9 +555,11 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         }
 
         // Store the current IDs
-        $session = $this->Session->getData();
+        //$session = $this->Session->getData();
+        $session = $this->objSessionBag->all();   //PBD Session           
         $session['CURRENT']['IDS'] = $this->current;
-        $this->Session->setData($session);
+        //$this->Session->setData($session);
+        if (isset($sesionBag) && isset($session))$this->objSessionBag->replace($session);
 
         return $return;
     }
@@ -755,9 +774,11 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         }
 
         // Empty the clipboard
-        $arrClipboard = $this->Session->get('CLIPBOARD');
+        //$arrClipboard = $this->Session->get('CLIPBOARD');
+        $arrClipboard=$this->objSessionBag->get('CLIPBOARD');  //PBD Session
         $arrClipboard[$this->strTable] = [];
-        $this->Session->set('CLIPBOARD', $arrClipboard);
+        //$this->Session->set('CLIPBOARD', $arrClipboard);
+        $this->objSessionBag->set('CLIPBOARD',$arrClipboard);  //PBD Session
 
         // Insert the record if the table is not closed and switch to edit mode
         if (!$GLOBALS['TL_DCA'][$this->strTable]['config']['closed']) {
@@ -812,13 +833,13 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
                 // Save new record in the session
                 /** @var AttributeBagInterface $objSessionBag */
-                $objSessionBag = \System::getContainer()->get('session')->getBag('contao_backend');
+                //$objSessionBag = \System::getContainer()->get('session')->getBag('contao_backend');
 
-                $new_records = $objSessionBag->get('new_records');
+                $new_records = $this->objSessionBag->get('new_records');  //PBD Session
                 $new_records[$this->strTable][] = $insertID;
-                $objSessionBag->set('new_records', $new_records);
+                $this->objSessionBag->set('new_records', $new_records);  //PBD Session
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "in session insertID $insertID ".$this->strTable.' len '.\count($new_records[$this->strTable]));
-                $this->Session->set('new_records', $new_records);
+                //$this->Session->set('new_records', $new_records);
 
                 // Call the oncreate_callback
                 if (\is_array($GLOBALS['TL_DCA'][$this->strTable]['config']['oncreate_callback'])) {
@@ -1000,7 +1021,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
             \Controller::redirect('contao/main.php?act=error');
         }
 
-        $session = $this->Session->getData();
+        //$session = $this->Session->getData();
+        $session = $this->objSessionBag->all();  //PBD Session            
         $ids = $session['CURRENT']['IDS'];
 
         if (\is_array($ids) && \strlen($ids[0])) {
@@ -1200,6 +1222,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
             $class = 'tl_tbox';
             $fs = $this->Session->get('fieldset_states');
+            $fs=$this->objSessionBag->get('fieldset_states');  //PBD Session
             $blnIsFirst = true;
 
             // Render boxes
@@ -1622,6 +1645,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         if (\is_array($GLOBALS['TL_DCA'][$this->strTable]['edit']['buttons_callback'])) {
             foreach ($GLOBALS['TL_DCA'][$this->strTable]['edit']['buttons_callback'] as $callback) {
                 if (\is_array($callback)) {
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'efg form data buttons_callback '.$callback[0]);
                     $this->import($callback[0]);
                     $arrButtons = $this->{$callback[0]}->{$callback[1]}($arrButtons, $this);          //Änderung PBD
                 } elseif (\is_callable($callback)) {
@@ -1765,7 +1789,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         $this->import('BackendUser', 'User');
 
         // Get current IDs from session
-        $session = $this->Session->getData();
+        //$session = $this->Session->getData();
+        $session = $this->objSessionBag->all();  //PBD Session            
         $ids = $session['CURRENT']['IDS'];
 
         if ('' !== $intId && \Environment::get('isAjaxRequest')) {
@@ -1775,7 +1800,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         // Save field selection in session
         if (\Input::post('FORM_SUBMIT') === $this->strTable.'_all' && \Input::get('fields')) {
             $session['CURRENT'][$this->strTable] = \Input::post('all_fields');
-            $this->Session->setData($session);
+            //$this->Session->setData($session);
+            $this->objSessionBag->replace($session);
         }
 
         // Add fields
@@ -2523,7 +2549,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
     {
         $blnSend = false;
 
-        if (\strlen((string)\Input::get('token')) && \Input::get('token') === $this->Session->get('fd_mail_send')) {          # PBD leycom
+        //if (\strlen((string)\Input::get('token')) && \Input::get('token') === $this->Session->get('fd_mail_send')) {          # PBD leycom
+        if (\strlen((string)\Input::get('token')) && \Input::get('token') === $this->objSessionBag->get('fd_mail_send')) {          # PBD leycom
             $blnSend = true;
         }
 
@@ -2720,10 +2747,14 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         if (!empty($objMailProperties->messageHtml)) {
             $objEmail->html = $objMailProperties->messageHtml;
         }
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'check sendTo Mail??');
 
         // Send Mail
-        if (\strlen((string)\Input::get('token')) && \Input::get('token') === $this->Session->get('fd_mail_send')) {   # PBD leycom
-            $this->Session->set('fd_mail_send', null);
+        //if (\strlen((string)\Input::get('token')) && \Input::get('token') === $this->Session->get('fd_mail_send')) {          # PBD leycom
+        if (\strlen((string)\Input::get('token')) && \Input::get('token') === $this->objSessionBag->get('fd_mail_send')) {          # PBD leycom
+            //$this->Session->set('fd_mail_send', null);
+            $this->objSessionBag->set('fd_mail_send',null);          # PBD leycom
+
             $blnSend = true;
 
             $blnConfirmationSent = false;
@@ -2741,7 +2772,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                             }
                         }
 
-                        $objEmail->sendTo($recipient);
+                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, '!!!!!!!!!!!!!!!!!!!vor sendTo Recipient '.$recipient);
+                        //$objEmail->sendTo($recipient);
                         $blnConfirmationSent = true;
 
                         \Message::addInfo(sprintf($GLOBALS['TL_LANG']['tl_formdata']['mail_sent'], str_replace(['<', '>'], ['[', ']'], $recipient)));
@@ -2759,7 +2791,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         }
 
         $strToken = md5(uniqid('', true));
-        $this->Session->set('fd_mail_send', $strToken);
+        //$this->Session->set('fd_mail_send', $strToken);
+        $this->objSessionBag->set('fd_mail_send',null);          # PBD leycom
 
         $strHint = '';
 
@@ -2877,14 +2910,16 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
             }
         }
 
-        $arrSessionData = $this->Session->get('EFG_CO4');
+        //$arrSessionData = $this->Session->get('EFG_CO4');
+        $arrSessionData=$this->objSessionBag->get('EFG_CO4');
         if (null === $arrSessionData) {
             $arrSessionData = [];
         }
-        $this->Session->set('EFG_CO4', $arrSessionData);
+        //$this->Session->set('EFG_CO4', $arrSessionData);
+        $this->objSessionBag->set('EFG_CO4',$arrSessionData);
 
         // Import CSV
-        if ('tl_formdata_import' === $_POST['FORM_SUBMIT']) {
+        if (isset($_POST['FORM_SUBMIT'])&&'tl_formdata_import' === $_POST['FORM_SUBMIT']) {
             EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'tl_formdata_import ');
 
             $this->loadDataContainer('tl_files');
@@ -2892,7 +2927,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
             $strMode = 'preview';
             $arrSessionData['import'][$this->strFormKey]['separator'] = $_POST['separator'];
             $arrSessionData['import'][$this->strFormKey]['csv_has_header'] = ('1' === $_POST['csv_has_header'] ? '1' : '');
-            $this->Session->set('EFG_CO4', $arrSessionData);
+            //$this->Session->set('EFG_CO4', $arrSessionData);
+            $this->objSessionBag->set('EFG_CO4',$arrSessionData);
 
             $this->log('PBD DC_Formdata importFile import_source '.\Input::post('import_source'), __METHOD__, TL_GENERAL);
             EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'importFile import_source '.\Input::post('import_source'));
@@ -2940,7 +2976,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
                 $arrImportCols = \Input::post('import_cols');
                 $arrSessionData['import'][$this->strFormKey]['import_cols'] = $arrImportCols;
-                $this->Session->set('EFG_CO4', $arrSessionData);
+                //$this->Session->set('EFG_CO4', $arrSessionData);
+                $this->objSessionBag->set('EFG_CO4',$arrSessionData);
 
                 $arrMapFields = array_flip($arrImportCols);
                 if (isset($arrMapFields['__IGNORE__'])) {
@@ -3129,6 +3166,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
     public function export($strMode = 'csv'): void
     {
+        //$session = $this->Session->getData();
+        $session = $this->objSessionBag->all();  //PBD Session            
         $expmode = \Input::get('expmode');
         if (isset($expmode) && \strlen(\Input::get('expmode'))) {
             $strMode = \Input::get('expmode');
@@ -3152,7 +3191,6 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         }
 
         // filter or search for values
-        $session = $this->Session->getData();
 
         $showFields = array_merge($this->arrBaseFields, $this->arrDetailFields);
         $ignoreFields = ['tstamp'];
@@ -4116,8 +4154,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
         $objRow = $objRowStmt->execute($this->values);
         $this->bid = ('' !== $return) ? $this->bid : 'tl_buttons';
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'closed '.' global_operations '.$GLOBALS['TL_DCA'][$this->strTable]['list']['global_operations']);
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "Display !closed '".!($GLOBALS['TL_DCA'][$this->strTable]['config']['closed'])."'");
+        //EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'closed '.' global_operations '.$GLOBALS['TL_DCA'][$this->strTable]['list']['global_operations']);
+        //EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "Display !closed '".!($GLOBALS['TL_DCA'][$this->strTable]['config']['closed'])."'");
 
         // Display buttons
         if (!$GLOBALS['TL_DCA'][$this->strTable]['config']['closed'] || !empty($GLOBALS['TL_DCA'][$this->strTable]['list']['global_operations'])) {
@@ -4504,7 +4542,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
     protected function searchMenu()
     {
         $searchFields = [];
-        $session = $this->Session->getData();
+        //$session = $this->Session->getData();
+        $session = $this->objSessionBag->all();  //PBD Session            
 
         // Get search fields
         foreach ($GLOBALS['TL_DCA'][$this->strTable]['fields'] as $k => $v) {
@@ -4541,7 +4580,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                 }
             }
 
-            $this->Session->setData($session);
+            //$this->Session->setData($session);
+            $this->objSessionBag->replace($session);
         }
 
         // Set search value from session
@@ -4593,6 +4633,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
      */
     protected function sortMenu()
     {
+        //$session = $this->Session->getData();
+        $session = $this->objSessionBag->all();  //PBD Session            
         if (2 !== $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] && 4 !== $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode']) {
             return '';
         }
@@ -4601,7 +4643,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
         // Get sorting fields
         foreach ($GLOBALS['TL_DCA'][$this->strTable]['fields'] as $k => $v) {
-            if ($v['sorting']) {
+            if (isset($v['sorting'])) {
                 $sortingFields[] = $k;
             }
         }
@@ -4612,7 +4654,6 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         }
 
         $this->bid = 'tl_buttons_a';
-        $session = $this->Session->getData();
         $orderBy = $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['fields'];
         $firstOrderBy = preg_replace('/\s+.*$/', '', $orderBy[0]);
 
@@ -4627,7 +4668,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         // Set sorting from user input
         if ('tl_filters' === \Input::post('FORM_SUBMIT')) {
             $session['sorting'][$strSessionKey] = \in_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][\Input::post('tl_sort')]['flag'], [2, 4, 6, 8, 10, 12], true) ? \Input::post('tl_sort').' DESC' : \Input::post('tl_sort');
-            $this->Session->setData($session);
+            //$this->Session->setData($session);
+            $this->objSessionBag->replace($session);
         }
 
         // Overwrite the "orderBy" value with the session value
@@ -4685,7 +4727,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         if (\count($this->values) < 2) {
             return false;
         }
-        $session = $this->Session->getData();
+            //$session = $this->Session->getData();
+            $session = $this->objSessionBag->all();    //PBD Session          
         // PBD invalid in php8 $filter = (4 === $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode']) ? $this->strTable.'_'.CURRENT_ID : (\strlen($this->strFormKey)) ? $this->strFormKey : $this->strTable;
         $filter = ((4 === $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode']) ? $this->strTable.'_'.CURRENT_ID : (\strlen($this->strFormKey)) ) ? $this->strFormKey : $this->strTable;
         EfgLog::EfgwriteLog(debmedium, __METHOD__, __LINE__, 'limitMenu filter '.$filter);      # PBD leycom
@@ -4706,7 +4749,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                 unset($session['filter'][$filter]['limit']);
             }
 
-            $this->Session->setData($session);
+            //$this->Session->setData($session);
+            $this->objSessionBag->replace($session);
 
             if ('tl_filters_limit' === \Input::post('FORM_SUBMIT')) {
                 \Controller::reload();
@@ -4814,9 +4858,10 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
         $fields = '';
         $this->bid = 'tl_buttons_a';
         $sortingFields = [];
-        $session = $this->Session->getData();
         // PBD invalid in php8 $filter = (4 === $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode']) ? $this->strTable.'_'.CURRENT_ID : (\strlen($this->strFormKey)) ? $this->strFormKey : $this->strTable;
         $filter = ((4 === $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode']) ? $this->strTable.'_'.CURRENT_ID : (\strlen($this->strFormKey)) ) ? $this->strFormKey : $this->strTable;
+        //$session = $this->Session->getData();
+        $session = $this->objSessionBag->all();   //PBD Session           
 
         // Get the sorting fields
         foreach ($GLOBALS['TL_DCA'][$this->strTable]['fields'] as $k => $v) {
@@ -4844,7 +4889,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
                 $session['filter'][$filter][$this->strFormFilterKey] = $this->strFormFilterValue;
             }
 
-            $this->Session->setData($session);
+            //$this->Session->setData($session);
+            $this->objSessionBag->replace($session);
         }
 
         // Set filter from table configuration
@@ -5336,11 +5382,12 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
     {
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'formImportSource');
 
-        $arrSessionData = $this->Session->get('EFG_CO4');
+        //$arrSessionData = $this->Session->get('EFG_CO4');
+        $arrSessionData=$this->objSessionBag->get('EFG_CO4');
 
         $objFileSelector = new \FileTree(\Widget::getAttributesFromDca($GLOBALS['TL_DCA']['tl_formdata']['fields']['import_source'], 'import_source', null, 'import_source', 'tl_formdata'));
 
-        // Return form
+        // Return form widget zur Auswahl
         return '
 <div id="tl_buttons">
 <a href="'.ampersand(str_replace('&key=import', '', \Environment::get('request'))).'" class="header_back" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['backBT']).'" accesskey="b">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>
@@ -5398,7 +5445,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
      */
     protected function formImportPreview($objFile, $strSeparator)
     {
-        $arrSessionData = $this->Session->get('EFG_CO4');
+        //$arrSessionData = $this->Session->get('EFG_CO4');
+        $arrSessionData=$this->objSessionBag->get('EFG_CO4');
         $blnUseCsvHeader = ('1' === $arrSessionData['import'][$this->strFormKey]['csv_has_header'] ? true : false);
 
         $arrEntries = [];
@@ -5433,7 +5481,8 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
             }
         }
 
-        $this->Session->set('EFG_CO4', $arrSessionData);
+        //$this->Session->set('EFG_CO4', $arrSessionData);
+        $this->objSessionBag->set('EFG_CO4',$arrSessionData);
 
         // plugin stylect cannot handle selects inside scrolling div
         // .. deactivate it
@@ -5518,8 +5567,8 @@ var Stylect = {
      */
     protected function importFieldmapMenu(&$arrEntries, $col, $val)
     {
-        $arrSessionData = $this->Session->get('EFG_CO4');
-
+        //$arrSessionData = $this->Session->get('EFG_CO4');
+        $arrSessionData=$this->objSessionBag->get('EFG_CO4');
         $return = '
 <select name="import_cols['.$col.']">
 	<option value="__IGNORE__"'.((!isset($arrSessionData['import'][$this->strFormKey]['import_cols'][$col]) || '__IGNORE__' === $arrSessionData['import'][$this->strFormKey]['import_cols'][$col]) ? ' selected="SELECTED"' : '').'>'.$GLOBALS['TL_LANG']['tl_formdata']['option_import_ignore'].'</option>';
@@ -5603,17 +5652,31 @@ window.addEvent('domready', function(){
 
     private function getFilepickerJavascript($strReload)
     {
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "getFilepickerJavascript strReload $strReload");
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "getFilepickerJavascript strReload Type $strReload");
 
         return "
 <script>
+// Callback-Funktion, die aufgerufen wird, wenn der POST-Request erfolgreich abgeschlossen ist
+function onSuccessCallback() {
+    // Hier können Sie Code ausführen, der nach Abschluss des POST-Requests ausgeführt werden soll
+    console.log('PBD onSuccessCallback ');
+    $('simple-modal').hide();
+    $('simple-modal-overlay').hide();
+    document.body.setStyle('overflow', 'auto');
+}
 function handleEfgFileselectorButton(){
 	$$('a[href*=contao/picker]').addEvent('click', function(e){
+    
+    alert('PBD handleEfgFileselectorButton ');
+    console.log('PBD handleEfgFileselectorButton ');
+        debugger;
 		var el = e.target;
 		var elHidden = el.getParent('div.selector_container').getPrevious('input[type=hidden]');
 		var opt = { 'id': elHidden.get('name'), 'url': e.target.get('href') };
+        // hier wird der Tree aufgerufen !!!
 		$$('div#simple-modal div.simple-modal-footer a.btn.primary').removeEvents('click').addEvent('click', function() {
-// console.log('PBD removeEvents'); uebernehmen filename klick
+ console.log('PBD removeEvents'); //uebernehmen filename klick
+debugger;
 			var val = [];
 			var	frm = null;
 			var frms = window.frames;
@@ -5640,7 +5703,7 @@ function handleEfgFileselectorButton(){
 			var inp = frm.document.getElementById('tl_listing').getElementsByTagName('input');
 			for (var i=0; i<inp.length; i++) {
 				if (!inp[i].checked || inp[i].id.match(/^check_all_/)) continue;
-				if (!inp[i].id.match(/^reset_/)) val.push(inp[i].get('value'));
+				if (!inp[i].id.match(/^reset_/)) val.push(inp[i].get('value'));    // value aus filetree abspeichern in val
 			}
 			if (opt.tag) {
 				$(opt.tag).value = val.join(',');
@@ -5649,24 +5712,66 @@ function handleEfgFileselectorButton(){
 				}
 				opt.self.set('href', opt.self.get('href').replace(/&value=[^&]*/, '&value='+val.join(',')));
 			} else {
-				$('ctrl_'+opt.id).value = val.join(\"\t\");
+				$('ctrl_'+opt.id).value = val.join('\"\t\"');  // schreibe den Wert in das ctrl Hidden Element des Windows
+
 				var act = (opt.url.indexOf('contao/page.php') != -1) ? 'reloadPagetree' : '".$strReload."';
-				new Request.Contao({
-					field: $('ctrl_'+opt.id),
-					evalScripts: false,
-					onRequest: AjaxRequest.displayBox(Contao.lang.loading + ' …'),
-					onSuccess: function(txt, json) {
-						$('ctrl_'+opt.id).getParent('div').set('html', json.content);
-						json.javascript && Browser.exec(json.javascript);
-						AjaxRequest.hideBox();
-						window.fireEvent('ajax_change');
-					}
-				}).post({'action':act, 'name':opt.id, 'value':$('ctrl_'+opt.id).value, 'REQUEST_TOKEN':Contao.request_token});
-			}
+                alert('PBD Request '+act+' opt.id ' + opt.id + ' value: '+$('ctrl_'+opt.id).value);
+console.log('PBD Request act: '+act+' opt.id(name) ' + opt.id + ' value: '+$('ctrl_'+opt.id).value+' REQUEST_TOKEN: '+Contao.request_token);
+/*
+		        new Request.Contao({
+				  field: $('ctrl_'+opt.id),    // dies ist das hidden inputfield mit dem wert (Filename) ?????
+				  evalScripts: false,
+			      onRequest: AjaxRequest.displayBox(Contao.lang.loading + ' …'),
+                  onSuccess: function(txt, json,xhr) {
+                    confirm('PBD Request success fire event ajax_change ' + txt + ' json ' + json.content);
+debugger;
+                    console.log('PBD Request success fire event ajax_change ' + txt + ' json ' + json.content);
+                    //$('ctrl_' + opt.id).getParent('div').set('html', json.content);
+                    $('ctrl_' + opt.id).getParent('div').set('html', txt);
+                    json.javascript && Browser.exec(json.javascript);
+                    AjaxRequest.hideBox();
+                    window.fireEvent('ajax_change');
+                    //xhr.preventDefault(); // Hier wird die Standardaktion des Browsers verhindert
+                    onSuccessCallback();
+                  },          
+                  onError: function (xhr) {
+                    console.error('Fehler während der AJAX-Anfrage: ', xhr.statusText);
+                  },
+                  onTimeout: 3000 // <-- value to add / increase
+		        }).post({'action':act, 'name':opt.id, 'value':$('ctrl_'+opt.id).value});
+                  url: '/efg/reloadFiletree/anton/berta/name/value',
+ ende alter request*/
+		        request=new Request.Contao({
+                  url: '/efg/reloadFiletree/anton/berta/name/value',
+				  field: $('ctrl_'+opt.id),
+				  evalScripts: false,
+			      onRequest: AjaxRequest.displayBox(Contao.lang.loading + ' …'),
+                  onSuccess: function(txt, json,xhr) {
+                    confirm('PBD Request success fire event ajax_change ' + txt + ' json ' + json.content);
+debugger;
+                    console.log('PBD Request success fire event ajax_change ' + txt + ' json ' + json.content);
+                    //$('ctrl_' + opt.id).getParent('div').set('html', json.content);
+                    $('ctrl_' + opt.id).getParent('div').set('html', txt);
+                    json.javascript && Browser.exec(json.javascript);
+                    AjaxRequest.hideBox();
+                    window.fireEvent('ajax_change');
+                    //xhr.preventDefault(); // Hier wird die Standardaktion des Browsers verhindert
+                    onSuccessCallback();
+                  },          
+                  onError: function (xhr) {
+                    console.error('Fehler während der AJAX-Anfrage: ', xhr.statusText);
+                  }
+		        });
+                request.send();
+	          }    // ende else
+
+      /* 
 			$('simple-modal').hide();
 			$('simple-modal-overlay').hide();
 			document.body.setStyle('overflow', 'auto');
+      */
 		});
+    console.log('ende click funktion');
 	});
 }
 

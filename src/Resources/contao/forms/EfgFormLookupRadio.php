@@ -33,9 +33,9 @@ declare(strict_types=1);
  * Namespace.
  */
 
-namespace PBDKN\Efgco4\Resources\contao\forms;
+namespace Pbdkn\Efgco4\Resources\contao\forms;
 
-use PBDKN\Efgco4\Resources\contao\classes\EfgLog;
+use Pbdkn\Efgco4\Resources\contao\classes\EfgLog;
 
 /**
  * Class EfgFormLookupRadio.

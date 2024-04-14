@@ -29,7 +29,7 @@ declare(strict_types=1);
  *
  */
 
-namespace PBDKN\Efgco4\Resources\contao\classes;
+namespace Pbdkn\Efgco4\Resources\contao\classes;
 
 class EfgMailhooks // Make sure this class name matches the first item in the above line of code
 {
@@ -97,9 +97,12 @@ class EfgMailhooks // Make sure this class name matches the first item in the ab
             }
         }
         // Test ob confirmationMail (Bestätigungsmail) gesendet werden soll
-        if (isset($arrSubmitted['kopie']) && 'ja' === $arrSubmitted['kopie']) {
+        //if (isset($arrSubmitted['kopie']) && 'ja' === $arrSubmitted['kopie']) {
+        if (isset($arrSubmitted['confirmationMail']) && 'ja' === $arrSubmitted['confirmationMail']) {
+            EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'set confirmationMail 1');
             $objForm->__set('sendConfirmationMail', '1');
         } else {
+            EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'set confirmationMail ""');
             $objForm->__set('sendConfirmationMail', '');
         }
         EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, 'end prepareFormData');

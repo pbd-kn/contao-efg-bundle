@@ -241,7 +241,7 @@ $GLOBALS['TL_DCA']['tl_formdata'] = [
  * @author     Thomas Kuhn <mail@th-kuhn.de>
  * @package    efg
  */
-use PBDKN\Efgco4\Resources\contao\classes\EfgLog;
+use Pbdkn\Efgco4\Resources\contao\classes\EfgLog;
 
 class tl_formdata extends \Backend
 {

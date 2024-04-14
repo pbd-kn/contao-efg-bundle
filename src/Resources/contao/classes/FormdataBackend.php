@@ -37,7 +37,7 @@ declare(strict_types=1);
  * unter contao 4 ist die Neuerstellung des Caches nicht moeglich. Muss evtl separat nachgeholt werden
  */
 
-namespace PBDKN\Efgco4\Resources\contao\classes;
+namespace Pbdkn\Efgco4\Resources\contao\classes;
 
 use Contao\System;
 
@@ -100,10 +100,14 @@ class FormdataBackend extends \Backend
 
         if (\Input::get('do') && 'feedback' !== \Input::get('do')) {
             if ($this->Formdata->arrStoringForms[\Input::get('do')]) {
-                $session = $this->Session->getData();
+                EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "storing formss in Session '".\Input::get('do')."'");
+                $objSessionBag = \System::getContainer()->get('session')->getBag('contao_backend');  //PBD Session
+                //$session = $this->Session->getData();
+                $session = $objSessionBag->all();  //PBD Session
                 $session['filter']['tl_feedback']['form'] = $this->Formdata->arrStoringForms[\Input::get('do')]['title'];
 
-                $this->Session->setData($session);
+                //$this->Session->setData($session);
+                $sessionBag->replace($session);  //PBD Session
             }
         }
 

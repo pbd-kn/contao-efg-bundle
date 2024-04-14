@@ -213,16 +213,16 @@ if (isset($GLOBALS['TL_DCA']['tl_form_field']['fields']['type']['options'])&&\is
 
 /*  nach config verlegt damit fe editing mit hasteform funktioniert
 // Add backend form fields
-$GLOBALS['BE_FFL']['efgLookupOptionWizard'] = 'PBDKN\Efgco4\Resources\contao\widgets\EfgLookupOptionWizard';
-$GLOBALS['BE_FFL']['efgLookupSelect'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormLookupSelectMenu';
-$GLOBALS['BE_FFL']['efgLookupCheckbox'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormLookupCheckbox';
-$GLOBALS['BE_FFL']['efgLookupRadio'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormLookupRadio';
-$GLOBALS['BE_FFL']['efgFormPaginator'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormPaginator';
+$GLOBALS['BE_FFL']['efgLookupOptionWizard'] = 'Pbdkn\Efgco4\Resources\contao\widgets\EfgLookupOptionWizard';
+$GLOBALS['BE_FFL']['efgLookupSelect'] = 'Pbdkn\Efgco4\Resources\contao\forms\EfgFormLookupSelectMenu';
+$GLOBALS['BE_FFL']['efgLookupCheckbox'] = 'Pbdkn\Efgco4\Resources\contao\forms\EfgFormLookupCheckbox';
+$GLOBALS['BE_FFL']['efgLookupRadio'] = 'Pbdkn\Efgco4\Resources\contao\forms\EfgFormLookupRadio';
+$GLOBALS['BE_FFL']['efgFormPaginator'] = 'Pbdkn\Efgco4\Resources\contao\forms\EfgFormPaginator';
 
 // Add front end form fields
-$GLOBALS['TL_FFL']['efgLookupSelect'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormLookupSelectMenu';
-$GLOBALS['TL_FFL']['efgLookupCheckbox'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormLookupCheckbox';
-$GLOBALS['TL_FFL']['efgLookupRadio'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormLookupRadio';
-$GLOBALS['TL_FFL']['efgImageSelect'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormImageSelect';
-$GLOBALS['TL_FFL']['efgFormPaginator'] = 'PBDKN\Efgco4\Resources\contao\forms\EfgFormPaginator';
+$GLOBALS['TL_FFL']['efgLookupSelect'] = 'Pbdkn\Efgco4\Resources\contao\forms\EfgFormLookupSelectMenu';
+$GLOBALS['TL_FFL']['efgLookupCheckbox'] = 'Pbdkn\Efgco4\Resources\contao\forms\EfgFormLookupCheckbox';
+$GLOBALS['TL_FFL']['efgLookupRadio'] = 'Pbdkn\Efgco4\Resources\contao\forms\EfgFormLookupRadio';
+$GLOBALS['TL_FFL']['efgImageSelect'] = 'Pbdkn\Efgco4\Resources\contao\forms\EfgFormImageSelect';
+$GLOBALS['TL_FFL']['efgFormPaginator'] = 'Pbdkn\Efgco4\Resources\contao\forms\EfgFormPaginator';
 */

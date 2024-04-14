@@ -29,7 +29,7 @@ declare(strict_types=1);
  *
  */
 
-namespace PBDKN\Efgco4\Resources\contao\classes;
+namespace Pbdkn\Efgco4\Resources\contao\classes;
 
 /**
  * Class EmailSMime.

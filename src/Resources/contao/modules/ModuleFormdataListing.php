@@ -29,9 +29,9 @@ declare(strict_types=1);
  *
  */
 
-namespace PBDKN\Efgco4\Resources\contao\modules;
+namespace Pbdkn\Efgco4\Resources\contao\modules;
 
-use PBDKN\Efgco4\Resources\contao\classes\EfgLog;
+use Pbdkn\Efgco4\Resources\contao\classes\EfgLog;
 
 /**
  * Class ModuleFormdataListing.
@@ -162,7 +162,7 @@ class ModuleFormdataListing extends \Module
      */
     public function generate()
     {
-        EfgLog::setEfgDebugmode('form');
+        EfgLog::setEfgDebugmode(255);
         if (TL_MODE === 'BE') {
             $objTemplate = new \BackendTemplate('be_wildcard');
             $objTemplate->wildcard = '### LISTING FORMDATA ###';
@@ -173,7 +173,6 @@ class ModuleFormdataListing extends \Module
 
             return $objTemplate->parse();
         }
-
         if (\strlen($this->efg_DetailsKey)) {
             $this->strDetailKey = $this->efg_DetailsKey;
         }
@@ -194,12 +193,16 @@ class ModuleFormdataListing extends \Module
         }
 
         // remove download and export from referer
-        $session = $this->Session->getData();
+                
+        $objSessionBag = \System::getContainer()->get('session')->getBag('contao_backend');  //PBD Session
+        //$session = $this->Session->getData();
+        $session = $objSessionBag->all();  //PBD Session
         $session['referer']['last'] = preg_replace('@(\?|&amp;|&)download=.*?(&amp;|&|$)@si', '', (string) $session['referer']['last']);
         $session['referer']['current'] = preg_replace('@(\?|&amp;|&)download=.*?(&amp;|&|$)@si', '', (string) $session['referer']['current']);
         $session['referer']['last'] = preg_replace('@(\?|&amp;|&)act=export(&amp;|&|$)@si', '', (string) $session['referer']['last']);
         $session['referer']['current'] = preg_replace('@(\?|&amp;|&)act=export(&amp;|&|$)@si', '', (string) $session['referer']['current']);
-        $this->Session->setData($session);
+        //$this->Session->setData($session);
+        $sessionBag->replace($session);  //PBD Session
 
         if (\Input::get($this->strDetailKey) && !\strlen($this->list_info) && !\strlen(\Input::get('act'))) {
             return '';

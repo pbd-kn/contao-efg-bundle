@@ -29,24 +29,24 @@ declare(strict_types=1);
  *
  */
 
-class_alias(PBDKN\Efgco4\Resources\contao\drivers\DC_Formdata::class, 'DC_Formdata');
-class_alias(PBDKN\Efgco4\Resources\contao\classes\Formdata::class, 'Formdata');
-class_alias(PBDKN\Efgco4\Resources\contao\classes\FormdataBackend::class, 'FormdataBackend');
-//class_alias(PBDKN\Efgco4\Resources\contao\widgets\EfgLookupOptionWizard::class, 'EfgLookupOptionWizard');
+class_alias(Pbdkn\Efgco4\Resources\contao\drivers\DC_Formdata::class, 'DC_Formdata');
+class_alias(Pbdkn\Efgco4\Resources\contao\classes\Formdata::class, 'Formdata');
+class_alias(Pbdkn\Efgco4\Resources\contao\classes\FormdataBackend::class, 'FormdataBackend');
+//class_alias(Pbdkn\Efgco4\Resources\contao\widgets\EfgLookupOptionWizard::class, 'EfgLookupOptionWizard');
 
 /*
  * Register the templates
  */
 TemplateLoader::addFiles([
-    'efg_internal_config' => 'PBDKN/Efgco4/Resources/contao/templates/internal',
-    'efg_internal_dca_formdata' => 'PBDKN/Efgco4/Resources/contao/templates/internal',
-    'efg_internal_modules' => 'PBDKN/Efgco4/Resources/contao/templates/internal',
-    'edit_fd_default' => 'PBDKN/Efgco4/Resources/contao/templates/forms',
-    'form_efg_imageselect' => 'PBDKN/Efgco4/Resources/contao/templates/forms',
-    'form_paginator' => 'PBDKN/Efgco4/Resources/contao/templates/forms',
-    'info_fd_simple_default' => 'PBDKN/Efgco4/Resources/contao/templates/listing/info',
-    'info_fd_table_default' => 'PBDKN/Efgco4/Resources/contao/templates/listing/info',
-    'list_fd_simple_default' => 'PBDKN/Efgco4/Resources/contao/templates/listing/list',
-    'list_fd_table_default' => 'PBDKN/Efgco4/Resources/contao/templates/listing/list',
-    'form_widget' => 'PBDKN/Efgco4/Resources/contao/templates/forms',
+    'efg_internal_config' => 'Pbdkn/Efgco4/Resources/contao/templates/internal',
+    'efg_internal_dca_formdata' => 'Pbdkn/Efgco4/Resources/contao/templates/internal',
+    'efg_internal_modules' => 'Pbdkn/Efgco4/Resources/contao/templates/internal',
+    'edit_fd_default' => 'Pbdkn/Efgco4/Resources/contao/templates/forms',
+    'form_efg_imageselect' => 'Pbdkn/Efgco4/Resources/contao/templates/forms',
+    'form_paginator' => 'Pbdkn/Efgco4/Resources/contao/templates/forms',
+    'info_fd_simple_default' => 'Pbdkn/Efgco4/Resources/contao/templates/listing/info',
+    'info_fd_table_default' => 'Pbdkn/Efgco4/Resources/contao/templates/listing/info',
+    'list_fd_simple_default' => 'Pbdkn/Efgco4/Resources/contao/templates/listing/list',
+    'list_fd_table_default' => 'Pbdkn/Efgco4/Resources/contao/templates/listing/list',
+    'form_widget' => 'Pbdkn/Efgco4/Resources/contao/templates/forms',
 ]);

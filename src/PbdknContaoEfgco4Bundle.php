@@ -29,10 +29,10 @@ declare(strict_types=1);
  *
  */
 
-namespace PBDKN\Efgco4;
+namespace Pbdkn\Efgco4;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class ContaoEfgco4Bundle extends Bundle
+class PbdknContaoEfgco4Bundle extends Bundle
 {
 }

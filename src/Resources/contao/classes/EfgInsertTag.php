@@ -39,7 +39,7 @@ declare(strict_types=1);
  * format: optional wenn vorhanden wir der gefundene Wert damit formatiert
  */
 
-namespace PBDKN\Efgco4\Resources\contao\classes;
+namespace Pbdkn\Efgco4\Resources\contao\classes;
 
 class EfgInsertTag extends \Contao\Frontend
 {

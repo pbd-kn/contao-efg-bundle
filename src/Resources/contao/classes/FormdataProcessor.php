@@ -33,7 +33,7 @@ declare(strict_types=1);
  * Namespace.
  */
 
-namespace PBDKN\Efgco4\Resources\contao\classes;
+namespace Pbdkn\Efgco4\Resources\contao\classes;
 
 use Contao\Email;
 
@@ -67,10 +67,12 @@ class FormdataProcessor extends \Contao\Frontend
      */
     public function processSubmittedData($arrSubmitted, $arrForm = false, $arrFiles = false, $arrLabels = false): void
     {
+        EfgLog::setEfgDebugmode(255);
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "processSubmittedData do '".\Input::get('do')."'");
 
         // Form config
         if (!$arrForm) {
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "processSubmittedData no arrForm");
             return;
         }
 
@@ -84,11 +86,14 @@ class FormdataProcessor extends \Contao\Frontend
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'this->Formdata->FdDcaKey '.$this->Formdata->FdDcaKey);
 
         // Get params of related listing formdata
-        if (!isset ($_SESSION['EFP']['LISTING_MOD']['id'])) {
-          EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Fehler in der Sessionverwaltung ');
-          return;      // Fehler in der Sessionverwaltung
-        }
-        $intListingId = (int) ($_SESSION['EFP']['LISTING_MOD']['id']);   // wird in ModuleFormdataListing gesetzt
+        //if (!isset ($_SESSION['EFP']['LISTING_MOD']['id'])) {
+          //EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Fehler in der Sessionverwaltung SESSION["EFP"]["LISTING_MOD"]["id"] existiert nicht');
+          //return;      // Fehler in der Sessionverwaltung
+        //}
+        if (isset($_SESSION['EFP']['LISTING_MOD']['id']))
+          $intListingId = (int) ($_SESSION['EFP']['LISTING_MOD']['id']);   // wird in ModuleFormdataListing gesetzt
+        else
+          $intListingId = 0;
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Module intListingId '.$intListingId);
         if ($intListingId > 0) {
             $objListing = \Database::getInstance()->prepare('SELECT * FROM tl_module WHERE id=?')   // lies module ein
@@ -122,6 +127,7 @@ class FormdataProcessor extends \Contao\Frontend
                 }
             }
         }
+        if (isset($arrListing)) {
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'act '.\Input::get('act').' arrListing[efg_fe_edit_access] '.$arrListing['efg_fe_edit_access']);
 
         if (\in_array($arrListing['efg_fe_edit_access'], ['public', 'groupmembers', 'member'], true)) {
@@ -138,6 +144,7 @@ class FormdataProcessor extends \Contao\Frontend
                     $this->log('Could not identify record by ID "'.\Input::get($this->strFormdataDetailsKey).'"', __METHOD__, TL_GENERAL);
                 }
             }
+        }
         }
 
         // Types of form fields with storable data
@@ -177,8 +184,10 @@ class FormdataProcessor extends \Contao\Frontend
             // HOOK: process efg form data callback
             if (\array_key_exists('processEfgFormData', $GLOBALS['TL_HOOKS']) && \is_array($GLOBALS['TL_HOOKS']['processEfgFormData'])) {
                 foreach ($GLOBALS['TL_HOOKS']['processEfgFormData'] as $key => $callback) {
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'efg form data callback '.$callback[0]);
                     $this->import($callback[0]);
                     $arrResult = $this->{$callback[0]}->{$callback[1]}($arrToSave, $arrFiles, $intOldId, $arrForm, $arrLabels);     //Änderung PBD
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'efg form data callback arr result len '.count($arrResult));
                     if (!empty($arrResult)) {
                         $arrSubmitted = $arrResult;
                         $arrToSave = $arrSubmitted;
@@ -353,16 +362,21 @@ class FormdataProcessor extends \Contao\Frontend
             $strType = $arrField['formfieldType'];
             $strVal = '';
             if (\in_array($strType, $arrFFstorable, true)) {
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "display on confirmation page k:$k ");
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "display on confirmation page k:$k submited ".$arrSubmitted[$k]);
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "display on confirmation page k:$k submited ".$arrSubmitted[$k]." arrFiles[$k] ".$arrFiles[$k]);
                 $strVal = $this->Formdata->preparePostValueForMail($arrSubmitted[$k], $arrField, $arrFiles[$k], $blnSkipEmptyFields);
             }
-
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "_SESSION['EFP']['FORMDATA'][$k]: $strVal");
+    
             $_SESSION['EFP']['FORMDATA'][$k] = $strVal;
         }
         $_SESSION['EFP']['FORMDATA']['_formId_'] = $arrForm['id'];
-        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'formFields stroed in Session ');
+        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'formFields stored in Session ');
 
         // Confirmation Mail
         if ($blnFEedit && !$arrForm['sendConfirmationMailOnFrontendEditing']) {
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'set confirmationmail to false ');
             $arrForm['sendConfirmationMail'] = false;
         }
 
@@ -486,8 +500,8 @@ class FormdataProcessor extends \Contao\Frontend
                 }
 
                 foreach ($objMailProperties->recipients as $recipient) {
-                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'vor sendTo to formular sender Recipient '.$recipient);
-                    $objMail->sendTo($recipient);
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, '!!!!!!!!!!!!!!!!!!vor sendTo to formular sender Recipient '.$recipient);
+                    //$objMail->sendTo($recipient);
                     $blnConfirmationSent = true;
                 }
             }
@@ -627,8 +641,8 @@ class FormdataProcessor extends \Contao\Frontend
 
                 foreach ($objMailProperties->recipients as $recipient) {
                     try {
-                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'vor sendTo Recipient '.$recipient);
-                        $objMail->sendTo($recipient);
+                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, '!!!!!!!!!!!!!!!!!!!vor sendTo mail zur Bearbeitung Recipient '.$recipient);
+                        //$objMail->sendTo($recipient);
                         $blnInformationSent = true;
                     }
                     //catch exception
@@ -683,6 +697,8 @@ class FormdataProcessor extends \Contao\Frontend
             EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'bearbeite FORM len FormFields :  '.count($arrFormFields));
 
             preg_match('/<body[^>]*?>.*?<\/body>/si', $strContent, $arrMatch);
+            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'bearbeite FORM len preg_match :  '.count($arrMatch));
+            //EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'bearbeite FORM len strContent :  '.$strContent);
 
             if (!empty($arrMatch)) {
                 for ($m = 0; $m < \count($arrMatch); ++$m) {

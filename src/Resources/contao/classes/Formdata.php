@@ -33,9 +33,9 @@ declare(strict_types=1);
  * Namespace.
  */
 
-namespace PBDKN\Efgco4\Resources\contao\classes;
+namespace Pbdkn\Efgco4\Resources\contao\classes;
 
-//use PBDKN\Efgco4\Resources\contao\classes\EfgLog;
+//use Pbdkn\Efgco4\Resources\contao\classes\EfgLog;
 
 /**
  * Class Formdata.
@@ -2310,7 +2310,9 @@ class Formdata extends \Contao\Frontend
      */
     public function executePostActions($strAction, $dc): void
     {
+
         EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "strAction $strAction ");
+//                       header('HTTP/1.1 400 Bad Request');exit('executePostActions'.$strAction);
 
         switch ($strAction) {
             case 'toggleEfgSubpalette':
@@ -2415,7 +2417,7 @@ class Formdata extends \Contao\Frontend
 
                 // Validate the request data
                 if (\Database::getInstance()->tableExists($dc->table)) {
-//                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "reloadFiletree tabelle da '".$dc->table." Feld $strField ");
+                    EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "reloadFiletree tabelle da '".$dc->table." Feld $strField ");
                     // The field does not exist
                     if (!\in_array($strField, $dc->arrBaseFields, true) && !\in_array($strField, $dc->arrDetailFields ?? [], true)) {
                         $this->log('Field "'.$strField.'" does not belong to form data table', 'Formdata executePostActions()', TL_ERROR);
@@ -2499,9 +2501,23 @@ class Formdata extends \Contao\Frontend
                 $arrAttribs['strField'] = $strField;
 
                 $objWidget = new $GLOBALS['BE_FFL'][$strKey]($arrAttribs);
-                echo $objWidget->generate().'<script>handleEfgFileselectorButton();</script>';
-//                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'reloadEfgImportSource vor generate Widget globals '.$GLOBALS['BE_FFL'][$strKey]."strFieldName $strFieldName strField $strField table ".$dc->table);
-        exit;                                      // PBD bei Ajax Request mit exit verlassen
+                $retval = $objWidget->generate().'<script>handleEfgFileselectorButton();</script>';
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'reloadEfgImportSource vor generate Widget globals '.$GLOBALS['BE_FFL'][$strKey]." strFieldName $strFieldName strField $strField table ".$dc->table);
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'retval '.$retval);
+                $responseData = array(
+                  'content' => $retval,
+                  // Weitere Daten hinzufügen...
+                );
+
+                // JSON kodieren
+                $jsonResponse = json_encode($responseData);
+
+                // Antwort senden
+                header('Content-Type: application/json');
+                echo $jsonResponse;
+                //return new JsonResponse(['dir'=>__DIR__,'content' => $retval,'debug'=>$debug]);  no return on void funktion so wird das beim fusballrequest gemacht (Routing) 
+
+                exit; // Wichtig, um sicherzustellen, dass keine weiteren Daten gesendet werden                
                 break; exit;
         }
     }

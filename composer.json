@@ -39,15 +39,15 @@
     },
     "autoload": {
         "psr-4": {
-            "PBDKN\\Efgco4\\":"src/"
+            "Pbdkn\\Efgco4\\":"src/"
         }
     },
     "extra": {
-        "contao-manager-plugin": "PBDKN\\Efgco4\\ContaoManager\\Plugin"
+        "contao-manager-plugin": "Pbdkn\\Efgco4\\ContaoManager\\Plugin"
     },
     "autoload-dev": {
         "psr-4": {
-            "PBDKN\\Efgco4\\Tests\\": "tests/"
+            "Pbdkn\\Efgco4\\Tests\\": "tests/"
         }
     },
     "support": {

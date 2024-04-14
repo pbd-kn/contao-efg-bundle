@@ -29,18 +29,24 @@ declare(strict_types=1);
  *
  */
 
-namespace PBDKN\Efgco4\DependencyInjection;
+namespace Pbdkn\Efgco4\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
-class ContaoEfgco4Extension extends Extension
+
+class PbdknContaoEfgco4Extension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
+//              $customLogger = System::getContainer()->get('logger');
+//            $customLogger->info('PBD ContaoEfgco4Extension load');
+
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yaml');
+        //$loader->load('routes.yaml');
+
     }
 }
