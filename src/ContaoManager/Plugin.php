@@ -45,19 +45,17 @@ class Plugin implements BundlePluginInterface, RoutingPluginInterface
     public function getBundles(ParserInterface $parser)
     {
         return [
-            BundleConfig::create(PbdknContaoEfgco4Bundle::class)
-                ->setLoadAfter([ContaoCoreBundle::class]),
-                ];
+            BundleConfig::create(ContaoCookiebar::class)
+                ->setLoadAfter([ContaoCoreBundle::class])
+                ->setReplace(['efg']),
+        ];
     }
 
-        /**
-     * {@inheritdoc}
-     */
     public function getRouteCollection(LoaderResolverInterface $resolver, KernelInterface $kernel)
     {
         return $resolver
             ->resolve(__DIR__.'/../Resources/config/routes.yaml')
             ->load(__DIR__.'/../Resources/config/routes.yaml')
-            ;
+        ;
     } 
 }
