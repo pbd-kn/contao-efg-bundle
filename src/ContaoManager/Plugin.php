@@ -39,7 +39,7 @@ use Symfony\Component\Config\Loader\LoaderResolverInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Pbdkn\Efgco4\PbdknContaoEfgco4Bundle;
 
-class Plugin implements BundlePluginInterface
+class Plugin implements BundlePluginInterface, RoutingPluginInterface
 {
     public function getBundles(ParserInterface $parser)
     {
@@ -48,11 +48,15 @@ class Plugin implements BundlePluginInterface
                 ->setLoadAfter([ContaoCoreBundle::class]),
                 ];
     }
+
+        /**
+     * {@inheritdoc}
+     */
     public function getRouteCollection(LoaderResolverInterface $resolver, KernelInterface $kernel)
     {
         return $resolver
-               ->resolve(__DIR__.'/../../src/Resources/config/routes.yaml')
-               ->load(__DIR__.'/../../src/Resources/config/routes.yaml')
-        ;
-    }        
+            ->resolve(__DIR__.'/../Resources/config/routes.yml')
+            ->load(__DIR__.'/../Resources/config/routes.yml')
+            ;
+    } 
 }
