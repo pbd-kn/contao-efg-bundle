@@ -1,5 +1,8 @@
 # src/Resources/config/routes.yaml
 
-efg:
+#Pbdkn\Efgco4\Controller:
+#pbdkn_efgco4_controller:
+#efg:
+pbdkn_efgco4_controller:
     resource: ../../Controller
     type: annotation

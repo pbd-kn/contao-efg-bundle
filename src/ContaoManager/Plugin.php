@@ -45,7 +45,14 @@ class Plugin implements BundlePluginInterface
     {
         return [
             BundleConfig::create(PbdknContaoEfgco4Bundle::class)
-                ->setLoadAfter([ContaoCoreBundle::class])
-                ->setReplace(['efg']),        ];
+                ->setLoadAfter([ContaoCoreBundle::class]),
+                ];
     }
+    public function getRouteCollection(LoaderResolverInterface $resolver, KernelInterface $kernel)
+    {
+        return $resolver
+               ->resolve(__DIR__.'/../../src/Resources/config/routes.yaml')
+               ->load(__DIR__.'/../../src/Resources/config/routes.yaml')
+        ;
+    }        
 }
