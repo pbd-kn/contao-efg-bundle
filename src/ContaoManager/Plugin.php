@@ -45,7 +45,7 @@ class Plugin implements BundlePluginInterface, RoutingPluginInterface
     public function getBundles(ParserInterface $parser)
     {
         return [
-            BundleConfig::create(ContaoCookiebar::class)
+            BundleConfig::create(PbdknContaoEfgco4Bundle::class)
                 ->setLoadAfter([ContaoCoreBundle::class])
                 ->setReplace(['efg']),
         ];
