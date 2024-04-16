@@ -2,5 +2,20 @@
 services:
     _defaults:
         autoconfigure: true
+        bind:
+            $insertTagParser: '@contao.insert_tag.parser'
+
 
     Pbdkn\Efgco4\EventListener\DisableDebugModeForInternalTemplatesListener: ~
+    
+    Pbdkn\Efgco4\:
+        resource: ../../
+        exclude: ../../{DependencyInjection,Resources,Model,EventListener,ContaoManager}
+        arguments:
+            $framework: '@contao.framework'
+            $connection: '@database_connection'
+#            $insertTagParser: '@contao.insert_tag_parser'
+#            $translator: '@translator'
+            $cgiUtil: '@Pbdkn\Efgco4.cgi_util'
+            $efgUtil: '@Pbdkn\Efgco4.efg_util'
+

@@ -28,8 +28,8 @@ class EfgRequestClass extends AbstractController
 {
     private ContaoFramework $framework;
     private Connection $connection; 
-    private InsertTagParser $insertTagParser; 
-    private TranslatorInterface $translator;
+    //private InsertTagParser $insertTagParser; 
+    //private TranslatorInterface $translator;
     private CgiUtil $cgiUtil; 
     private EfgUtil $efgUtil; 
 
@@ -38,23 +38,23 @@ class EfgRequestClass extends AbstractController
     public function __construct(
       ContaoFramework $framework,
       Connection $connection,
-      InsertTagParser $insertTagParser,
-      TranslatorInterface $translator,
+      //InsertTagParser $insertTagParser,
+      //TranslatorInterface $translator,
       CgiUtil $cgiUtil,
       EfgUtil $efgUtil      
       )
     {
         $this->framework = $framework;
         $this->connection = $connection;
-        $this->insertTagParser=$insertTagParser; 
-        $this->translator=$translator;
+        //$this->insertTagParser=$insertTagParser; 
+        //$this->translator=$translator;
         $this->cgiUtil=$cgiUtil;
         $this->efgUtil=$efgUtil;
         //parent::__construct($strTable);
     } 
     /**
      * @throws \Exception
-     * @Route('/efg/reloadFiletree/{aktion}/{strtable}/{name}/{value}', 
+     * @Route("/efg/reloadFiletree/{aktion}/{strtable}/{name}/{value}", 
      * name="EfgRequestClass::class\reloadFiletree", 
      * defaults={"_scope" = "frontend"})
      */

@@ -2,7 +2,6 @@
 
 #Pbdkn\Efgco4\Controller:
 #pbdkn_efgco4_controller:
-#efg:
-pbdkn_efgco4_controller:
+efg:
     resource: ../../Controller
     type: annotation
