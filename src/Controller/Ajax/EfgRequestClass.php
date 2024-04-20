@@ -23,7 +23,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-
+#[AsController]
 class EfgRequestClass extends AbstractController
 {
     private ContaoFramework $framework;
