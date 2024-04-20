@@ -2,8 +2,8 @@
 services:
     _defaults:
         autoconfigure: true
-        bind:
-            $insertTagParser: '@contao.insert_tag.parser'
+        autowire: true
+        public: true
 
 
     Pbdkn\Efgco4\EventListener\DisableDebugModeForInternalTemplatesListener: ~
