@@ -22,8 +22,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Pbdkn\Efgco4\Util\CgiUtil;
+use Pbdkn\Efgco4\Util\EfgUtil;
 
-#[AsController]
+
+
 class EfgRequestClass extends AbstractController
 {
     private ContaoFramework $framework;
@@ -63,7 +66,7 @@ class EfgRequestClass extends AbstractController
   public function reloadFiletree(string $aktion, string $strtable, string $name,string $value)
   {
     // Direkter Zugriff auf den DataContainer für tl_example_table
-        return new Response('pbd reloadFiletree EfgRequestClass');
+        return new Response("pbd reloadFiletree EfgRequestClass string $aktion, string $strtable, string $name,string $value");
     $html="";
     $debug="";
     $errortxt="";

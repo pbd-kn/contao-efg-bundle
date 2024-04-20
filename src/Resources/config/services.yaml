@@ -8,8 +8,13 @@ services:
 
     Pbdkn\Efgco4\EventListener\DisableDebugModeForInternalTemplatesListener: ~
     
-    PBDKN\Efgco4\:
-        resource: ../../Controller
-        tags: ['controller.service_arguments']
+    Pbdkn\Efgco4\:
+        resource: ../../
+        exclude: ../../{DependencyInjection,Resources,Model}
+
         
+    Pbdkn\Efgco4\Controller\Ajax\EfgRequestClass:
+        tags:
+            - { name: controller.service_arguments }
+        public: true
                       
