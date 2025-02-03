@@ -1928,12 +1928,19 @@ class Formdata extends \Contao\Frontend
         // .. {{form::fieldname?label=Label for this field: }}
         foreach ($tags[0] as $tag) {
             $elements = explode('::', preg_replace(['/^__BRCL__/i', '/__BRCR__$/i'], ['', ''], $tag));
+//            EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Prepare insert tag '.$tag." len elements ".count($elements));
 
             switch (strtolower($elements[0])) {
                 // Formdata field
                 case 'form':
+                    if (!isset($elements[1])) break;
                     $strKey = $elements[1];
-                    [$strKey, $arrTagParams] = explode('?', $strKey);
+
+                    if (is_array($strKey)) {
+                      [$strKey, $arrTagParams] = explode('?', $strKey);
+                    } else {
+                      $arrTagParams="";
+                    } 
 
                     if (!empty($arrTagParams)) {
                         $arrTagParams = $this->parseInsertTagParams($tag);
@@ -2046,9 +2053,19 @@ class Formdata extends \Contao\Frontend
                             $messageHtml = str_replace($tag, $strLabel.implode(', ', $varHtml), $messageHtml);
                         } else {
                             if (TL_MODE === 'BE') {
-                                $strVal = $this->prepareDatabaseValueForMail($arrSubmitted[$strKey], $arrField, $arrFiles[$strKey]);
+                                if (isset($arrFiles[$strKey])) {
+                                  $strVal = $this->prepareDatabaseValueForMail($arrSubmitted[$strKey], $arrField, $arrFiles[$strKey]);
+                                } else {
+                                  $strVal="";
+                                }
                             } else {
-                                $strVal = $this->preparePostValueForMail($arrSubmitted[$strKey], $arrField, $arrFiles[$strKey]);
+//        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Prepare insert preparePostValueForMail arrSubmitted strKey'.$strKey.' '.$arrSubmitted[$strKey]);
+//        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Prepare insert preparePostValueForMail arrFiles strKey'.$strKey.' '.$arrFiles[$strKey]);
+                                if (isset($arrFiles[$strKey])) {
+                                  $strVal = $this->preparePostValueForMail($arrSubmitted[$strKey], $arrField, $arrFiles[$strKey]);
+                                } else {
+                                  $strVal="";
+                                }
                             }
 
                             if (empty($strVal) && $blnSkipEmptyFields) {

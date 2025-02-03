@@ -26,7 +26,7 @@
 
 
 // This file is created when saving a form in form generator
-// last created on 2024-03-18 14:31:15
+// last created on 2025-02-03 16:46:22
 
 define('debsmall',1);
 define('debmedium',2+debsmall);
@@ -58,47 +58,6 @@ if (TL_MODE == 'BE')
  * -------------------------------------------------------------------------
  */
 
-array_insert($GLOBALS['BE_MOD'], 1, array('formdata' => array()));
-
-// this is used for the form independent "Feedback" module
-$GLOBALS['BE_MOD']['formdata']['feedback'] = array
-(
-	'tables'     => array('tl_formdata', 'tl_formdata_details'),
-	'icon'       => 'bundles/contaoefgco4/icons/formdata_all.gif',
-    'stylesheet' => 'bundles/contaoefgco4/css/style.css'
-);
-
-// following are used for the form dependent modules
-$GLOBALS['BE_MOD']['formdata']['fd_artikelliste'] = array
-(
-	'tables'     => array('tl_formdata', 'tl_formdata_details'),
-	'import'     => array('FormdataBackend', 'importCsv'),
-	'icon'       => 'bundles/contaoefgco4/icons/formdata_all.gif',
-    'stylesheet' => 'bundles/contaoefgco4/css/style.css');
-$GLOBALS['BE_MOD']['formdata']['fd_galerieliste'] = array
-(
-	'tables'     => array('tl_formdata', 'tl_formdata_details'),
-	'import'     => array('FormdataBackend', 'importCsv'),
-	'icon'       => 'bundles/contaoefgco4/icons/formdata_all.gif',
-    'stylesheet' => 'bundles/contaoefgco4/css/style.css');
-$GLOBALS['BE_MOD']['formdata']['fd_ausstellungen'] = array
-(
-	'tables'     => array('tl_formdata', 'tl_formdata_details'),
-	'import'     => array('FormdataBackend', 'importCsv'),
-	'icon'       => 'bundles/contaoefgco4/icons/formdata_all.gif',
-    'stylesheet' => 'bundles/contaoefgco4/css/style.css');
-$GLOBALS['BE_MOD']['formdata']['fd_presse'] = array
-(
-	'tables'     => array('tl_formdata', 'tl_formdata_details'),
-	'import'     => array('FormdataBackend', 'importCsv'),
-	'icon'       => 'bundles/contaoefgco4/icons/formdata_all.gif',
-    'stylesheet' => 'bundles/contaoefgco4/css/style.css');
-$GLOBALS['BE_MOD']['formdata']['fd_popup-artikel'] = array
-(
-	'tables'     => array('tl_formdata', 'tl_formdata_details'),
-	'import'     => array('FormdataBackend', 'importCsv'),
-	'icon'       => 'bundles/contaoefgco4/icons/formdata_all.gif',
-    'stylesheet' => 'bundles/contaoefgco4/css/style.css');
 
 
 /**
@@ -137,7 +96,7 @@ $GLOBALS['TL_HOOKS']['processFormData'][] = array('Pbdkn\Efgco4\Resources\contao
 $GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array('Pbdkn\Efgco4\Resources\contao\classes\FormdataProcessor', 'processConfirmationContent');
 $GLOBALS['TL_HOOKS']['listComments'][] = array('Pbdkn\Efgco4\Resources\classes\contao\FormdataComments', 'listComments');
 $GLOBALS['TL_HOOKS']['getSearchablePages'][] = array('Pbdkn\Efgco4\Resources\contao\classes\Formdata', 'getSearchablePages');
-//$GLOBALS['TL_HOOKS']['executePostActions'][] = array('Pbdkn\Efgco4\Resources\contao\classes\Formdata', 'executePostActions');
+$GLOBALS['TL_HOOKS']['executePostActions'][] = array('Pbdkn\Efgco4\Resources\contao\classes\Formdata', 'executePostActions');
 $GLOBALS['TL_HOOKS']['replaceInsertTags'][] = array('Pbdkn\Efgco4\Resources\contao\classes\EfgInsertTag', 'Efg_InsertTags');
 $GLOBALS['TL_HOOKS']['prepareFormData'][] = array('Pbdkn\Efgco4\Resources\contao\classes\EfgMailhooks', 'prepareFormData');
 

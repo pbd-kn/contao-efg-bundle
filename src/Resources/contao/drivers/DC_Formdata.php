@@ -1617,7 +1617,7 @@ class DC_Formdata extends \Contao\DataContainer implements \listable, \editable
 
                 $class = 'tl_box';
                 $return .= "\n".'</fieldset>';
-                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'render result '.$return);
+                //EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'render result '.$return);
             }
         }
 

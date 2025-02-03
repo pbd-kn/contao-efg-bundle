@@ -364,8 +364,6 @@ class FormdataProcessor extends \Contao\Frontend
             if (\in_array($strType, $arrFFstorable, true)) {
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "display on confirmation page k:$k ");
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "display on confirmation page k:$k submited ".$arrSubmitted[$k]);
-                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "display on confirmation page k:$k submited ".$arrSubmitted[$k]." arrFiles[$k] ".$arrFiles[$k]);
-                $strVal = $this->Formdata->preparePostValueForMail($arrSubmitted[$k], $arrField, $arrFiles[$k], $blnSkipEmptyFields);
             }
             EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, "_SESSION['EFP']['FORMDATA'][$k]: $strVal");
     
@@ -640,9 +638,9 @@ class FormdataProcessor extends \Contao\Frontend
                 }
 
                 foreach ($objMailProperties->recipients as $recipient) {
-                    try {
-                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, '!!!!!!!!!!!!!!!!!!!vor sendTo mail zur Bearbeitung Recipient '.$recipient);
-                        //$objMail->sendTo($recipient);
+                    try { 
+                        EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'vor sendTo mail zur Bearbeitung Recipient '.$recipient.' from '.$objMail->from);
+                        $objMail->sendTo($recipient);
                         $blnInformationSent = true;
                     }
                     //catch exception

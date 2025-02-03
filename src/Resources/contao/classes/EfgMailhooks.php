@@ -35,6 +35,7 @@ class EfgMailhooks // Make sure this class name matches the first item in the ab
 {
     public function __construct()
     {
+//    \System::log("PBD EfgMailhooks Klasse inst", __METHOD__, TL_GENERAL);
     }
 
     /*
@@ -45,6 +46,8 @@ class EfgMailhooks // Make sure this class name matches the first item in the ab
 
     public function prepareFormData(&$arrSubmitted, $arrLabels, $arrFields, $objForm): void
     {
+//    \System::log("PBD prepareFormData", __METHOD__, TL_GENERAL);
+
         $debug = true;
         foreach ($arrLabels as $k => $v) {
             EfgLog::EfgwriteLog(debsmall, __METHOD__, __LINE__, "arrLabels[$k]: $v");

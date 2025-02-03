@@ -59,11 +59,12 @@ class EfgLog
     */
     public static function setEfgDebugmode($key): void
     {
-//\System::log("PBD EfgwriteLog key '" . $key."'", __METHOD__, TL_GENERAL);
+//\System::log("PBD setEfgDebugmode key '" . $key."'", __METHOD__, TL_GENERAL);
         if (!isset($key)) {
             $key = 'form';
         }
         if (is_numeric($key)) {
+//\System::log("PBD setEfgDebugmode key '" . $key."' is numeric", __METHOD__, TL_GENERAL);
             self::$myefgdebuglevel = $key;
             self::$debFormKey = 'form';
             $arrUniqid = StringUtil::trimsplit('.', uniqid('efgc0n7a0', true));
@@ -79,12 +80,13 @@ class EfgLog
             //$savekey = $key;
             while ($objForms->next()) {  // suche Form
                 if ('form' === $key || 'feedback' === $key) {    // bei neuer form ist der key form nimm den höchsten wert
-//\System::log("PBD EfgwriteLog for form myefgdebuglevel '" . self::$myefgdebuglevel . "' title '" . $objForms->title .  "' efgDebugMode '" . $objForms->efgDebugMode . "'", __METHOD__, TL_GENERAL);
+//\System::log("PBD setEfgDebugmode for form myefgdebuglevel '" . self::$myefgdebuglevel . "' title '" . $objForms->title .  "' efgDebugMode '" . $objForms->efgDebugMode . "'", __METHOD__, TL_GENERAL);
                   if ($objForms->efgDebugMode > self::$myefgdebuglevel) {
                       self::$myefgdebuglevel = (int)  $objForms->efgDebugMode;
                       self::$debFormKey = $key;
                       $arrUniqid = StringUtil::trimsplit('.', uniqid('efgc0n7a0', true));
                       self::$uniqid = $arrUniqid[1];
+//\System::log("PBD setEfgDebugmode for form myefgdebuglevel '" . self::$myefgdebuglevel . "' title '" . $objForms->title .  "' efgDebugMode '" . $objForms->efgDebugMode . "'", __METHOD__, TL_GENERAL);
                       continue;
                   }
                 }
@@ -115,6 +117,7 @@ class EfgLog
      */
     public static function EfgwriteLog($level, $method, $line, $value): void
     {
+
         if ('' === self::$debFormKey) {
             return;
         }
@@ -122,12 +125,14 @@ class EfgLog
         //$arrNamespace = StringUtil::trimsplit('::', $method);
         //$arrClass =  StringUtil::trimsplit('\\', $arrNamespace[0]);
         //$vclass = $arrClass[\count($arrClass)-1] . "::" . $arrNamespace[1] ; // class that will write the log
+//\System::log("PBD EfgwriteLog for form myefgdebuglevel '" . self::$myefgdebuglevel . "' title '" . $objForms->title .  "' efgDebugMode '" . $objForms->efgDebugMode . "'", __METHOD__, TL_GENERAL);
         $arr = StringUtil::trimsplit('\\', $method);
         $vclass = $arr[\count($arr) - 1];
 
         if (\is_array($value)) {
             $value = print_r($value, true);
         }
+
         if (((int)$level & self::$myefgdebuglevel) === $level) {
             self::logMessage(sprintf('[%s] [%s] [%s:%s] %s', self::$uniqid, $level, $vclass, $line, 'PBD '.$value), 'efg_debug');
         }

@@ -24,7 +24,7 @@
 
 
 // This file is created when saving a form in form generator
-// last created on 2024-03-18 14:31:15
+// last created on 2025-02-03 16:27:16
 
 
 /**
@@ -34,11 +34,7 @@ $GLOBALS['TL_LANG']['MOD']['formdata'] = 'Formular-Daten';
 $GLOBALS['TL_LANG']['MOD']['efg_co4'] = 'Formular-Daten';
 $GLOBALS['TL_LANG']['MOD']['feedback'] = array('Feedback', 'Gespeicherte Daten aus Formularen.');
 // Eintraege der Forms
-$GLOBALS['TL_LANG']['MOD']['fd_artikelliste'] = array('Artikelliste', 'Gespeicherte Daten aus Formular "Artikelliste".');
-$GLOBALS['TL_LANG']['MOD']['fd_galerieliste'] = array('Galerieliste', 'Gespeicherte Daten aus Formular "Galerieliste".');
-$GLOBALS['TL_LANG']['MOD']['fd_ausstellungen'] = array('Ausstellungen', 'Gespeicherte Daten aus Formular "Ausstellungen".');
-$GLOBALS['TL_LANG']['MOD']['fd_presse'] = array('Presse', 'Gespeicherte Daten aus Formular "Presse".');
-$GLOBALS['TL_LANG']['MOD']['fd_popup-artikel'] = array('popup-artikel', 'Gespeicherte Daten aus Formular "popup-artikel".');
+$GLOBALS['TL_LANG']['MOD']['fd_kontakt-skat'] = array('Kontakt Skat', 'Gespeicherte Daten aus Formular "Kontakt Skat".');
 
 /**
  * Front end modules
