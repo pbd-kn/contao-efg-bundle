@@ -53,7 +53,7 @@ class ModuleFormdataListing extends \Module
 
     protected $strIconFolder;
 
-    protected $objEditRecord;            // zugehöriger Datensatz class Contao\Database\Result damit er für Haste callbackfunktionen existiert
+    protected $objEditRecord;            // zugeh?riger Datensatz class Contao\Database\Result damit er f?r Haste callbackfunktionen existiert
 
     /**
      * Related form, like fd_frm_contact.
@@ -192,17 +192,20 @@ class ModuleFormdataListing extends \Module
             }
         }
 
-        // remove download and export from referer
-                
-        $objSessionBag = \System::getContainer()->get('session')->getBag('contao_backend');  //PBD Session
-        //$session = $this->Session->getData();
-        $session = $objSessionBag->all();  //PBD Session
-        $session['referer']['last'] = preg_replace('@(\?|&amp;|&)download=.*?(&amp;|&|$)@si', '', (string) $session['referer']['last']);
-        $session['referer']['current'] = preg_replace('@(\?|&amp;|&)download=.*?(&amp;|&|$)@si', '', (string) $session['referer']['current']);
-        $session['referer']['last'] = preg_replace('@(\?|&amp;|&)act=export(&amp;|&|$)@si', '', (string) $session['referer']['last']);
-        $session['referer']['current'] = preg_replace('@(\?|&amp;|&)act=export(&amp;|&|$)@si', '', (string) $session['referer']['current']);
-        //$this->Session->setData($session);
-        $sessionBag->replace($session);  //PBD Session
+        // Remove download and export parameters from existing referer entries.
+        $objSessionBag = \System::getContainer()->get('session')->getBag('contao_backend');
+        $session = $objSessionBag->all();
+
+        foreach (['last', 'current'] as $refererKey) {
+            if (!isset($session['referer'][$refererKey]) || !\is_string($session['referer'][$refererKey])) {
+                continue;
+            }
+
+            $session['referer'][$refererKey] = preg_replace('@(\?|&amp;|&)download=.*?(&amp;|&|$)@si', '', $session['referer'][$refererKey]);
+            $session['referer'][$refererKey] = preg_replace('@(\?|&amp;|&)act=export(&amp;|&|$)@si', '', $session['referer'][$refererKey]);
+        }
+
+        $objSessionBag->replace($session);
 
         if (\Input::get($this->strDetailKey) && !\strlen($this->list_info) && !\strlen(\Input::get('act'))) {
             return '';
@@ -462,15 +465,15 @@ class ModuleFormdataListing extends \Module
             return '';
         }
 
-        $this->objEditRecord = $objRecord;            // zugehöriger Datensatz class Contao\Database\Result für haste callbacks
+        $this->objEditRecord = $objRecord;            // zugeh?riger Datensatz class Contao\Database\Result f?r haste callbacks
         $objHasteForm = new \Haste\Form\Form('efg-bundle', 'POST', function ($objHaste) {
             return \Input::post('FORM_SUBMIT') === $objHaste->getFormId();
         });
         //
         // Callback zum darstellen der aktuellen Werte
         $objHasteForm->addFieldsFromFormGenerator($objForm->id, function (&$strField, &$arrDca) {
-            if (isset($this->objEditRecord->$strField)) {   // Wert für Feld vorhanden
-                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Wert in Form übernehmen strField '.$strField.' val '.$this->objEditRecord->$strField);
+            if (isset($this->objEditRecord->$strField)) {   // Wert f?r Feld vorhanden
+                EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'Wert in Form ?bernehmen strField '.$strField.' val '.$this->objEditRecord->$strField);
                 $x=$this->formatValue($strField, $this->objEditRecord->$strField);
                 EfgLog::EfgwriteLog(debfull, __METHOD__, __LINE__, 'formatValue '.$x);
                 //$arrDca['value'] = $this->objEditRecord->$strField;
@@ -499,7 +502,7 @@ class ModuleFormdataListing extends \Module
           // Read from GET: \Input::get('year');
         }
         $formResult = $objHasteForm->generate();
-        $formResult .= '{{link::back}}';  // zurück button
+        $formResult .= '{{link::back}}';  // zur?ck button
 
         return $formResult;
     }
@@ -1601,7 +1604,7 @@ class ModuleFormdataListing extends \Module
 
             $strTotalNumberOfItems = number_format((int) $intTotalcount, 0, $GLOBALS['TL_LANG']['MSC']['decimalSeparator'], $GLOBALS['TL_LANG']['MSC']['thousandsSeparator']);
             if ($GLOBALS['TL_LANG']['MSC']['efgTotalNumberOfItems']) $str = $GLOBALS['TL_LANG']['MSC']['efgTotalNumberOfItems'];
-            else { $str='Anzahl Einträge: %s';}
+            else { $str='Anzahl Eintr?ge: %s';}
             $this->Template->totalNumberOfItems = [
                 'raw' => (int) $intTotalcount,
                 'formatted' => $strTotalNumberOfItems,
@@ -1801,7 +1804,7 @@ class ModuleFormdataListing extends \Module
 
                 foreach ($GLOBALS['TL_HOOKS']['efgExportXls'] as $key => $callback) {
                     $this->import($callback[0]);
-                    $res = $this->{$callback[0]}->{$callback[1]}($arrHookDataColumns, $arrHookData);       //Ã„nderung PBD
+                    $res = $this->{$callback[0]}->{$callback[1]}($arrHookDataColumns, $arrHookData);       //Änderung PBD
                 }
             }
             exit;

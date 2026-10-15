@@ -197,7 +197,7 @@ $GLOBALS['TL_DCA']['tl_formdata'] = array
 	(
 		'dataContainer'               => 'Formdata',
 		'ctable'                      => array('tl_formdata_details'),
-<?php if ($this->arrForm['key'] != 'feedback'): ?>
+<?php if (($this->arrForm['key'] ?? $this->strFormKey ?? '') != 'feedback'): ?>
 		'closed'                      => false,
 <?php else: ?>
 		'closed'                      => true,
@@ -221,7 +221,7 @@ $GLOBALS['TL_DCA']['tl_formdata'] = array
 		'label' => array
 		(
 			'fields'                  => array('date', 'form', 'alias', 'be_notes' <?php foreach ($this->arrFields as $varKey => $varVals): echo ', \'' . $varKey . '\''; endforeach; ?>),
-<?php if ($this->arrForm['key'] != 'feedback'): ?>
+<?php if (($this->arrForm['key'] ?? $this->strFormKey ?? '') != 'feedback'): ?>
 			'format'                  => '<div class="fd_wrap">
 	<div class="fd_head">%s<span>[%s]</span><span>%s</span></div>
 	<?php if (count($this->arrFields) > 10): ?><div class="limit_height' . (!$GLOBALS['TL_CONFIG']['doNotCollapse'] ? ' h64' : '') . ' block"><?php endif; ?>
@@ -233,7 +233,7 @@ $GLOBALS['TL_DCA']['tl_formdata'] = array
 			'label_callback'          => array('tl_fd_<?php echo str_replace(array('-','.'), array('_', '_'), $this->strFormKey); ?>','getRowLabel')
 			*/
 <?php endif; ?>
-<?php if ($this->arrForm['key'] == 'feedback'): ?>
+<?php if (($this->arrForm['key'] ?? $this->strFormKey ?? '') == 'feedback'): ?>
 			/*
 			'format'                  => '<div class="fd_wrap">
 	<div class="fd_head">%s<span>[%s]</span></div>
@@ -248,7 +248,7 @@ $GLOBALS['TL_DCA']['tl_formdata'] = array
 		),
 		'global_operations' => array
 		(
-<?php if ($this->arrForm['key'] != 'feedback'): ?>
+<?php if (($this->arrForm['key'] ?? $this->strFormKey ?? '') != 'feedback'): ?>
 			'import' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_formdata']['import'],
@@ -345,10 +345,10 @@ endforeach;	?>
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_formdata']['form'],
 			'inputType'               => 'select',
-			'exclude'                 => <?php echo ($this->arrForm['key'] == 'feedback' ? 'false' : 'true' ); ?>,
-			'search'                  => <?php echo ($this->arrForm['key'] == 'feedback' ? 'true' : 'false' ); ?>,
-			'filter'                  => <?php echo ($this->arrForm['key'] == 'feedback' ? 'true' : 'false' ); ?>,
-			'sorting'                 => <?php echo ($this->arrForm['key'] == 'feedback' ? 'true' : 'false' ); ?>,
+			'exclude'                 => <?php echo (($this->arrForm['key'] ?? $this->strFormKey ?? '') == 'feedback' ? 'false' : 'true' ); ?>,
+			'search'                  => <?php echo (($this->arrForm['key'] ?? $this->strFormKey ?? '') == 'feedback' ? 'true' : 'false' ); ?>,
+			'filter'                  => <?php echo (($this->arrForm['key'] ?? $this->strFormKey ?? '') == 'feedback' ? 'true' : 'false' ); ?>,
+			'sorting'                 => <?php echo (($this->arrForm['key'] ?? $this->strFormKey ?? '') == 'feedback' ? 'true' : 'false' ); ?>,
 			'options_callback'        => array('tl_formdata', 'getFormsSelect'),
 			'eval'                    => array('chosen' => true, 'tl_class'=> 'w50')
 		),
@@ -473,7 +473,7 @@ endforeach;	?>
 		'detailFields'               => array(<?php $strSep = ''; foreach ($this->arrFields as $varKey => $varVals):
 	echo $strSep . "'" . str_replace("'", "\'", \StringUtil::decodeEntities($varKey)) . "'"; $strSep = ',';
 endforeach; ?>),
-<?php if ($this->arrForm['key'] != 'feedback'): ?>
+<?php if (($this->arrForm['key'] ?? $this->strFormKey ?? '') != 'feedback'): ?>
 		'formFilterKey'              => 'form',
 		'formFilterValue'            => '<?php echo $this->arrForm['title']; ?>'
 <?php endif; ?>
@@ -520,12 +520,12 @@ $arrOpts = array(array('value' => '1', 'label' => $varVals['label']));
 endif; ?>
 <?php if (is_array($arrOpts)): ?>
 <?php foreach ($arrOpts as $kOpt => $arrOpt): ?>
-<?php if ($arrOpt['group']): ?>
+<?php if (!empty($arrOpt['group'])): ?>
 $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo \StringUtil::decodeEntities($strField); ?>']['reference'] = &$GLOBALS['TL_LANG']['tl_formdata']['_optgroups_']['<?php echo \StringUtil::decodeEntities($strField); ?>'];
 <?php break; endif; ?>
 <?php endforeach; ?>
 <?php foreach ($arrOpts as $kOpt => $arrOpt): ?>
-<?php if ($arrOpt['group']): $blnInGroup = true; $strGroupKey = \StringUtil::decodeEntities($arrOpt['value']); $strGroupLabel = \StringUtil::decodeEntities($arrOpt['label']); ?>
+<?php if (!empty($arrOpt['group'])): $blnInGroup = true; $strGroupKey = \StringUtil::decodeEntities($arrOpt['value']); $strGroupLabel = \StringUtil::decodeEntities($arrOpt['label']); ?>
 <?php if ($varVals['type'] == 'conditionalselect'): ?>
 $GLOBALS['TL_LANG']['tl_formdata']['_optgroups_']['<?php echo $strField; ?>']['<?php echo $strGroupKey; ?>'] = '<?php echo str_replace("'", "\'", $strGroupKey); ?>';
 <?php else: ?>
@@ -533,23 +533,23 @@ $GLOBALS['TL_LANG']['tl_formdata']['_optgroups_']['<?php echo $strField; ?>']['<
 <?php endif; ?>
 <?php endif; ?>
 <?php if ($blnInGroup && strlen($strGroupKey)): ?>
-<?php if ($arrOpt['group']): continue; endif; ?>
+<?php if (!empty($arrOpt['group'])): continue; endif; ?>
 $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['options']['<?php echo $strGroupKey; ?>']['<?php echo str_replace("'", "\'", \StringUtil::decodeEntities($arrOpt['value']));?>'] = '<?php echo str_replace("'", "\'", \StringUtil::decodeEntities($arrOpt['label'])); ?>';
 <?php else: ?>
 $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['options']['<?php echo str_replace("'", "\'", \StringUtil::decodeEntities($arrOpt['value']));?>'] = '<?php echo str_replace("'", "\'", \StringUtil::decodeEntities($arrOpt['label'])); ?>';
 <?php endif; ?>
 <?php endforeach; ?>
 <?php foreach ($arrOpts as $kOpt => $arrOpt): ?>
-<?php if ($arrOpt['default']): ?>
+<?php if (!empty($arrOpt['default'])): ?>
 $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['default'][] = '<?php echo str_replace("'", "\'", \StringUtil::decodeEntities($arrOpt['label']))?>';
 <?php endif; ?>
 <?php endforeach; ?>
 <?php endif; ?>
-<?php if ($varVals['type'] == 'checkbox' && count($arrOpts)>1 && !$arrVals['multiple']): ?>
+<?php if ($varVals['type'] == 'checkbox' && count($arrOpts)>1 && empty($varVals['multiple'])): ?>
 $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['eval']['multiple'] = true;
 $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['eval']['csv'] = '|';
 <?php endif; unset($arrOpts); ?>
-<?php if ($this->arrForm['efgStoreValues']): ?>
+<?php if (($this->arrForm['efgStoreValues'] ?? false)): ?>
 $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['eval']['efgStoreValues'] = true;
 <?php endif; ?>
 <?php break;
@@ -567,7 +567,7 @@ $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['eval'][
 <?php endif; unset($arrOpts); ?>
 <?php break;
 case 'upload': ?>
-<?php if ($varVals['storeFile']): ?>
+<?php if (!empty($varVals['storeFile'])): ?>
 $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['storeFile'] = true;
 $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['eval']['files'] = true;
 $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['eval']['filesOnly'] = true;
@@ -580,8 +580,8 @@ $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['eval'][
 $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['eval']['filesOnly'] = true;
 $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['eval']['extensions'] = 'gif,jpg,png';
 $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['eval']['fieldType'] = '<?php echo ($varVals['efgImageMultiple']) ? 'checkbox' : 'radio'; ?>';
-$GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['eval']['multiple'] = <?php if ($varVals['efgImageMultiple']): ?>true<?php else: ?>false<?php endif; ?>;
-<?php if ($varVals['efgImageMultiple']): ?>
+$GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['eval']['multiple'] = <?php if (!empty($varVals['efgImageMultiple'])): ?>true<?php else: ?>false<?php endif; ?>;
+<?php if (!empty($varVals['efgImageMultiple'])): ?>
 $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['eval']['csv'] = '|';
 <?php endif; ?>
 <?php break;
@@ -593,19 +593,19 @@ $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['eval'][
 <?php if ($varVals['type'] == 'condition'): // conditionalforms ?>
 $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['eval']['submitOnChange'] = true;
 <?php endif; ?>
-<?php if ($varVals['conditionField'] && strlen($varVals['conditionField'])): ?>
+<?php if (!empty($varVals['conditionField'])): ?>
 $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['eval']['conditionField'] = '<?php echo $this->arrFieldNamesById[$varVals['conditionField']]; ?>';
 <?php endif; ?>
 <?php if ($varVals['mandatory'] == "1"): ?>
 $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['eval']['mandatory'] = true;
 <?php endif; ?>
-<?php if ($varVals['minlength']): ?>
+<?php if (!empty($varVals['minlength'])): ?>
 $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['eval']['minlength'] = <?php echo $varVals['minlength']; ?>;
 <?php endif; ?>
-<?php if ($varVals['maxlength']): ?>
+<?php if (!empty($varVals['maxlength'])): ?>
 $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['eval']['maxlength'] = <?php echo $varVals['maxlength']; ?>;
 <?php endif; ?>
-<?php if ($varVals['mSize']): ?>
+<?php if (!empty($varVals['mSize'])): ?>
 $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['eval']['size'] = <?php echo $varVals['mSize']; ?>;
 <?php endif; ?>
 <?php if ($varVals['multiple'] == "1"): ?>
@@ -624,10 +624,10 @@ $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['eval'][
 <?php if ($varVals['rgxp'] == 'date' || $varVals['rgxp'] == 'datim'): ?>
 $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['flag'] = 5;
 <?php endif; ?>
-<?php if ($varVals['dateFormat']): ?>
+<?php if (!empty($varVals['dateFormat'])): ?>
 $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['eval']['dateFormat'] = '<?php echo $varVals['dateFormat']; ?>';
 <?php endif; ?>
-<?php if ($varVals['size']): $arrSize = deserialize($varVals['size']); ?>
+<?php if (!empty($varVals['size'])): $arrSize = deserialize($varVals['size']); ?>
 <?php if ($varVals['type'] == 'textarea'): ?>
 $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['eval']['cols'] = <?php echo $arrSize[1]; ?>;
 $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['eval']['rows'] = <?php echo $arrSize[0]; ?>;
